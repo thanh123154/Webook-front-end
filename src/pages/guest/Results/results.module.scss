@@ -1,0 +1,33 @@
+@import "../../../assets/scss/sizes.scss";
+
+.container {
+  padding: 25px calc((100% - #{$container-width}) / 2);
+}
+
+.container-preview {
+  padding: 25px calc((100% - #{$container-width}) / 2);
+
+  .title {
+    width: 500px !important;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .sub-title {
+    width: 200px !important;
+    margin-bottom: 5px;
+  }
+
+  .btn {
+    width: 120px !important;
+    margin-right: 20px !important;
+    margin-bottom: 10px;
+  }
+
+  .card-image {
+    width: 100% !important;
+    display: block;
+    height: 250px !important;
+    margin-bottom: 5px;
+  }
+}

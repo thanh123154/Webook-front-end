@@ -1,0 +1,64 @@
+@import "../../../assets/scss/sizes.scss";
+@import "../../../assets/scss/mixins.scss";
+
+.container {
+  @include blur-bg();
+  position: absolute;
+  top: 80px;
+  right: calc((100% - #{$container-width}) / 2);
+  padding: 10px 0;
+  width: 250px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 5px #00000025;
+
+  * {
+    color: #fff !important;
+  }
+
+  :global(.divider) {
+    background-color: #ffffff25;
+  }
+
+  :global(.ant-switch-checked) {
+    background-color: #fff !important;
+
+    :global(.ant-switch-handle)::before {
+      background-color: #333;
+    }
+  }
+
+  :global(.switch) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+
+    button {
+      width: 0;
+
+      &:global(.ant-switch-checked) {
+        background-color: #333;
+      }
+    }
+  }
+
+  :global(.divider) {
+    margin: 5px 0;
+  }
+
+  span {
+    padding: 10px 20px;
+  }
+
+  :global(.dropdown-btn) {
+    padding: 10px 20px;
+    cursor: pointer;
+
+    &:hover,
+    &:global(.active) {
+      background-color: #ffffff25;
+    }
+  }
+}

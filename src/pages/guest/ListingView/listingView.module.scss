@@ -1,0 +1,160 @@
+@import "../../../assets/scss/mixins.scss";
+@import "../../../assets/scss/sizes.scss";
+
+$hor-padding: calc((100% - #{$container-width}) / 2);
+
+.container {
+  .reviews-container {
+    padding: 25px $hor-padding;
+    padding-bottom: 50px;
+
+    button {
+      @include std-btn();
+      margin-top: 20px;
+      border-color: #333 !important;
+      color: #333 !important;
+
+      &:hover {
+        color: #fff !important;
+        background-color: #333;
+      }
+    }
+
+    .reviews {
+      svg {
+        font-size: 20px;
+        margin-right: 10px;
+      }
+
+      .counts {
+        font-size: 22px;
+        position: relative;
+        padding-left: 25px;
+
+        &::before {
+          content: "";
+          width: 4px;
+          height: 4px;
+          background-color: #333;
+          border-radius: 50px;
+          position: absolute;
+          left: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+      }
+    }
+  }
+
+  .top {
+    padding: 25px $hor-padding;
+
+    .head {
+      margin-bottom: 5px;
+    }
+
+    .sub-head {
+      color: #999;
+      margin-left: 5px;
+    }
+
+    svg {
+      color: #999;
+    }
+  }
+
+  .gallery {
+    display: flex;
+    overflow: hidden;
+    position: relative;
+
+    .gallery-item {
+      height: 350px;
+      width: calc(100vw / 3);
+      object-fit: cover;
+      object-position: center;
+    }
+
+    button {
+      position: absolute;
+      right: 25px;
+      bottom: 25px;
+      @include std-btn();
+      border: 1px solid #333;
+      color: #333 !important;
+    }
+  }
+
+  .mid {
+    padding: 25px $hor-padding;
+
+    h2 {
+      margin-right: 10px;
+    }
+
+    .num {
+      position: relative;
+      margin-right: 15px;
+      font-size: 16px;
+
+      &::before {
+        content: "";
+        width: 3px;
+        height: 3px;
+        background-color: #333;
+        border-radius: 50px;
+        position: absolute;
+        left: -9px;
+        top: calc(100% / 2 - 2px);
+      }
+
+      &:first-child {
+        &::before {
+          width: 0;
+        }
+      }
+    }
+
+    .desc,
+    .amenity {
+      font-size: 16px;
+    }
+  }
+
+  .save-btn {
+    border: none !important;
+    box-shadow: none !important;
+
+    * {
+      color: #333 !important;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+  }
+}
+
+.container-preview {
+  .wrapper {
+    padding: 0 $hor-padding;
+  }
+
+  .title {
+    width: 600px !important;
+    display: block;
+    padding: 25px 0 20px 0;
+  }
+
+  .sub-title {
+    width: 300px !important;
+    margin-bottom: 15px;
+  }
+
+  .gallery {
+    overflow: hidden;
+
+    .gallery-item span {
+      height: 350px !important;
+      width: calc(100vw / 3) !important;
+    }
+  }
+}

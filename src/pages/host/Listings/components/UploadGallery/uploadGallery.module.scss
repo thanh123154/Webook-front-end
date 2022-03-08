@@ -1,0 +1,66 @@
+.cell {
+  width: 107px;
+  height: 107px;
+  margin-right: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #00000025;
+  position: relative;
+  transition: all 0.2s ease-in-out;
+
+  &.btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-style: dashed;
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+
+    &:hover {
+      border-color: #333;
+    }
+  }
+
+  :global(.ant-image) {
+    height: 100%;
+
+    img {
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+  }
+
+  &:hover .delete-btn {
+    display: flex;
+  }
+
+  .delete-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #e75151;
+    width: 20px;
+    height: 20px;
+    border-radius: 50px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+
+    svg {
+      color: #fff;
+      font-size: 12px;
+    }
+
+    &:hover {
+      background-color: #ff5b5b;
+    }
+  }
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+}

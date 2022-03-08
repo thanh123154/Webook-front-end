@@ -1,0 +1,42 @@
+@import "../../../../../assets/scss/mixins.scss";
+
+.container {
+  width: fit-content;
+  margin: 50px auto 25px auto;
+  display: flex;
+  align-items: center;
+
+  :global(.btn) {
+    @include btn-icon();
+    margin: 0 5px;
+    width: 35px;
+    height: 35px;
+    border: none;
+    background-color: unset;
+
+    * {
+      color: #333;
+    }
+
+    &:hover {
+      background-color: #f1f1f1;
+    }
+
+    &:global(.active) {
+      background-color: #333;
+
+      * {
+        color: #fff;
+      }
+    }
+
+    &:disabled {
+      background-color: unset;
+      cursor: not-allowed;
+
+      * {
+        color: #dadada;
+      }
+    }
+  }
+}

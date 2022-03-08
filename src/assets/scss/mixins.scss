@@ -1,0 +1,38 @@
+@mixin btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 50px;
+}
+
+@mixin std-typo {
+  margin: 0;
+  // color: #333;
+}
+
+@mixin blur-bg {
+  background-color: #ffffff25 !important;
+  backdrop-filter: blur(3rem);
+}
+
+@mixin std-btn {
+  height: 40px;
+  border-radius: 5px;
+}
+
+@mixin std-input {
+  height: 40px;
+  border-radius: 5px;
+}
+
+@mixin primary-btn {
+  @include std-btn();
+
+  background-color: #333 !important;
+  border-color: #333 !important;
+
+  * {
+    color: #fff;
+  }
+}

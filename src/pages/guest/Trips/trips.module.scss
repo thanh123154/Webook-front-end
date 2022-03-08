@@ -1,0 +1,21 @@
+@import "../../../assets/scss/mixins.scss";
+@import "../../../assets/scss/sizes.scss";
+
+.container {
+  padding-top: 50px;
+  padding-left: calc((100% - 1200px) / 2);
+  padding-right: calc((100% - 1200px) / 2);
+
+  .top {
+    margin-bottom: 20px;
+  }
+}
+.antpagination {
+  padding-right: calc((100% - 1200px) / 2);
+}
+.deleteIcon {
+  color: red;
+}
+.deleteIcon:hover {
+  color: #006fff;
+}
