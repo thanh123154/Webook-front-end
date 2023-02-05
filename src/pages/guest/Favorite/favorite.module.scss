@@ -1,8 +1,0 @@
-@import "../../../assets/scss/mixins.scss";
-@import "../../../assets/scss/sizes.scss";
-
-$hor-padding: calc((100% - #{$container-width}) / 2);
-
-.container {
-  padding: 25px $hor-padding;
-}
