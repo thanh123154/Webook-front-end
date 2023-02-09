@@ -50,7 +50,9 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
 
       <Menu.Dropdown>
         <Menu.Label>Application</Menu.Label>
+        
         <Menu.Item icon={<CgProfile />}>Settings</Menu.Item>
+
         <Menu.Item icon={<CgProfile />}>Messages</Menu.Item>
         <Menu.Item icon={<CgProfile />}>Gallery</Menu.Item>
         <Menu.Item
