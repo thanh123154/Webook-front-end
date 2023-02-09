@@ -7,7 +7,7 @@ import { GrClose } from "react-icons/gr";
 import { LogoText } from "../assets/svgs";
 import { UnderlineButton } from "../components";
 import { useRendered } from "../hooks";
-import { DrawerMenu, MenuDropDown, NavMenu } from "./components";
+import { DrawerMenu, MenuDropDown, NavMenu, SearchBarSpecial } from "./components";
 
 export const Header = () => {
   const { rendered } = useRendered();
@@ -38,6 +38,7 @@ export const Header = () => {
             </Link>
 
             {/* <NavMenu /> */}
+            <SearchBarSpecial index={1} />
 
             <Box pos="relative" sx={{ "*": { transition: "all 0.3s ease-in-out" } }}>
               <Text
