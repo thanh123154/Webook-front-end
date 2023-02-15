@@ -1,34 +1,49 @@
-import { MantineProvider, type MantineProviderProps, type MantineTheme } from "@mantine/core";
+import {
+  type ColorScheme,
+  MantineProvider,
+  type MantineProviderProps,
+} from "@mantine/core";
+import { useLocalStorage } from "@mantine/hooks";
+import { NotificationsProvider } from "@mantine/notifications";
 import React from "react";
 
 import { fonts } from "./fonts";
 
 export const ThemeProvider: React.FC<MantineProviderProps> = ({ children }) => {
+  const [theme, setTheme] = useLocalStorage<ColorScheme>({
+    key: "Mantine theme",
+    defaultValue: "dark",
+  });
+
   return (
     <MantineProvider
       withNormalizeCSS
       withGlobalStyles
       theme={{
-        colorScheme: "light",
-        fontFamily: fonts.inter.style.fontFamily,
-        headings: { fontFamily: fonts.rigatoni.style.fontFamily, fontWeight: 700 },
+        colorScheme: theme,
         components: {
-          Text: {
+          Title: {
             styles: {
               root: {
-                fontWeight: 500,
+                color: "#29363D",
               },
             },
           },
-        },
-        globalStyles: (theme: MantineTheme) => ({
-          html: {
-            [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
-              fontSize: "calc(10 * (100vw/1500))",
+          Button: {
+            defaultProps: {
+              tt: "uppercase",
+              fw: 700,
+              radius: "xl",
+              variant: "gradient",
             },
           },
-          body: {
-            backgroundColor: "#f2f2f2",
+        },
+        globalStyles: () => ({
+          html: {
+            scrollBehavior: "smooth",
+          },
+          "body *": {
+            fontFamily: `${fonts.poppins.style.fontFamily} !important`,
           },
           a: {
             color: "#000",
@@ -37,7 +52,7 @@ export const ThemeProvider: React.FC<MantineProviderProps> = ({ children }) => {
         }),
       }}
     >
-      {children}
+      <NotificationsProvider>{children}</NotificationsProvider>
     </MantineProvider>
   );
 };

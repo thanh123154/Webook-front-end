@@ -46,7 +46,7 @@ model Session {
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
-
+//them moi user
 model User {
     id            String    @id @default(cuid())
     name          String?

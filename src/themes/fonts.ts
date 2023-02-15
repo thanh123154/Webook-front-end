@@ -1,16 +1,8 @@
-import { Inter } from "@next/font/google";
-import localFont from "@next/font/local";
+import { Poppins } from "@next/font/google";
 
-const inter = Inter({ subsets: ["latin"] });
-
-const rigatoni = localFont({
-  src: [
-    {
-      path: "../assets/fonts/rigatoni-bold.woff2",
-      weight: "700",
-      style: "normal",
-    },
-  ],
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
-export const fonts = { inter, rigatoni };
+export const fonts = { poppins };
