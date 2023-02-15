@@ -1,4 +1,12 @@
-import { AspectRatio, Box, Flex, MantineTheme, type Sx, Text, Title } from "@mantine/core";
+import {
+  AspectRatio,
+  Box,
+  Flex,
+  MantineTheme,
+  type Sx,
+  Text,
+  Title,
+} from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/dist/ScrollTrigger";
@@ -42,7 +50,12 @@ export const FindZenAi = () => {
           <UnderlineButton>Join Presale</UnderlineButton>
         </Flex>
         <Flex my={{ base: 60, sm: 0 }} justify={"center"}>
-          <Text className="miniText" display={"flex"} transform={"uppercase"} fz={{ base: "20px", sm: "2.08rem" }}>
+          <Text
+            className="miniText"
+            display={"flex"}
+            transform={"uppercase"}
+            fz={{ base: "20px", sm: "2.08rem" }}
+          >
             <AspectRatio ratio={1} w={"2.56rem"}>
               <BigStar />
             </AspectRatio>
