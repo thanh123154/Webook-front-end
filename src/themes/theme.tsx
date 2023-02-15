@@ -25,7 +25,7 @@ export const ThemeProvider: React.FC<MantineProviderProps> = ({ children }) => {
           Title: {
             styles: {
               root: {
-                color: "#29363D",
+                // color: "#29363D",
               },
             },
           },
@@ -46,7 +46,7 @@ export const ThemeProvider: React.FC<MantineProviderProps> = ({ children }) => {
             fontFamily: `${fonts.poppins.style.fontFamily} !important`,
           },
           a: {
-            color: "#000",
+            color: "unset",
             textDecoration: "none",
           },
         }),
