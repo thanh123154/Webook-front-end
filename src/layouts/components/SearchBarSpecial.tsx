@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Menu, Text } from "@mantine/core";
+import { Box, Button, Flex, Input, Loader, Menu, Text, TextInput } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { DateRangePicker, DateRangePickerValue } from "@mantine/dates";
 import Link from "next/link";
@@ -22,9 +22,26 @@ type Props = {
 };
 
 export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
+  const [peopleDropDown, setPeopleDropDown] = useState(false);
   return (
-    <Flex>
-      <DatePicker placeholder="Pick date" label="Event date" withAsterisk />
+    <Flex justify={"center"} gap={20}>
+      <TextInput label="Where" placeholder="Search destinations" rightSection={<Loader size="xs" />} />
+
+      <DatePicker placeholder="Add dates" label="Check in" withAsterisk />
+
+      <DatePicker placeholder="Add dates" label="Check out" withAsterisk />
+
+      <TextInput
+        readOnly
+        onClick={() => setPeopleDropDown(!peopleDropDown)}
+        label="Who"
+        placeholder="Add guests"
+        rightSection={
+          <Button variant="gradient" gradient={{ from: "indigo", to: "cyan" }}>
+            Search
+          </Button>
+        }
+      />
     </Flex>
   );
 };

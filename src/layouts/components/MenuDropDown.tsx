@@ -1,4 +1,4 @@
-import { Button, Flex, Menu, Text } from "@mantine/core";
+import { Button, Flex, Menu, Modal, Text } from "@mantine/core";
 import { IconArrowsLeftRight, IconMessageCircle, IconPhoto, IconSearch, IconSettings, IconTrash } from "@tabler/icons";
 import { nanoid } from "nanoid";
 import Link from "next/link";
@@ -26,6 +26,8 @@ type Props = {
 export const MenuDropDown: React.FC<Props> = ({ index }) => {
   const [isRendered, setIsRendered] = useState(false);
   const [isPC, setIsPc] = useState(true);
+  const [openedLogin, setOpenedLogin] = useState(false);
+
   useEffect(() => {
     !isRendered && setIsRendered(true);
   }, [isRendered]);
@@ -50,7 +52,7 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
 
       <Menu.Dropdown>
         <Menu.Label>Application</Menu.Label>
-        
+
         <Menu.Item icon={<CgProfile />}>Settings</Menu.Item>
 
         <Menu.Item icon={<CgProfile />}>Messages</Menu.Item>
@@ -69,11 +71,15 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
         <Menu.Divider />
 
         <Menu.Label>Danger zone</Menu.Label>
-        <Menu.Item icon={<CgProfile />}>Transfer my data</Menu.Item>
+        <Menu.Item onClick={() => setOpenedLogin(true)} icon={<CgProfile />}>
+          Login
+        </Menu.Item>
         <Menu.Item color="red" icon={<CgProfile />}>
-          Delete my account
+          Log out
         </Menu.Item>
       </Menu.Dropdown>
+
+      <Modal centered opened={openedLogin} onClose={() => setOpenedLogin(false)} title="Introduce yourself!"></Modal>
     </Menu>
   );
 };
