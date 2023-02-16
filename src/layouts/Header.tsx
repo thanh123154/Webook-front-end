@@ -17,10 +17,21 @@ import { GrClose } from "react-icons/gr";
 import { useRendered } from "../hooks";
 import { DrawerMenu, MenuDropDown, SearchBarSpecial } from "./components";
 import { useLocalStorage } from "@mantine/hooks";
+import { api } from "../utils/api";
+import { useSession } from "next-auth/react";
 
 export const Header = () => {
   const { rendered } = useRendered();
   const [opened, setOpened] = useState(false);
+
+  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
+
+  const { data: sessionData } = useSession();
+
+  const { data: secretMessage } = api.example.getSecretMessage.useQuery(
+    undefined, // no input
+    { enabled: sessionData?.user !== undefined }
+  );
 
   const [count, setCount] = useState(9);
 
@@ -54,7 +65,7 @@ export const Header = () => {
             </Link>
 
             {/* <NavMenu /> */}
-            <SearchBarSpecial index={1} />
+            {/* <SearchBarSpecial index={1} /> */}
 
             <Box
               pos="relative"
@@ -84,8 +95,6 @@ export const Header = () => {
             </Box>
 
             <Flex gap={"2rem"} fz={"2rem"}>
-              {/* <UnderlineButton fz="2.1rem">Zen AI Browser</UnderlineButton> */}
-
               <Button
                 variant="outline"
                 onClick={() => {
@@ -104,6 +113,10 @@ export const Header = () => {
               </Indicator>
 
               <MenuDropDown index={123} />
+              <Text fz={18}>
+                {sessionData && <span>{sessionData.user?.name}</span>}
+                {/* {secretMessage && <span> - {secretMessage}</span>} */}
+              </Text>
             </Flex>
           </Group>
         </Flex>

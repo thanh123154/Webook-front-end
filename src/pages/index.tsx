@@ -8,6 +8,7 @@ import { api } from "../utils/api";
 import { Box, Button, ColorScheme, Text, Title } from "@mantine/core";
 
 import { Header } from "../layouts";
+import { Hero } from "../features/Home";
 
 const Home: NextPage = () => {
   const hello = api.example.hello.useQuery({ text: "from tRPC" });
@@ -23,7 +24,9 @@ const Home: NextPage = () => {
       <Header />
 
       <Box>
-        <div>
+        <Hero />
+
+        {/* <div>
           <Title>
             Create <span>T3</span> App
           </Title>
@@ -43,7 +46,7 @@ const Home: NextPage = () => {
             <p>{hello.data ? hello.data.greeting : "Loading tRPC query..."}</p>
             <AuthShowcase />
           </div>
-        </div>
+        </div> */}
       </Box>
 
       {/* <Footer /> */}

@@ -87,11 +87,11 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
           }
           icon={<CgProfile />}
         >
-          Login
+          {sessionData ? "Log out" : "Log in"}
         </Menu.Item>
-        <Menu.Item color="red" icon={<CgProfile />}>
+        {/* <Menu.Item color="red" icon={<CgProfile />}>
           Log out
-        </Menu.Item>
+        </Menu.Item> */}
       </Menu.Dropdown>
 
       <Modal

@@ -1,76 +1,55 @@
-import { AspectRatio, Box, Flex, Text, Title } from "@mantine/core";
+import {
+  AspectRatio,
+  Box,
+  type ColorScheme,
+  Container,
+  Flex,
+  Tabs,
+  Text,
+  TextInput,
+  Title,
+} from "@mantine/core";
+import { useLocalStorage } from "@mantine/hooks";
+import { IconPhoto } from "@tabler/icons";
 import React from "react";
-
-import { BigStar } from "../../assets/svgs";
-import { TextAnimation } from "../../components";
+import { IconDollar, Location } from "../../assets/svgs";
+import { SearchBarSpecial } from "../../layouts/components";
 
 export const Hero = () => {
+  const [theme, setTheme] = useLocalStorage<ColorScheme>({
+    key: "Mantine theme",
+    defaultValue: "dark",
+  });
   return (
-    <Box maw={{ base: "329px", sm: "111.6rem" }} mx={"auto"}>
-      <Box h={{ base: "", lg: "100px" }}></Box>
-      <TextAnimation delayTime={0.25} duration={0.6} startPoint={-180} endPoint={0}>
-        <Flex pos={"relative"} gap={{ base: "1.5rem", sm: "6rem" }} align={"start"}>
-          <AspectRatio w={{ base: "3rem", sm: "10.5rem" }} ratio={1}>
-            <BigStar />
-          </AspectRatio>
-          <Title
-            lh={{ base: "45px", sm: 1 }}
-            lts={"-0.03em"}
-            fw={700}
-            transform="uppercase"
-            fz={{ base: "34px", sm: "7rem" }}
-          >
-            Tapping into
-          </Title>
-        </Flex>
-      </TextAnimation>
-
-      <Flex
-        mt={{ base: "16px", sm: "0px" }}
-        direction={{ base: "column-reverse", sm: "row" }}
-        pos={"relative"}
-        gap={"1rem"}
-        align={"center"}
-      >
-        <TextAnimation delayTime={0.65} duration={0.6} startPoint={-180} endPoint={0}>
-          <Text lts={"-0.02em"} w={{ base: "20rem", sm: "34rem" }} fz={{ base: "17px", sm: "1.7rem" }}>
-            Zenithereum is a decentralized AI protocol that focuses on AI research and tool development to improve agent
-            growth in crypto and real-world environments, with a goal to benefit humanity.
+    <Box bg={theme === "light" ? "#FCFCFD" : "#1A1B1E"}>
+      {" "}
+      <Container py={50} size={1440} px={{ base: "20px", sm: "120px" }}>
+        <Flex gap={14} align={"center"}>
+          <Box w={32} h={2} bg={"#58C17D"} />
+          <Text fw={500} c={"#58C17D"}>
+            It&apos;s time to go 🚀
           </Text>
-        </TextAnimation>
-
-        <Flex
-          align={{ base: "center", sm: "start" }}
-          justify={"center"}
-          gap={{ base: "0.5rem", sm: "3.5rem" }}
-          direction={"column"}
-        >
-          <TextAnimation delayTime={0.65} duration={0.6} startPoint={-180} endPoint={0}>
-            <Title
-              lh={{ base: "40px", sm: 1.2 }}
-              lts={"-0.03em"}
-              fw={700}
-              transform="uppercase"
-              fz={{ base: "30px", sm: "7rem" }}
-            >
-              the power
-            </Title>
-          </TextAnimation>
-          <TextAnimation delayTime={0.85} duration={0.6} startPoint={-180} endPoint={0}>
-            <Title
-              lh={{ base: "45px", sm: 1.2 }}
-              lts={"-0.03em"}
-              fw={700}
-              transform="uppercase"
-              fz={{ base: "30px", sm: "7rem" }}
-            >
-              OF ai
-            </Title>
-          </TextAnimation>
         </Flex>
-      </Flex>
 
-      <Flex></Flex>
+        <Title mt={20} maw={641} fw={600} fz={64}>
+          Don&apos;t just dream about it, plan it. Travel.
+        </Title>
+
+        <Text mt={20} maw={600} c={"#7D7C84"}>
+          When you&apos;re traveling, do you want to make sure your hotel has a
+          nice pool? Or maybe a happy hour with good deals on drinks? There
+        </Text>
+
+        <Tabs mt={48} defaultValue="stays" activateTabWithKeyboard={false}>
+          <Tabs.List>
+            <Tabs.Tab value="stays">Stays</Tabs.Tab>
+          </Tabs.List>
+
+          <Tabs.Panel value="stays" pt="xs">
+            <SearchBarSpecial index={1231} />
+          </Tabs.Panel>
+        </Tabs>
+      </Container>
     </Box>
   );
 };
