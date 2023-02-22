@@ -5,14 +5,20 @@ import {
   Flex,
   Text,
   TextInput,
+  Popover,
+  ActionIcon,
+  Group,
+  NumberInputHandlers,
+  NumberInput,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { DateRangePicker, DateRangePickerValue } from "@mantine/dates";
 import { useLocalStorage } from "@mantine/hooks";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Calenda, Location, Who } from "../../assets/svgs";
 import { BsArrowRightShort, BsSearch } from "react-icons/bs";
+import { GuestDropDown } from "./GuestDropDown";
 
 type anotherchild = {
   name: string;
@@ -37,6 +43,31 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
     key: "Mantine theme",
     defaultValue: "dark",
   });
+
+  const [valueAdult, setValueAdult] = useState(0);
+  const [valueChildren, setValueChildren] = useState(0);
+  const handlersChildren = useRef<NumberInputHandlers>();
+
+  const handlersAdult = useRef<NumberInputHandlers>();
+
+  const incrementAdult = () => {
+    console.log("first");
+    handlersAdult.current?.increment();
+  };
+
+  const decrementAdult = () => {
+    handlersAdult.current?.decrement();
+  };
+
+  const incrementChildren = () => {
+    console.log("first");
+    handlersChildren.current?.increment();
+  };
+
+  const decrementChildren = () => {
+    handlersChildren.current?.decrement();
+  };
+
   return (
     <Flex
       bg={
@@ -81,6 +112,7 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
           placeholder="Add dates"
           label="Check in"
           withAsterisk
+          dropdownPosition={"bottom-start"}
         />
       </Flex>
 
@@ -95,6 +127,7 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
               backgroundColor: "transparent",
             },
           }}
+          dropdownPosition={"bottom-start"}
           placeholder="Add dates"
           label="Check out"
           withAsterisk
@@ -104,20 +137,45 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
       <Flex gap={10}>
         {" "}
         <Who />
-        <TextInput
-          readOnly
-          onClick={() => setPeopleDropDown(!peopleDropDown)}
-          sx={{
-            ".mantine-Input-input": {
-              padding: "0px",
-              border: "none",
-              backgroundColor: "transparent",
-            },
-          }}
-          placeholder="Add dates"
-          label="Add guests"
-          withAsterisk
-        />
+        <Popover width={200} position="bottom" withArrow shadow="md">
+          <Popover.Target>
+            <TextInput
+              readOnly
+              onClick={() => setPeopleDropDown(!peopleDropDown)}
+              sx={{
+                ".mantine-Input-input": {
+                  padding: "0px",
+                  border: "none",
+                  backgroundColor: "transparent",
+                },
+              }}
+              placeholder="Add dates"
+              label="Add guests"
+              withAsterisk
+            />
+          </Popover.Target>
+          <Popover.Dropdown sx={{ width: "400px !important" }}>
+            <Flex direction={"column"} gap={20}>
+              {" "}
+              <GuestDropDown
+                xref={handlersAdult}
+                decrement={decrementAdult}
+                title={"Adult"}
+                increment={incrementAdult}
+                setValue={setValueAdult}
+                value={valueAdult}
+              />
+              <GuestDropDown
+                title={"Children"}
+                xref={handlersChildren}
+                decrement={decrementChildren}
+                increment={incrementChildren}
+                setValue={setValueChildren}
+                value={valueChildren}
+              />
+            </Flex>
+          </Popover.Dropdown>
+        </Popover>
       </Flex>
 
       <Button size="lg" leftIcon={<BsSearch />}>

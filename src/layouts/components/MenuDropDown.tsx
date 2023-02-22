@@ -87,7 +87,7 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
           }
           icon={<CgProfile />}
         >
-          {sessionData ? "Log out" : "Log in"}
+          {sessionData ? "Log out" : "Log in as google"}
         </Menu.Item>
         {/* <Menu.Item color="red" icon={<CgProfile />}>
           Log out
