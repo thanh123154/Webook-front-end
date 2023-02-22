@@ -116,7 +116,7 @@ export const Header = () => {
 
               <MenuDropDown index={123} />
               <Text fz={18}>
-                {sessionData && <span>{sessionData.user?.name}</span>}
+                {sessionData && <span>Hello {sessionData.user?.name}</span>}
                 {/* {secretMessage && <span> - {secretMessage}</span>} */}
               </Text>
             </Flex>
