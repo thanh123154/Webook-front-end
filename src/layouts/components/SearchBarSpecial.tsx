@@ -149,7 +149,11 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
                   backgroundColor: "transparent",
                 },
               }}
-              placeholder="Add dates"
+              placeholder={
+                valueAdult != 0 || valueChildren != 0
+                  ? `${valueAdult} Adult , ${valueChildren} children`
+                  : "Add guests"
+              }
               label="Add guests"
               withAsterisk
             />

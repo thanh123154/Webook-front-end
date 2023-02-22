@@ -106,8 +106,10 @@ export const Header = () => {
                 change darkmode pr light mode
               </Button>
 
+              {/* <Button>Switch to hosting</Button> */}
+
               <Indicator label={count} overflowCount={10} inline size={22}>
-                <ActionIcon color="blue">
+                <ActionIcon color="cyan">
                   <CgBell size={25} />
                 </ActionIcon>
               </Indicator>

@@ -4,7 +4,10 @@ import { nanoid } from "nanoid";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { CgProfile } from "react-icons/cg";
+import { CgProfile, CgSwap } from "react-icons/cg";
+import { MdSwapHorizontalCircle } from "react-icons/md";
+import { AiFillSetting } from "react-icons/ai";
+import { RiLoginCircleFill } from "react-icons/ri";
 import { api } from "../../utils/api";
 
 type anotherchild = {
@@ -54,7 +57,7 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
   return (
     <Menu trigger={"click"} shadow="md" width={200}>
       <Menu.Target>
-        <ActionIcon color="blue" variant="outline">
+        <ActionIcon color="cyan" variant="outline">
           <CgProfile size={20} />
         </ActionIcon>
       </Menu.Target>
@@ -62,10 +65,11 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
       <Menu.Dropdown>
         <Menu.Label>Application</Menu.Label>
 
-        <Menu.Item icon={<CgProfile />}>Settings</Menu.Item>
+        <Menu.Item icon={<MdSwapHorizontalCircle />}>
+          Switch to hosting
+        </Menu.Item>
 
-        <Menu.Item icon={<CgProfile />}>Messages</Menu.Item>
-        <Menu.Item icon={<CgProfile />}>Gallery</Menu.Item>
+        {/* <Menu.Item icon={<CgProfile />}>Gallery</Menu.Item>
         <Menu.Item
           icon={<CgProfile />}
           rightSection={
@@ -75,7 +79,7 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
           }
         >
           Search
-        </Menu.Item>
+        </Menu.Item> */}
 
         <Menu.Divider />
 
@@ -85,10 +89,13 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
           onClick={
             sessionData ? () => void signOut() : () => void signIn("google")
           }
-          icon={<CgProfile />}
+          icon={<RiLoginCircleFill />}
         >
           {sessionData ? "Log out" : "Log in as google"}
         </Menu.Item>
+
+        <Menu.Item icon={<AiFillSetting />}>Setting</Menu.Item>
+
         {/* <Menu.Item color="red" icon={<CgProfile />}>
           Log out
         </Menu.Item> */}
