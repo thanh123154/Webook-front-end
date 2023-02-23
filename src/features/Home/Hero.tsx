@@ -18,7 +18,7 @@ import { SearchBarSpecial } from "../../layouts/components";
 export const Hero = () => {
   const [theme, setTheme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
-    defaultValue: "light",
+    defaultValue: "dark",
   });
   return (
     <Box bg={theme === "light" ? "#FCFCFD" : "#1A1B1E"}>
