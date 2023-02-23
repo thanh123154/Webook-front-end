@@ -18,7 +18,7 @@ import { SearchBarSpecial } from "../../layouts/components";
 export const Hero = () => {
   const [theme, setTheme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
-    defaultValue: "dark",
+    defaultValue: "light",
   });
   return (
     <Box bg={theme === "light" ? "#FCFCFD" : "#1A1B1E"}>
@@ -46,7 +46,10 @@ export const Hero = () => {
           </Tabs.List>
 
           <Tabs.Panel value="stays" pt="xs">
-            <SearchBarSpecial index={1231} />
+            <Box pb={50} sx={{ borderBottom: "1px solid #E9EBED" }}>
+              {" "}
+              <SearchBarSpecial index={1231} />
+            </Box>
           </Tabs.Panel>
         </Tabs>
       </Container>

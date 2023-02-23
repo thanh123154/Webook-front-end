@@ -14,7 +14,16 @@ import HomeZenVerifyAiBanner2 from "./HomeZenVerifyAiBanner2.png";
 import HomeZenVerifyAiBanner3 from "./HomeZenVerifyAiBanner3.png";
 import HomeZenVerifyAiBanner4 from "./HomeZenVerifyAiBanner4.png";
 
+import Pic1 from "./Pic1.png";
+import Pic2 from "./Pic2.png";
+import Pic3 from "./Pic3.png";
+import Pic4 from "./Pic4.png";
+
 export {
+  Pic1,
+  Pic2,
+  Pic3,
+  Pic4,
   HomeZenArtAiBanner,
   HomeZenArtGalleryBanner1,
   HomeZenArtGalleryBanner2,
