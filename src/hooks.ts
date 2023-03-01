@@ -1,11 +1,22 @@
 import { useEffect, useState } from "react";
 
-export const useRendered = () => {
-  const [rendered, setRendered] = useState(false);
+export const useRender = () => {
+  const [isRendered, setIsRendered] = useState(false);
+
+  /**
+   * @param duration ms
+   */
+  const reRender = (duration = 100) => {
+    setIsRendered(false);
+
+    setTimeout(() => {
+      setIsRendered(true);
+    }, duration);
+  };
 
   useEffect(() => {
-    setRendered(true);
+    setIsRendered(true);
   }, []);
 
-  return { rendered };
+  return { isRendered, reRender };
 };

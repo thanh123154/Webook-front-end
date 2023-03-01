@@ -68,7 +68,11 @@ model User {
     updatedAt     DateTime  @updatedAt
     gender        String?
 
-    listings Listing[]
+    listings    Listing[]
+    transaction transaction[]
+    review      review[]
+    booking     booking[]
+    wishList    wishList[]
 }
 
 model Listing {
@@ -76,15 +80,15 @@ model Listing {
     hostId      String
     name        String
     address     String
-    price       String
-    gallery     String
-    desc        String   @db.Text
+    price       Float
+    gallery     String   @db.LongText
+    desc        String   @db.LongText
     beds        Int
     bedsrooms   Int
     bathrooms   Int
     guests      Int
-    active      Boolean
-    detail      String   @db.Text
+    active      Boolean  @default(true)
+    detail      String   @db.LongText
     placeId     String
     province    String
     district    String
@@ -93,11 +97,98 @@ model Listing {
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
 
-    host User @relation(fields: [hostId], references: [id])
+    host           User             @relation(fields: [hostId], references: [id])
+    location       place            @relation(fields: [placeId], references: [id])
+    booking        booking[]
+    transaction    transaction[]
+    review         review[]
+    wishList       wishList[]
+    ListingAmenity ListingAmenity[]
 }
 
 model place {
-    id String @id @default(cuid())
+    id   String @id @default(cuid())
+    name String
 
-    // host User @relation(fields: [hostId], references: [id])
+    Listing Listing[]
+}
+
+model booking {
+    guestId   String
+    listingId String
+    checkIn   DateTime
+    checkOut  DateTime
+    total     String
+    guest     Int
+    isDenied  Boolean
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    review    String   @db.Text
+    rating    Int
+
+    booked Listing @relation(fields: [listingId], references: [id])
+    guests User    @relation(fields: [guestId], references: [id])
+
+    @@id([guestId, listingId])
+}
+
+model transaction {
+    guestId   String
+    listingId String
+    checkIn   DateTime
+    checkOut  DateTime
+    price     String
+    guest     Int
+    review    String   @db.Text
+    rating    Int
+
+    listings Listing @relation(fields: [listingId], references: [id])
+    guests   User    @relation(fields: [guestId], references: [id])
+
+    @@id([guestId, listingId])
+}
+
+model review {
+    guestId   String
+    listingId String
+    comment   String @db.Text
+    rating    Int
+
+    guests   User    @relation(fields: [guestId], references: [id])
+    listings Listing @relation(fields: [listingId], references: [id])
+
+    @@id([guestId, listingId])
+}
+
+model wishList {
+    id        String
+    guestId   String
+    listingId String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    guests   User    @relation(fields: [guestId], references: [id])
+    listings Listing @relation(fields: [listingId], references: [id])
+
+    @@id([guestId, listingId])
+}
+
+model ListingAmenity {
+    id        String
+    listingId String
+    amenityId String
+
+    amenitys Amenity @relation(fields: [amenityId], references: [id])
+    listings Listing @relation(fields: [listingId], references: [id])
+
+    @@id([amenityId, listingId])
+}
+
+model Amenity {
+    id   String @id @default(cuid())
+    name String
+
+    ListingAmenity ListingAmenity[]
 }

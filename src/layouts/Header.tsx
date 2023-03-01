@@ -14,14 +14,15 @@ import React, { useState } from "react";
 import { CgBell, CgProfile } from "react-icons/cg";
 import { GrClose } from "react-icons/gr";
 
-import { useRendered } from "../hooks";
+// import { useRendered } from "../hooks";
 import { DrawerMenu, MenuDropDown, SearchBarSpecial } from "./components";
 import { useLocalStorage } from "@mantine/hooks";
 import { api } from "../utils/api";
 import { useSession } from "next-auth/react";
+import { useRender } from "../hooks";
 
 export const Header = () => {
-  const { rendered } = useRendered();
+  const { isRendered } = useRender();
   const [opened, setOpened] = useState(false);
 
   // const hello = api.example.hello.useQuery({ text: "from tRPC" });
@@ -40,7 +41,7 @@ export const Header = () => {
     defaultValue: "dark",
   });
 
-  if (!rendered) return <></>;
+  if (!isRendered) return <></>;
 
   return (
     <Box
