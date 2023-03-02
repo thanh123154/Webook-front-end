@@ -14,7 +14,6 @@ import React, { useState } from "react";
 import { CgBell, CgProfile } from "react-icons/cg";
 import { GrClose } from "react-icons/gr";
 
-// import { useRendered } from "../hooks";
 import { DrawerMenu, MenuDropDown, SearchBarSpecial } from "./components";
 import { useLocalStorage } from "@mantine/hooks";
 import { api } from "../utils/api";
