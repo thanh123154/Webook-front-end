@@ -5,6 +5,7 @@ import { TextEditor } from "../../components/text-editor";
 import { Step1 } from "./component/Step1";
 import { Step2 } from "./component/Step2";
 import { Step3 } from "./component/Step3";
+import { Step4 } from "./component/Step4";
 
 export const CreateListing = () => {
   const [active, setActive] = useState(1);
@@ -25,6 +26,9 @@ export const CreateListing = () => {
         </Stepper.Step>
         <Stepper.Step label="Step3" description="Guest pricing">
           <Step3 sth="test3" />
+        </Stepper.Step>
+        <Stepper.Step label="Step4" description="Address">
+          <Step4 sth="test4" />
         </Stepper.Step>
         <Stepper.Completed>
           Completed, click back button to get to previous step

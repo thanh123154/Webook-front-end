@@ -26,16 +26,26 @@ export const Step3: React.FC<Props> = ({ sth }) => {
       {" "}
       <Flex gap={50} direction={"column"}>
         <NumberInput
-          label="Price"
+          label="Long-term rental price"
+          rightSection={<Box mr={50}> vnđ</Box>}
           defaultValue={1000}
-          parser={(value) => value || "".replace(/\$\s?|(,*)/g, "")}
+          parser={(value) => value && value.replace(/\$\s?|(,*)/g, "")}
           formatter={(value) =>
-            !Number.isNaN(parseFloat(value || ""))
-              ? `$ ${value || ""}`.replace(
-                  /\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g,
-                  ","
-                )
-              : "$ "
+            value && !Number.isNaN(parseFloat(value))
+              ? `${value}`.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+              : ""
+          }
+        />
+
+        <NumberInput
+          label="Short-term rental price"
+          rightSection={<Box mr={50}> vnđ</Box>}
+          defaultValue={1000}
+          parser={(value) => value && value.replace(/\$\s?|(,*)/g, "")}
+          formatter={(value) =>
+            value && !Number.isNaN(parseFloat(value))
+              ? `${value}`.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+              : ""
           }
         />
       </Flex>
