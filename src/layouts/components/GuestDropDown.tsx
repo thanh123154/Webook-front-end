@@ -1,17 +1,13 @@
 import {
   ActionIcon,
-  Box,
-  Button,
   Flex,
   Group,
-  Menu,
-  Modal,
   NumberInput,
-  NumberInputHandlers,
+  type NumberInputHandlers,
   Text,
 } from "@mantine/core";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 type Props = {
   value: number;

@@ -1,27 +1,13 @@
-import { ActionIcon, Button, Flex, Menu, Modal, Text } from "@mantine/core";
+import { ActionIcon, Menu, Modal } from "@mantine/core";
 
-import { nanoid } from "nanoid";
 import { signIn, signOut, useSession } from "next-auth/react";
-import Link from "next/link";
+
 import React, { useEffect, useState } from "react";
-import { CgProfile, CgSwap } from "react-icons/cg";
+import { CgProfile } from "react-icons/cg";
 import { MdSwapHorizontalCircle } from "react-icons/md";
 import { AiFillSetting } from "react-icons/ai";
 import { RiLoginCircleFill } from "react-icons/ri";
 import { api } from "../../utils/api";
-
-type anotherchild = {
-  name: string;
-  link: string;
-  svg: JSX.Element;
-};
-
-type ChildProps = {
-  name: string;
-  link: string;
-  // svg: JSX.Element;
-  children?: Array<anotherchild>;
-};
 
 type Props = {
   // item: ChildProps;

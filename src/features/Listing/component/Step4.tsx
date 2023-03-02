@@ -1,5 +1,5 @@
-import { Box, Container, Flex, Select } from "@mantine/core";
-import React, { useRef, useState } from "react";
+import { Container, Flex, Select } from "@mantine/core";
+import React from "react";
 
 type Props = {
   sth: string;

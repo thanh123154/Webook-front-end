@@ -1,7 +1,6 @@
 import { Button, Container, Group, Stepper } from "@mantine/core";
-import React, { useRef, useState } from "react";
-import { type Editor as TinyMCEEditor } from "tinymce";
-import { TextEditor } from "../../components/text-editor";
+import React, { useState } from "react";
+
 import { Step1 } from "./component/Step1";
 import { Step2 } from "./component/Step2";
 import { Step3 } from "./component/Step3";

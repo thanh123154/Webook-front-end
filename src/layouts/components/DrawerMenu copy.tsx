@@ -1,4 +1,11 @@
-import { Box, Drawer, type DrawerProps, Flex, Sx, Text } from "@mantine/core";
+import {
+  Box,
+  Drawer,
+  type DrawerProps,
+  Flex,
+  type Sx,
+  Text,
+} from "@mantine/core";
 import { nanoid } from "nanoid";
 import Link from "next/link";
 import React from "react";

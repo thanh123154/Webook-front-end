@@ -1,18 +1,16 @@
 import {
-  AspectRatio,
   Box,
   type ColorScheme,
   Container,
   Flex,
   Tabs,
   Text,
-  TextInput,
   Title,
 } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
-import { IconPhoto } from "@tabler/icons";
+
 import React from "react";
-import { IconDollar, Location } from "../../assets/svgs";
+
 import { SearchBarSpecial } from "../../layouts/components";
 
 export const Hero = () => {

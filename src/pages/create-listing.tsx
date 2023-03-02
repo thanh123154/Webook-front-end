@@ -1,6 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { Container, Box, type Sx, AspectRatio } from "@mantine/core";
+import { Container, type Sx } from "@mantine/core";
 import { CreateListing } from "../features/Listing";
 import { Header } from "../layouts";
 

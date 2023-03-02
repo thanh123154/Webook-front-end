@@ -13,13 +13,7 @@ import { nanoid } from "nanoid";
 import Link from "next/link";
 import React from "react";
 import { BsArrowRightShort } from "react-icons/bs";
-import {
-  FaDiscord,
-  FaInstagram,
-  FaLinkedinIn,
-  FaTelegram,
-  FaYoutube,
-} from "react-icons/fa";
+import { FaDiscord, FaTelegram, FaYoutube } from "react-icons/fa";
 
 import { LogoFooter } from "../assets/svgs";
 import { menuFooter } from "../constants";

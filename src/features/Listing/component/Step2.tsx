@@ -3,12 +3,10 @@ import {
   Container,
   Flex,
   MultiSelect,
-  Text,
   Textarea,
-  TextInput,
   Title,
 } from "@mantine/core";
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { type Editor as TinyMCEEditor } from "tinymce";
 
 import { TextEditor } from "../../../components/text-editor";

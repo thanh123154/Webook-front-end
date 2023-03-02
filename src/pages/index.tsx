@@ -1,19 +1,13 @@
-import styles from "./index.module.css";
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/react";
 
-import { api } from "../utils/api";
-import { Box, Button, ColorScheme, Text, Title } from "@mantine/core";
+import { Box } from "@mantine/core";
 
 import { Header } from "../layouts";
 import { Hero } from "../features/Home";
 import { Listing } from "../features/Home/Listing";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
-
   return (
     <>
       <Head>

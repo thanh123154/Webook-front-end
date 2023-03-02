@@ -1,12 +1,5 @@
-import {
-  Box,
-  Container,
-  Flex,
-  NumberInput,
-  Textarea,
-  TextInput,
-} from "@mantine/core";
-import React, { useEffect, useState } from "react";
+import { Container, Flex, NumberInput, Textarea } from "@mantine/core";
+import React from "react";
 
 type Props = {
   sth: string;

@@ -11,10 +11,10 @@ import {
 } from "@mantine/core";
 import Link from "next/link";
 import React, { useState } from "react";
-import { CgBell, CgProfile } from "react-icons/cg";
+import { CgBell } from "react-icons/cg";
 import { GrClose } from "react-icons/gr";
 
-import { DrawerMenu, MenuDropDown, SearchBarSpecial } from "./components";
+import { DrawerMenu, MenuDropDown } from "./components";
 import { useLocalStorage } from "@mantine/hooks";
 import { api } from "../utils/api";
 import { useSession } from "next-auth/react";
@@ -23,8 +23,6 @@ import { useRender } from "../hooks";
 export const Header = () => {
   const { isRendered } = useRender();
   const [opened, setOpened] = useState(false);
-
-  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
 
   const { data: sessionData } = useSession();
 

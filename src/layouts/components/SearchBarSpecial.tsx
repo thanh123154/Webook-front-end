@@ -1,37 +1,20 @@
 import {
-  Box,
   Button,
   type ColorScheme,
   Flex,
   Text,
   TextInput,
   Popover,
-  ActionIcon,
-  Group,
   NumberInputHandlers,
-  NumberInput,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
-import { DateRangePicker, DateRangePickerValue } from "@mantine/dates";
+
 import { useLocalStorage } from "@mantine/hooks";
-import Link from "next/link";
+
 import React, { useEffect, useRef, useState } from "react";
 import { Calenda, Location, Who } from "../../assets/svgs";
-import { BsArrowRightShort, BsSearch } from "react-icons/bs";
+import { BsSearch } from "react-icons/bs";
 import { GuestDropDown } from "./GuestDropDown";
-
-type anotherchild = {
-  name: string;
-  link: string;
-  svg: JSX.Element;
-};
-
-type ChildProps = {
-  name: string;
-  link: string;
-  // svg: JSX.Element;
-  children?: Array<anotherchild>;
-};
 
 type Props = {
   index: number;
