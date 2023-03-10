@@ -1,4 +1,4 @@
-import { ActionIcon, Menu, Modal } from "@mantine/core";
+import { ActionIcon, Burger, Menu, Modal } from "@mantine/core";
 
 import { signIn, signOut, useSession } from "next-auth/react";
 
@@ -8,6 +8,10 @@ import { MdSwapHorizontalCircle } from "react-icons/md";
 import { AiFillSetting } from "react-icons/ai";
 import { RiLoginCircleFill } from "react-icons/ri";
 import { api } from "../../utils/api";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useDisclosure } from "@mantine/hooks";
+import { UserSetting } from "./UserSetting";
 
 type Props = {
   // item: ChildProps;
@@ -15,8 +19,10 @@ type Props = {
 };
 
 export const MenuDropDown: React.FC<Props> = ({ index }) => {
+  const router = useRouter();
   const [isRendered, setIsRendered] = useState(false);
-  const [isPC, setIsPc] = useState(true);
+  const [opened, { toggle }] = useDisclosure(false);
+  const label = opened ? "Close navigation" : "Open navigation";
   const [openedLogin, setOpenedLogin] = useState(false);
 
   const { data: sessionData } = useSession();
@@ -30,48 +36,36 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
     !isRendered && setIsRendered(true);
   }, [isRendered]);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (window.screen.width > 1450) {
-        setIsPc(true);
-      } else setIsPc(false);
-    }
-  }, []);
-
   if (!isRendered) return <></>;
 
   return (
-    <Menu trigger={"click"} shadow="md" width={200}>
+    <Menu onChange={toggle} trigger={"click"} shadow="md" width={200}>
       <Menu.Target>
-        <ActionIcon color="cyan" variant="outline">
-          <CgProfile size={20} />
+        <ActionIcon color="green">
+          <Burger opened={opened} onClick={toggle} aria-label={label} />
         </ActionIcon>
       </Menu.Target>
 
       <Menu.Dropdown>
         <Menu.Label>Application</Menu.Label>
-
-        <Menu.Item icon={<MdSwapHorizontalCircle />}>
-          Switch to hosting
-        </Menu.Item>
-
-        {/* <Menu.Item icon={<CgProfile />}>Gallery</Menu.Item>
-        <Menu.Item
-          icon={<CgProfile />}
-          rightSection={
-            <Text size="xs" color="dimmed">
-              ⌘K
-            </Text>
-          }
-        >
-          Search
-        </Menu.Item> */}
+        {router.asPath === "/host" ? (
+          <Link href={"/"}>
+            <Menu.Item icon={<MdSwapHorizontalCircle />}>
+              Switch to guest
+            </Menu.Item>
+          </Link>
+        ) : (
+          <Link href={"/host"}>
+            <Menu.Item icon={<MdSwapHorizontalCircle />}>
+              Switch to hosting
+            </Menu.Item>
+          </Link>
+        )}
 
         <Menu.Divider />
 
         <Menu.Label>Danger zone</Menu.Label>
         <Menu.Item
-          // onClick={() => setOpenedLogin(true)}
           onClick={
             sessionData ? () => void signOut() : () => void signIn("google")
           }
@@ -79,12 +73,10 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
         >
           {sessionData ? "Log out" : "Log in as google"}
         </Menu.Item>
-
-        <Menu.Item icon={<AiFillSetting />}>Setting</Menu.Item>
-
-        {/* <Menu.Item color="red" icon={<CgProfile />}>
-          Log out
-        </Menu.Item> */}
+        <Link href={"/profile"}>
+          {" "}
+          <Menu.Item icon={<AiFillSetting />}>Setting</Menu.Item>
+        </Link>
       </Menu.Dropdown>
 
       <Modal

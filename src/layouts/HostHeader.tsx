@@ -20,7 +20,7 @@ import { api } from "../utils/api";
 import { useSession } from "next-auth/react";
 import { useRender } from "../hooks";
 
-export const Header = () => {
+export const HostHeader = () => {
   const { isRendered } = useRender();
   const [opened, setOpened] = useState(false);
 
@@ -61,9 +61,6 @@ export const Header = () => {
             <Link href="/">
               <Title fz={30}>WEBOOK</Title>
             </Link>
-
-            {/* <NavMenu /> */}
-            {/* <SearchBarSpecial index={1} /> */}
 
             <Box
               pos="relative"
@@ -114,6 +111,7 @@ export const Header = () => {
 
               <Text fz={18}>
                 {sessionData && <span>Hello {sessionData.user?.name}</span>}
+                {/* {secretMessage && <span> - {secretMessage}</span>} */}
               </Text>
               <MenuDropDown index={123} />
             </Flex>
