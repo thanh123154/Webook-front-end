@@ -7,7 +7,7 @@ import { Step3 } from "./component/Step3";
 import { Step4 } from "./component/Step4";
 
 export const CreateListing = () => {
-  const [active, setActive] = useState(1);
+  const [active, setActive] = useState(0);
   const nextStep = () =>
     setActive((current) => (current < 3 ? current + 1 : current));
   const prevStep = () =>

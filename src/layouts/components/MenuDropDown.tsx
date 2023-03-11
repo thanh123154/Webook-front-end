@@ -11,7 +11,6 @@ import { api } from "../../utils/api";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useDisclosure } from "@mantine/hooks";
-import { UserSetting } from "./UserSetting";
 
 type Props = {
   // item: ChildProps;
@@ -73,6 +72,12 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
         >
           {sessionData ? "Log out" : "Log in as google"}
         </Menu.Item>
+
+        {router.asPath.includes("/host") && (
+          <Link href={"/host/listing"}>
+            <Menu.Item icon={<MdSwapHorizontalCircle />}>Listing</Menu.Item>
+          </Link>
+        )}
         <Link href={"/profile"}>
           {" "}
           <Menu.Item icon={<AiFillSetting />}>Setting</Menu.Item>

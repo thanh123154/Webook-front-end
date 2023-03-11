@@ -5,12 +5,9 @@ import { Box } from "@mantine/core";
 import { Header } from "../../layouts";
 // import { Statistic } from "../../features/Host";
 import dynamic from "next/dynamic";
+import ListingManagement from "../../features/Host/ListingManagement";
 
-const Statistic = dynamic(() => import("../../features/Host/Statistic"), {
-  ssr: false,
-});
-
-const Host: NextPage = () => {
+const Listing: NextPage = () => {
   return (
     <>
       <Head>
@@ -18,12 +15,10 @@ const Host: NextPage = () => {
         <meta name="description" content="Zenithereum" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       <Header />
-
-      <Statistic />
+      <ListingManagement />
     </>
   );
 };
 
-export default Host;
+export default Listing;
