@@ -1,8 +1,8 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { Container, type Sx } from "@mantine/core";
-import { CreateListing } from "../features/Listing";
-import { Header } from "../layouts";
+import { CreateListing } from "../../features/Listing";
+import { Header } from "../../layouts";
 
 const createListing: NextPage = () => {
   return (

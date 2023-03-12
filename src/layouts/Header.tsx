@@ -19,9 +19,11 @@ import { useLocalStorage } from "@mantine/hooks";
 import { api } from "../utils/api";
 import { useSession } from "next-auth/react";
 import { useRender } from "../hooks";
+import { useRouter } from "next/router";
 
 export const Header = () => {
   const { isRendered } = useRender();
+  const router = useRouter();
   const [opened, setOpened] = useState(false);
 
   const { data: sessionData } = useSession();
@@ -31,6 +33,7 @@ export const Header = () => {
     { enabled: sessionData?.user !== undefined }
   );
 
+  console.log(router, "test mode");
   const [count, setCount] = useState(9);
 
   const [theme, setTheme] = useLocalStorage<ColorScheme>({
@@ -58,7 +61,7 @@ export const Header = () => {
       >
         <Flex h={{ base: "auto", sm: "8rem" }} align="center">
           <Group position="apart" w="100%">
-            <Link href="/">
+            <Link href={router.asPath.includes("/host") ? "/host" : "/"}>
               <Title fz={30}>WEBOOK</Title>
             </Link>
 
@@ -112,11 +115,10 @@ export const Header = () => {
                 </ActionIcon>
               </Indicator>
 
-              <MenuDropDown index={123} />
               <Text fz={18}>
                 {sessionData && <span>Hello {sessionData.user?.name}</span>}
-                {/* {secretMessage && <span> - {secretMessage}</span>} */}
               </Text>
+              <MenuDropDown index={123} />
             </Flex>
           </Group>
         </Flex>

@@ -50,7 +50,7 @@ export const GuestDropDown: React.FC<Props> = ({
         <ActionIcon size={32} variant="default" onClick={() => increment()}>
           +
         </ActionIcon>
-      </Group>{" "}
+      </Group>
     </Flex>
   );
 };
