@@ -49,11 +49,11 @@ export const BoxListing: React.FC<Props> = ({ title }) => {
 
         <Flex align={"flex-end"}>
           <Title fw={500} fz={24}>
-            $200
+            $200$
           </Title>
 
           <Title fw={500} fz={16}>
-            /Night
+            /Month
           </Title>
         </Flex>
       </Flex>

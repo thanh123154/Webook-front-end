@@ -22,28 +22,6 @@ const Home: NextPage = () => {
         <Hero />
 
         <Listing />
-
-        {/* <div>
-          <Title>
-            Create <span>T3</span> App
-          </Title>
-          <div>
-            <Link
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <Title>First Steps →</Title>
-              <Text>
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </Text>
-            </Link>
-          </div>
-          <div>
-            <p>{hello.data ? hello.data.greeting : "Loading tRPC query..."}</p>
-            <AuthShowcase />
-          </div>
-        </div> */}
       </Box>
 
       {/* <Footer /> */}

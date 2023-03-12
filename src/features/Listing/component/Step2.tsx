@@ -2,14 +2,22 @@ import {
   Box,
   Container,
   Flex,
+  Image,
   MultiSelect,
+  SimpleGrid,
+  Text,
   Textarea,
   Title,
 } from "@mantine/core";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { type Editor as TinyMCEEditor } from "tinymce";
 
 import { TextEditor } from "../../../components/text-editor";
+import {
+  Dropzone,
+  IMAGE_MIME_TYPE,
+  type FileWithPath,
+} from "@mantine/dropzone";
 
 type Props = {
   sth: string;
@@ -17,6 +25,20 @@ type Props = {
 
 export const Step2: React.FC<Props> = ({ sth }) => {
   const editorRef = useRef<TinyMCEEditor | null>(null);
+  const [files, setFiles] = useState<FileWithPath[]>([]);
+
+  const previews = files.map((file, index) => {
+    const imageUrl = URL.createObjectURL(file);
+    return (
+      <Image
+        key={index}
+        src={imageUrl}
+        imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+        alt=""
+      />
+    );
+  });
+
   return (
     <Container
       pb={100}
@@ -45,13 +67,21 @@ export const Step2: React.FC<Props> = ({ sth }) => {
             clearable
             w={"100%"}
           />
-          {/* <MultiSelect
-            data={data}
-            label="service"
-            placeholder="Pick all that you like"
-            w={"50%"}
-          /> */}
         </Flex>
+        <Box>
+          <Title my={10}>Your Picture</Title>
+          <Dropzone accept={IMAGE_MIME_TYPE} onDrop={setFiles}>
+            <Text align="center">Drop images here</Text>
+          </Dropzone>
+
+          <SimpleGrid
+            cols={4}
+            breakpoints={[{ maxWidth: "sm", cols: 1 }]}
+            mt={previews.length > 0 ? "xl" : 0}
+          >
+            {previews}
+          </SimpleGrid>
+        </Box>
         <Box>
           {" "}
           <Title mb={10}>Detail</Title>

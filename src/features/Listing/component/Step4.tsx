@@ -1,4 +1,4 @@
-import { Container, Flex, Select } from "@mantine/core";
+import { Container, Flex, Select, Textarea } from "@mantine/core";
 import React from "react";
 
 type Props = {
@@ -16,37 +16,19 @@ export const Step4: React.FC<Props> = ({ sth }) => {
       size={1400}
     >
       {" "}
-      <Select
-        label="Province"
-        placeholder="Pick one"
-        data={[
-          { value: "react", label: "React" },
-          { value: "ng", label: "Angular" },
-          { value: "svelte", label: "Svelte" },
-          { value: "vue", label: "Vue" },
-        ]}
-      />
-      <Select
-        label="District"
-        placeholder="Pick one"
-        data={[
-          { value: "react", label: "React" },
-          { value: "ng", label: "Angular" },
-          { value: "svelte", label: "Svelte" },
-          { value: "vue", label: "Vue" },
-        ]}
-      />
-      <Select
-        label="Ward"
-        placeholder="Pick one"
-        data={[
-          { value: "react", label: "React" },
-          { value: "ng", label: "Angular" },
-          { value: "svelte", label: "Svelte" },
-          { value: "vue", label: "Vue" },
-        ]}
-      />
-      <Flex gap={50} direction={"column"}></Flex>
+      <Flex gap={50} direction={"column"}>
+        <Select label="Province" placeholder="Pick one" data={data} />
+        <Select label="District" placeholder="Pick one" data={data} />
+        <Select label="Ward" placeholder="Pick one" data={data} />
+
+        <Textarea
+          placeholder="Enter"
+          label="Detail address(optional)"
+          radius="md"
+          withAsterisk
+          // autosize
+        />
+      </Flex>
     </Container>
   );
 };
