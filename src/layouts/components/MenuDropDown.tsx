@@ -3,7 +3,7 @@ import { ActionIcon, Burger, Menu, Modal } from "@mantine/core";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import React, { useEffect, useState } from "react";
-import { CgProfile } from "react-icons/cg";
+
 import { MdSwapHorizontalCircle } from "react-icons/md";
 import { AiFillSetting } from "react-icons/ai";
 import { RiLoginCircleFill } from "react-icons/ri";
@@ -47,18 +47,20 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
 
       <Menu.Dropdown>
         <Menu.Label>Application</Menu.Label>
-        {router.asPath === "/host" ? (
+        {router.asPath === "/host" && sessionData ? (
           <Link href={"/"}>
             <Menu.Item icon={<MdSwapHorizontalCircle />}>
               Switch to guest
             </Menu.Item>
           </Link>
-        ) : (
+        ) : sessionData ? (
           <Link href={"/host"}>
             <Menu.Item icon={<MdSwapHorizontalCircle />}>
               Switch to hosting
             </Menu.Item>
           </Link>
+        ) : (
+          ""
         )}
 
         <Menu.Divider />

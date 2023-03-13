@@ -64,6 +64,7 @@ export const Past: React.FC<Props> = ({ sth }) => {
         </thead>
         <tbody>{rows}</tbody>
       </Table>
+
       <UpdateListingDrawer
         opened={opened}
         setClose={() => setOpened(false)}
