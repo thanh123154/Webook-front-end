@@ -28,3 +28,22 @@ export type PropsHomeZenDefiAiCard = {
   tag: string;
   colorTag: string;
 };
+
+export type TableHistoryData = {
+  id: number;
+  name: string;
+  address: string;
+  price: number;
+  // gallery: string;
+  desc: string;
+  beds: number;
+  bedrooms: number;
+  bathrooms: number;
+  guests: number;
+  detail: string;
+  province: string;
+  district: string;
+  ward: string;
+  destination: string;
+  active: boolean;
+};

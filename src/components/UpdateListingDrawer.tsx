@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Code,
   Drawer,
   Flex,
   Group,
@@ -33,17 +32,20 @@ import {
 } from "react";
 import { TextEditor } from "./text-editor";
 import { useForm } from "@mantine/form";
+import { nanoid } from "nanoid";
+import { type TableHistoryData } from "../types";
 
 type Props = {
   opened: boolean;
   setClose: () => void;
+  dataDrawer: TableHistoryData;
 };
 type Ref = {
   openDrawer: () => void;
   closeDrawer: () => void;
 };
 const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
-  { opened, setClose, ...props },
+  { opened, dataDrawer, setClose, ...props },
   ref
 ) => {
   const [openedDrawer, setOpened] = useState(false);
@@ -54,7 +56,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
     const imageUrl = URL.createObjectURL(file);
     return (
       <Image
-        key={index}
+        key={nanoid()}
         src={imageUrl}
         imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
         alt=""
@@ -63,16 +65,13 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
   });
   console.log(files, "oke");
   const form = useForm({
-    initialValues: {
-      title: "Affordable and Convenient: Your Ideal Student Housing",
-      beds: 2,
-      bedsroom: 1,
-      bathsroom: 2,
-      guests: 2,
-      description: "Short",
-      amenity: ["US"],
-    },
+    initialValues: dataDrawer,
   });
+
+  useEffect(() => {
+    // setCurrentData(dataDrawer);
+    form.setValues(dataDrawer);
+  }, [dataDrawer]);
 
   useImperativeHandle(ref, () => ({
     openDrawer: () => {
