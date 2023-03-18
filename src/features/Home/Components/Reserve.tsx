@@ -1,24 +1,18 @@
 import {
-  AspectRatio,
   Box,
   Button,
-  Center,
-  Flex,
   Group,
-  NumberInputHandlers,
-  SegmentedControl,
-  Select,
+  type NumberInputHandlers,
   Text,
   Title,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import moment from "moment";
 
-import Image, { type StaticImageData } from "next/image";
+import { type StaticImageData } from "next/image";
 
 import React, { useRef, useState } from "react";
-import { Pic1 } from "../../../assets/imgs";
-import { Calenda, Person } from "../../../assets/svgs";
+import { Calenda } from "../../../assets/svgs";
 import { GuestDropDown } from "../../../layouts/components/GuestDropDown";
 
 type Props = {
