@@ -10,7 +10,7 @@ const createListing: NextPage = () => {
       <Head>
         <title>Webook | create listing</title>
         <meta name="description" content="WEBOOK - Profile" />
-        <link rel="icon" href="https://warriorempires.io/favicon.ico" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
       <Container size={1920} px={0} sx={container}>

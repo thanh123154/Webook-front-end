@@ -31,7 +31,7 @@ export type PropsHomeZenDefiAiCard = {
 
 export type TableHistoryData = {
   id: number;
-  name: string;
+  title: string;
   address: string;
   price: number;
   // gallery: string;
@@ -46,4 +46,8 @@ export type TableHistoryData = {
   ward: string;
   destination: string;
   active: boolean;
+};
+
+export type PicContent = {
+  id: number;
 };

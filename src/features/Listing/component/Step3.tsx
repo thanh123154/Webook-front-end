@@ -18,7 +18,7 @@ export const Step3: React.FC<Props> = ({ sth }) => {
       {" "}
       <Flex gap={50} direction={"column"}>
         <NumberInput
-          label="Long-term rental price"
+          label="Long-term rental price / month"
           rightSection={<Box mr={50}> vnđ</Box>}
           defaultValue={1000}
           parser={(value) => value && value.replace(/\$\s?|(,*)/g, "")}
@@ -30,7 +30,7 @@ export const Step3: React.FC<Props> = ({ sth }) => {
         />
 
         <NumberInput
-          label="Short-term rental price"
+          label="Short-term rental price / night"
           rightSection={<Box mr={50}> vnđ</Box>}
           defaultValue={1000}
           parser={(value) => value && value.replace(/\$\s?|(,*)/g, "")}

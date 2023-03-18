@@ -10,8 +10,12 @@ import LogoText from "./LogoText.svg";
 import Location from "./Location.svg";
 import Calenda from "./Calenda.svg";
 import Who from "./Who.svg";
+import Flag from "./Flag.svg";
+import Person from "./Person.svg";
 
 export {
+  Person,
+  Flag,
   Calenda,
   Who,
   Logo,

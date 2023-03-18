@@ -8,6 +8,7 @@ import {
   Text,
   ActionIcon,
   Title,
+  Switch,
 } from "@mantine/core";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -20,6 +21,7 @@ import { api } from "../utils/api";
 import { useSession } from "next-auth/react";
 import { useRender } from "../hooks";
 import { useRouter } from "next/router";
+import { IconMoonStars, IconSun } from "@tabler/icons";
 
 export const Header = () => {
   const { isRendered } = useRender();
@@ -96,16 +98,16 @@ export const Header = () => {
             </Box>
 
             <Flex gap={"2rem"} fz={"2rem"}>
-              <Button
-                variant="outline"
-                onClick={() => {
+              <Switch
+                size="md"
+                onChange={(value) => {
                   if (theme === "dark") {
                     setTheme("light");
                   } else setTheme("dark");
                 }}
-              >
-                change darkmode pr light mode
-              </Button>
+                onLabel={<IconSun size="1rem" stroke={2.5} />}
+                offLabel={<IconMoonStars size="1rem" stroke={2.5} />}
+              />
 
               {/* <Button>Switch to hosting</Button> */}
 

@@ -44,7 +44,7 @@ const Profile: NextPage = () => {
       <Head>
         <title>Webook | Profile</title>
         <meta name="description" content="WEBOOK - Profile" />
-        <link rel="icon" href="https://warriorempires.io/favicon.ico" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <Header />

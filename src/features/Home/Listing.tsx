@@ -8,7 +8,9 @@ import {
   Text,
   Title,
 } from "@mantine/core";
+import Link from "next/link";
 import React, { useState } from "react";
+import { Pic1, TestRoom } from "../../assets/imgs";
 import { BoxListing } from "./Components/BoxListing";
 
 export const Listing = () => {
@@ -29,7 +31,7 @@ export const Listing = () => {
       />
       <Grid mt={50}>
         <Grid.Col span={3}>
-          <BoxListing title="dasdas" />
+          <BoxListing dataPic={[TestRoom, Pic1]} />
         </Grid.Col>
       </Grid>
     </Container>

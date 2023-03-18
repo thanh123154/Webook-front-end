@@ -26,9 +26,10 @@ export const GuestDropDown: React.FC<Props> = ({
   setValue,
   xref,
   title,
+  ...props
 }) => {
   return (
-    <Flex align={"center"} justify={"space-between"}>
+    <Flex align={"center"} justify={"space-between"} {...props}>
       {" "}
       <Text>{title}</Text>
       <Group spacing={5}>

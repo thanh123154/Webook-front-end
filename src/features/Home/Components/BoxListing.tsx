@@ -1,31 +1,37 @@
 import { Carousel } from "@mantine/carousel";
-import { AspectRatio, Box, Flex, Text, Title } from "@mantine/core";
-import Image from "next/image";
+import { AspectRatio, Flex, Text, Title } from "@mantine/core";
+import Image, { type StaticImageData } from "next/image";
 
-import React, { useEffect, useState } from "react";
-import { Pic1 } from "../../../assets/imgs";
+import React from "react";
 import { AiFillStar } from "react-icons/ai";
+import { nanoid } from "nanoid";
+import Link from "next/link";
 
 type Props = {
-  title: string;
+  dataPic: Array<StaticImageData>;
 };
 
-export const BoxListing: React.FC<Props> = ({ title }) => {
+export const BoxListing: React.FC<Props> = ({ dataPic }) => {
   return (
     <Flex direction={"column"}>
       <Carousel sx={{ maxWidth: 282 }} mx="auto" withIndicators height={282}>
-        <Carousel.Slide>
-          <AspectRatio w={"282px"} ratio={1}>
-            <Image src={Pic1} alt="" fill />
-          </AspectRatio>
-        </Carousel.Slide>
+        {dataPic.map((item) => (
+          <Carousel.Slide key={nanoid()}>
+            <AspectRatio w={"282px"} ratio={1}>
+              <Image src={item} alt="" fill />
+            </AspectRatio>
+          </Carousel.Slide>
+        ))}
       </Carousel>
 
       <Flex mt={14} align={"center"} justify={"space-between"}>
         {" "}
-        <Title fw={500} fz={20}>
-          Luxury resort
-        </Title>
+        <Link href="/listing-detail" target="_blank" rel="noopener noreferrer">
+          {" "}
+          <Title fw={500} fz={20}>
+            Luxury resort
+          </Title>
+        </Link>
         <Flex gap={10} align={"center"} justify={"space-between"}>
           {" "}
           <AiFillStar size={20} color="orange" /> 4.8
@@ -49,7 +55,7 @@ export const BoxListing: React.FC<Props> = ({ title }) => {
 
         <Flex align={"flex-end"}>
           <Title fw={500} fz={24}>
-            $200$
+            200$
           </Title>
 
           <Title fw={500} fz={16}>
