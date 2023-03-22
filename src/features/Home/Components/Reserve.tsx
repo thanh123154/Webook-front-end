@@ -5,13 +5,17 @@ import {
   type NumberInputHandlers,
   Text,
   Title,
+  SegmentedControl,
+  Center,
+  type ColorScheme,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
-import moment from "moment";
+import { useLocalStorage } from "@mantine/hooks";
+import moment, { Moment } from "moment";
 
 import { type StaticImageData } from "next/image";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Calenda } from "../../../assets/svgs";
 import { GuestDropDown } from "../../../layouts/components/GuestDropDown";
 
@@ -20,8 +24,14 @@ type Props = {
 };
 
 export const Reserve: React.FC<Props> = ({ dataPic }) => {
-  const [valueCheckIn, setValueCheckIn] = useState<Date | null>(null);
-  const [valueCheckOut, setValueCheckOut] = useState<Date | null>(null);
+  const [theme, setTheme] = useLocalStorage<ColorScheme>({
+    key: "Mantine theme",
+    defaultValue: "dark",
+  });
+  const [valueCheckIn, setValueCheckIn] = useState<Date | null>();
+  const [valueCheckOut, setValueCheckOut] = useState<Date | null>();
+  const [dayDif, setDayDif] = useState(0);
+  const currentPrice = 500;
 
   const [valueAdult, setValueAdult] = useState(0);
   const [valueChildren, setValueChildren] = useState(0);
@@ -30,7 +40,6 @@ export const Reserve: React.FC<Props> = ({ dataPic }) => {
   const handlersAdult = useRef<NumberInputHandlers>();
 
   const incrementAdult = () => {
-    console.log("first");
     handlersAdult.current?.increment();
   };
 
@@ -39,7 +48,6 @@ export const Reserve: React.FC<Props> = ({ dataPic }) => {
   };
 
   const incrementChildren = () => {
-    console.log("first");
     handlersChildren.current?.increment();
   };
 
@@ -47,10 +55,21 @@ export const Reserve: React.FC<Props> = ({ dataPic }) => {
     handlersChildren.current?.decrement();
   };
 
+  console.log(valueCheckIn, valueCheckOut, "data");
+
+  useEffect(() => {
+    if (valueCheckOut && valueCheckIn) {
+      const start = moment(valueCheckIn);
+      const end = moment(valueCheckOut);
+
+      const duration = moment.duration(end.diff(start));
+      setDayDif(duration.days());
+      // console.log(duration.days(), "day");
+    }
+  }, [valueCheckIn, valueCheckOut]);
+
   return (
     <Box
-      // bg={"red"}
-      h={670}
       w={418}
       sx={{
         border: "1px solid #E9EBED",
@@ -65,7 +84,7 @@ export const Reserve: React.FC<Props> = ({ dataPic }) => {
       <Text mt={24}>
         <Box display={"inline"} fw={600}>
           5 Days
-        </Box>{" "}
+        </Box>
         in Some Where
       </Text>
 
@@ -117,6 +136,15 @@ export const Reserve: React.FC<Props> = ({ dataPic }) => {
         setValue={setValueChildren}
         value={valueChildren}
       />
+      <Center mt={24}>
+        {" "}
+        <SegmentedControl
+          data={[
+            { label: "500 vnđ/Month", value: "month" },
+            { label: "1000vnđ/Night", value: "day" },
+          ]}
+        />
+      </Center>
 
       <Button mt={32} size="lg" w={"100%"} bg={"#3B71FE"}>
         Reserve
@@ -125,6 +153,55 @@ export const Reserve: React.FC<Props> = ({ dataPic }) => {
       <Text fz={14} c={"#7D7C84"} my={32}>
         You won&apos;t be charged yet
       </Text>
+
+      <Group p={12} mt={44} mb={16} position="apart">
+        {" "}
+        <Text fw={500} fz={12} c={"#7D7C84"}>
+          ${currentPrice} x {dayDif} days
+        </Text>
+        <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
+          ${currentPrice * dayDif}
+        </Text>
+      </Group>
+
+      <Group p={12} mb={16} position="apart">
+        {" "}
+        <Text fw={500} fz={12} c={"#7D7C84"}>
+          10% campaign discount
+        </Text>
+        <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
+          -$10
+        </Text>
+      </Group>
+
+      <Group p={12} mb={16} position="apart">
+        {" "}
+        <Text fw={500} fz={12} c={"#7D7C84"}>
+          Service fee
+        </Text>
+        <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
+          $0
+        </Text>
+      </Group>
+
+      <Group
+        bg={theme === "dark" ? "black" : "#F9F9F9"}
+        sx={{
+          borderRadius: "24px",
+          border: "1px solid #E9EBED",
+        }}
+        p={12}
+        mb={16}
+        position="apart"
+      >
+        {" "}
+        <Text fw={500} fz={12} c={"#7D7C84"}>
+          Total before taxes
+        </Text>
+        <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
+          ${currentPrice * dayDif - 10}
+        </Text>
+      </Group>
     </Box>
   );
 };
