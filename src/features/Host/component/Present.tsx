@@ -9,11 +9,11 @@ type Props = {
 };
 type DetailListing = ElementRef<typeof UpdateListingDrawer>;
 
-export const Present: React.FC<Props> = ({ sth }) => {
+export const Past: React.FC<Props> = ({ sth }) => {
   const [opened, setOpened] = useState(false);
   const [dataDrawer, setDataDrawer] = useState<TableHistoryData>({
     id: 1,
-    name: "",
+    title: "",
     address: "",
     price: 2,
     desc: "",
@@ -35,7 +35,7 @@ export const Present: React.FC<Props> = ({ sth }) => {
   for (let i = 0; i < 10; i++) {
     const item = {
       id: i + 1,
-      name: `Item ${i + 1}`,
+      title: `Item ${i + 1}`,
       address: `${Math.floor(Math.random() * 1000) + 1} Main St`,
       price: Math.floor(Math.random() * 1000000) + 100000,
       // gallery: `https://picsum.photos/200/300?random=${i + 1}`,
@@ -73,8 +73,8 @@ export const Present: React.FC<Props> = ({ sth }) => {
             textAlignment: "right",
           },
           {
-            accessor: "name",
-            title: "Name",
+            accessor: "title",
+            title: "Title",
           },
 
           {
