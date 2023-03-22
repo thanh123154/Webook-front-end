@@ -165,7 +165,7 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
         </Popover>
       </Flex>
 
-      <Button size="lg" leftIcon={<BsSearch />}>
+      <Button bg={"#3B71FE"} size="lg" leftIcon={<BsSearch />}>
         Search
       </Button>
     </Flex>

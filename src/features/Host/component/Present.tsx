@@ -9,7 +9,7 @@ type Props = {
 };
 type DetailListing = ElementRef<typeof UpdateListingDrawer>;
 
-export const Past: React.FC<Props> = ({ sth }) => {
+export const Present: React.FC<Props> = ({ sth }) => {
   const [opened, setOpened] = useState(false);
   const [dataDrawer, setDataDrawer] = useState<TableHistoryData>({
     id: 1,
