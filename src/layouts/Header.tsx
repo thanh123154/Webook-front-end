@@ -23,7 +23,7 @@ import { useRender } from "../hooks";
 import { useRouter } from "next/router";
 import { IconMoonStars, IconSun } from "@tabler/icons";
 
-export const Header = () => {
+const _Header = () => {
   const { isRendered } = useRender();
   const router = useRouter();
   const [opened, setOpened] = useState(false);
@@ -130,3 +130,5 @@ export const Header = () => {
     </Box>
   );
 };
+
+export const Header = React.memo(_Header);
