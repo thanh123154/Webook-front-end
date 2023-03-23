@@ -82,13 +82,30 @@ const Profile: NextPage = () => {
 
     try {
       setIsUpdating(true);
+
+      // Prepare updated user data
+      const updatedUserData = {
+        name: values.name,
+        email: values.email,
+        gender: values.gender,
+        image: avatar,
+      };
+
+      // Call the update user API endpoint
+      await apiUpdate({ id: session?.user?.id || "", data: updatedUserData });
+
+      // Refetch the updated user data
+      await refetch();
+
+      // Clear the file input and reset the form
+      setFile(null);
+      form.reset();
     } catch (error) {
       console.log(error);
     } finally {
       setIsUpdating(false);
     }
   };
-
   return (
     <>
       <Head>
