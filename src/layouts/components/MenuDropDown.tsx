@@ -47,7 +47,7 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
 
       <Menu.Dropdown>
         <Menu.Label>Application</Menu.Label>
-        {router.asPath === "/host" && sessionData ? (
+        {router.asPath.includes("host") && sessionData ? (
           <Link href={"/"}>
             <Menu.Item icon={<MdSwapHorizontalCircle />}>
               Switch to guest
@@ -82,7 +82,12 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
         )}
         <Link href={"/profile"}>
           {" "}
-          <Menu.Item icon={<AiFillSetting />}>Setting</Menu.Item>
+          <Menu.Item icon={<AiFillSetting />}>Profile</Menu.Item>
+        </Link>
+
+        <Link href={"/booking-status"}>
+          {" "}
+          <Menu.Item icon={<AiFillSetting />}>Booking Status</Menu.Item>
         </Link>
       </Menu.Dropdown>
 
