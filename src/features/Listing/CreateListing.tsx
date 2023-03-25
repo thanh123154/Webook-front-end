@@ -7,7 +7,9 @@ import {
   Stepper,
   Title,
 } from "@mantine/core";
+
 import React, { useState } from "react";
+import { z } from "zod";
 
 import { Step1 } from "./component/Step1";
 import { Step2 } from "./component/Step2";
@@ -26,7 +28,7 @@ export const CreateListing = () => {
       {" "}
       <Stepper active={active} onStepClick={setActive} breakpoint="sm">
         <Stepper.Step label="First step" description="Your idea">
-          <Step1 sth="hello" />
+          <Step1 nextStep={nextStep} prevStep={prevStep} />
         </Stepper.Step>
 
         <Stepper.Step label="Second step" description="Experience">
@@ -54,12 +56,6 @@ export const CreateListing = () => {
           </Center>
         </Stepper.Completed>
       </Stepper>
-      <Group position="center" mt="xl">
-        <Button variant="default" onClick={prevStep}>
-          Back
-        </Button>
-        {active < 4 ? <Button onClick={nextStep}>Next step</Button> : ""}
-      </Group>
     </Container>
   );
 };

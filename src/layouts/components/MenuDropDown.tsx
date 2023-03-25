@@ -26,11 +26,6 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
 
   const { data: sessionData } = useSession();
 
-  const { data: secretMessage } = api.example.getSecretMessage.useQuery(
-    undefined, // no input
-    { enabled: sessionData?.user !== undefined }
-  );
-
   useEffect(() => {
     !isRendered && setIsRendered(true);
   }, [isRendered]);
