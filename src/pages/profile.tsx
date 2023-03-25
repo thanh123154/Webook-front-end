@@ -92,7 +92,7 @@ const Profile: NextPage = () => {
       };
 
       // Call the update user API endpoint
-      await apiUpdate({ id: session?.user?.id || "", data: updatedUserData });
+      await apiUpdate({ id: session?.user?.id || "", ...updatedUserData });
 
       // Refetch the updated user data
       await refetch();
