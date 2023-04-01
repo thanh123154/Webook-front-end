@@ -68,7 +68,7 @@ export const Step1: React.FC<Props> = ({ nextStep, prevStep }) => {
         desc: "",
         active: true,
         detail: "",
-        placeId: "",
+        placeId: "123321",
         province: "",
         district: "",
         ward: "",

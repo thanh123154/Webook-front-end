@@ -43,4 +43,15 @@ export const ListingRouter = createTRPCRouter({
         },
       });
     }),
+  getByHostId: protectedProcedure
+    .input(
+      z.object({
+        hostId: z.string(),
+      })
+    )
+    .query(({ input: { hostId }, ctx }) => {
+      return ctx.prisma.listing.findMany({
+        where: { hostId },
+      });
+    }),
 });

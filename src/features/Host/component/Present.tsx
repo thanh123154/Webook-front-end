@@ -1,8 +1,10 @@
-import { Box, Container, Flex, Text } from "@mantine/core";
+import { Box, Container, Flex, LoadingOverlay, Text } from "@mantine/core";
 import { DataTable } from "mantine-datatable";
 import React, { useState, type ElementRef, useRef, useEffect } from "react";
 import { UpdateListingDrawer } from "../../../components/UpdateListingDrawer";
 import { type TableHistoryData } from "../../../types";
+import { api } from "../../../utils/api";
+import { useSession } from "next-auth/react";
 
 type Props = {
   sth: string;
@@ -11,14 +13,29 @@ type DetailListing = ElementRef<typeof UpdateListingDrawer>;
 
 export const Present: React.FC<Props> = ({ sth }) => {
   const [opened, setOpened] = useState(false);
+
+  const [dataTable, setDataTable] = useState<TableHistoryData[]>([]);
+
+  const { data: session } = useSession();
+  const {
+    data: currentListing,
+    isLoading,
+    refetch,
+  } = api.listing.getByHostId.useQuery(
+    { hostId: session?.user?.id || "" },
+
+    { enabled: !!session?.user?.id, refetchOnWindowFocus: false }
+  );
+  console.log(currentListing, "day");
+
   const [dataDrawer, setDataDrawer] = useState<TableHistoryData>({
-    id: 1,
-    title: "",
+    id: "sth",
+    name: "",
     address: "",
     price: 2,
     desc: "",
     beds: 2,
-    bedrooms: 2,
+    bedsrooms: 2,
     bathrooms: 2,
     guests: 2,
     detail: "",
@@ -28,34 +45,18 @@ export const Present: React.FC<Props> = ({ sth }) => {
     destination: "",
     active: true,
   });
+
+  useEffect(() => {
+    if (currentListing) {
+      setDataTable(currentListing);
+    }
+  }, [currentListing]);
+
   const refDetailListing = useRef<DetailListing>(null);
-
-  const data: TableHistoryData[] = [];
-
-  for (let i = 0; i < 10; i++) {
-    const item = {
-      id: i + 1,
-      title: `Item ${i + 1}`,
-      address: `${Math.floor(Math.random() * 1000) + 1} Main St`,
-      price: Math.floor(Math.random() * 1000000) + 100000,
-      // gallery: `https://picsum.photos/200/300?random=${i + 1}`,
-      desc: `Description for item ${i + 1}`,
-      beds: Math.floor(Math.random() * 10) + 1,
-      bedrooms: Math.floor(Math.random() * 10) + 1,
-      bathrooms: Math.floor(Math.random() * 10) + 1,
-      guests: Math.floor(Math.random() * 10) + 1,
-      detail: `https://example.com/item/${i + 1}`,
-      province: `Province ${i % 3}`,
-      district: `District ${i % 5}`,
-      ward: `Ward ${i % 10}`,
-      destination: `Destination ${i % 2}`,
-      active: Math.random() < 0.5,
-    };
-    data.push(item);
-  }
 
   return (
     <Box>
+      <LoadingOverlay visible={isLoading} />
       <DataTable
         mt={20}
         withBorder
@@ -64,16 +65,11 @@ export const Present: React.FC<Props> = ({ sth }) => {
         striped
         highlightOnHover
         // provide data
-        records={data}
+        records={dataTable}
         // define columns
         columns={[
           {
-            accessor: "id",
-            title: "#",
-            textAlignment: "right",
-          },
-          {
-            accessor: "title",
+            accessor: "name",
             title: "Title",
           },
 

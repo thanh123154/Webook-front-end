@@ -30,14 +30,14 @@ export type PropsHomeZenDefiAiCard = {
 };
 
 export type TableHistoryData = {
-  id: number;
-  title: string;
+  id: string;
+  name: string;
   address: string;
   price: number;
   // gallery: string;
   desc: string;
   beds: number;
-  bedrooms: number;
+  bedsrooms: number;
   bathrooms: number;
   guests: number;
   detail: string;
