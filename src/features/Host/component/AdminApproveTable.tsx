@@ -1,17 +1,36 @@
 import { Box, Container, Flex, LoadingOverlay, Text } from "@mantine/core";
 import { DataTable } from "mantine-datatable";
-import React, { useState, type ElementRef, useRef, useEffect } from "react";
+import type { ForwardRefRenderFunction } from "react";
+import React, {
+  useState,
+  type ElementRef,
+  useRef,
+  useEffect,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import { UpdateListingDrawer } from "../../../components/UpdateListingDrawer";
 import { type TableHistoryData } from "../../../types";
 import { api } from "../../../utils/api";
 import { useSession } from "next-auth/react";
 
+import { type Listing } from "@prisma/client";
+import { type QueryObserverResult } from "@tanstack/react-query";
+
 type Props = {
   sth: string;
 };
+
+type Ref = {
+  refetchFunc: () => Promise<QueryObserverResult<Listing[]>>;
+};
+
 type DetailListing = ElementRef<typeof UpdateListingDrawer>;
 
-export const Upcoming: React.FC<Props> = ({ sth }) => {
+const _AdminApproveTable: ForwardRefRenderFunction<Ref, Props> = (
+  { sth },
+  ref
+) => {
   const [opened, setOpened] = useState(false);
 
   const [dataTable, setDataTable] = useState<TableHistoryData[]>([]);
@@ -21,7 +40,7 @@ export const Upcoming: React.FC<Props> = ({ sth }) => {
     data: currentListing,
     isLoading,
     refetch,
-  } = api.listing.getByHostId.useQuery(
+  } = api.listing.getByHostIdAndNotApproved.useQuery(
     { hostId: session?.user?.id || "" },
 
     { enabled: !!session?.user?.id, refetchOnWindowFocus: false }
@@ -31,7 +50,8 @@ export const Upcoming: React.FC<Props> = ({ sth }) => {
     id: "sth",
     name: "",
     address: "",
-    price: 2,
+    priceLongTerm: 0,
+    priceShortTerm: 0,
     desc: "",
     beds: 2,
     bedsrooms: 2,
@@ -43,6 +63,7 @@ export const Upcoming: React.FC<Props> = ({ sth }) => {
     ward: "",
     destination: "",
     active: true,
+    approved: false,
   });
 
   useEffect(() => {
@@ -52,6 +73,10 @@ export const Upcoming: React.FC<Props> = ({ sth }) => {
   }, [currentListing]);
 
   const refDetailListing = useRef<DetailListing>(null);
+
+  useImperativeHandle(ref, () => ({
+    refetchFunc: refetch,
+  }));
 
   return (
     <Box>
@@ -126,6 +151,11 @@ export const Upcoming: React.FC<Props> = ({ sth }) => {
             title: "Destination",
           },
           {
+            accessor: "approved",
+            title: "Approved",
+            render: ({ active }) => (active === true ? "Yes" : "Pending"),
+          },
+          {
             accessor: "active",
             title: "Active",
             render: ({ active }) => (active ? "Yes" : "No"),
@@ -148,3 +178,4 @@ export const Upcoming: React.FC<Props> = ({ sth }) => {
     </Box>
   );
 };
+export const AdminApproveTable = forwardRef<Ref, Props>(_AdminApproveTable);

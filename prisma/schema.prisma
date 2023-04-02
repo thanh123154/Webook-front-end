@@ -81,7 +81,8 @@ model Listing {
     hostId      String
     name        String
     address     String
-    price       Float
+    priceLongTerm       Float
+     priceShortTerm       Float
     gallery     String   @db.LongText
     desc        String   @db.LongText
     beds        Int
@@ -92,6 +93,7 @@ model Listing {
     detail      String   @db.LongText
     placeId     String
     province    String
+    approved    Boolean
     district    String
     ward        String
     destination String

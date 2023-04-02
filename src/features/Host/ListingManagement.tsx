@@ -1,35 +1,68 @@
-import {
-  Box,
-  Button,
-  Container,
-  Flex,
-  LoadingOverlay,
-  Tabs,
-  Title,
-} from "@mantine/core";
+import { Button, Container, Flex, Tabs, Title } from "@mantine/core";
 import Link from "next/link";
-import React from "react";
-import { Past } from "./component/Past";
+import React, { type ElementRef, useRef, useState } from "react";
 import { Present } from "./component/Present";
 
-import { Upcoming } from "./component/Upcoming";
-import { useSession } from "next-auth/react";
-import { api } from "../../utils/api";
+import { UpdateListingDrawer } from "../../components/UpdateListingDrawer";
+import { type TableHistoryData } from "../../types";
+import { type QueryObserverResult } from "@tanstack/react-query";
+import { type Listing } from "@prisma/client";
+import { AdminApproveTable } from "./component/AdminApproveTable";
 
+type Ref = {
+  refetchFunc: () => Promise<QueryObserverResult<Listing[]>>;
+};
+type DetailListing = ElementRef<typeof UpdateListingDrawer>;
 const ListingManagement = () => {
+  const refDetailListing = useRef<DetailListing>(null);
+  const presentRef = useRef<Ref>(null);
+
+  const handleRefetch = () => {
+    presentRef.current?.refetchFunc;
+  };
+
+  const [opened, setOpened] = useState(false);
+  const [dataDrawer, setDataDrawer] = useState<TableHistoryData>({
+    id: "",
+    name: "",
+    address: "",
+    priceLongTerm: 0,
+    priceShortTerm: 0,
+    desc: "",
+    beds: 0,
+    bedsrooms: 0,
+    bathrooms: 0,
+    guests: 0,
+    detail: "",
+    province: "",
+    district: "",
+    ward: "",
+    destination: "",
+    active: true,
+    approved: false,
+  });
+
   return (
     <Container py={50} size={1440} px={{ base: "20px", sm: "20px" }}>
       <Flex justify={"space-between"} align={"center"} my={30}>
         {" "}
-        <Title>Listing management</Title>
-        <Link
-          href="/host/create-listing"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {" "}
-          <Button>Add listing</Button>
-        </Link>
+        <Title>Pending admin approval list</Title>{" "}
+        <Button onClick={() => setOpened(true)}>Add listing</Button>
+        <UpdateListingDrawer
+          refetch={handleRefetch}
+          dataDrawer={dataDrawer}
+          opened={opened}
+          setClose={() => setOpened(false)}
+          ref={refDetailListing}
+          isCreateListing={true}
+        />
+      </Flex>
+
+      <AdminApproveTable sth="" />
+
+      <Flex justify={"space-between"} align={"center"} my={30}>
+        {" "}
+        <Title>Listing management</Title>{" "}
       </Flex>
       <Tabs defaultValue="Current">
         <Tabs.List>

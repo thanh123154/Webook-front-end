@@ -1,17 +1,33 @@
 import { Box, Container, Flex, LoadingOverlay, Text } from "@mantine/core";
 import { DataTable } from "mantine-datatable";
-import React, { useState, type ElementRef, useRef, useEffect } from "react";
+import type { ForwardRefRenderFunction } from "react";
+import React, {
+  useState,
+  type ElementRef,
+  useRef,
+  useEffect,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import { UpdateListingDrawer } from "../../../components/UpdateListingDrawer";
 import { type TableHistoryData } from "../../../types";
 import { api } from "../../../utils/api";
 import { useSession } from "next-auth/react";
 
+import { type Listing } from "@prisma/client";
+import { type QueryObserverResult } from "@tanstack/react-query";
+
 type Props = {
   sth: string;
 };
+
+type Ref = {
+  refetchFunc: () => Promise<QueryObserverResult<Listing[]>>;
+};
+
 type DetailListing = ElementRef<typeof UpdateListingDrawer>;
 
-export const Present: React.FC<Props> = ({ sth }) => {
+const _Present: ForwardRefRenderFunction<Ref, Props> = ({ sth }, ref) => {
   const [opened, setOpened] = useState(false);
 
   const [dataTable, setDataTable] = useState<TableHistoryData[]>([]);
@@ -26,13 +42,13 @@ export const Present: React.FC<Props> = ({ sth }) => {
 
     { enabled: !!session?.user?.id, refetchOnWindowFocus: false }
   );
-  console.log(currentListing, "day");
 
   const [dataDrawer, setDataDrawer] = useState<TableHistoryData>({
     id: "sth",
     name: "",
     address: "",
-    price: 2,
+    priceLongTerm: 0,
+    priceShortTerm: 0,
     desc: "",
     beds: 2,
     bedsrooms: 2,
@@ -44,6 +60,7 @@ export const Present: React.FC<Props> = ({ sth }) => {
     ward: "",
     destination: "",
     active: true,
+    approved: false,
   });
 
   useEffect(() => {
@@ -51,8 +68,12 @@ export const Present: React.FC<Props> = ({ sth }) => {
       setDataTable(currentListing);
     }
   }, [currentListing]);
-
+  console.log(currentListing, " data table present");
   const refDetailListing = useRef<DetailListing>(null);
+
+  useImperativeHandle(ref, () => ({
+    refetchFunc: refetch,
+  }));
 
   return (
     <Box>
@@ -127,6 +148,11 @@ export const Present: React.FC<Props> = ({ sth }) => {
             title: "Destination",
           },
           {
+            accessor: "approved",
+            title: "Approved",
+            render: ({ active }) => (active === true ? "Yes" : "Pending"),
+          },
+          {
             accessor: "active",
             title: "Active",
             render: ({ active }) => (active ? "Yes" : "No"),
@@ -149,3 +175,4 @@ export const Present: React.FC<Props> = ({ sth }) => {
     </Box>
   );
 };
+export const Present = forwardRef<Ref, Props>(_Present);

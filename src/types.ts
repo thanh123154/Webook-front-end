@@ -33,7 +33,8 @@ export type TableHistoryData = {
   id: string;
   name: string;
   address: string;
-  price: number;
+  priceLongTerm: number;
+  priceShortTerm: number;
   // gallery: string;
   desc: string;
   beds: number;
@@ -46,6 +47,7 @@ export type TableHistoryData = {
   ward: string;
   destination: string;
   active: boolean;
+  approved: boolean;
 };
 
 export type PicContent = {

@@ -13,7 +13,6 @@ import {
   Text,
   Textarea,
   Title,
-  type Sx,
 } from "@mantine/core";
 import {
   Dropzone,
@@ -22,7 +21,6 @@ import {
 } from "@mantine/dropzone";
 import { type Editor as TinyMCEEditor } from "tinymce";
 import {
-  type ReactNode,
   useEffect,
   useImperativeHandle,
   useState,
@@ -31,28 +29,151 @@ import {
   useRef,
 } from "react";
 import { TextEditor } from "./text-editor";
-import { useForm } from "@mantine/form";
+import { useForm, zodResolver } from "@mantine/form";
 import { nanoid } from "nanoid";
 import { type TableHistoryData } from "../types";
+import { z } from "zod";
+import { useSession } from "next-auth/react";
+import { api } from "../utils/api";
 
 type Props = {
   opened: boolean;
   setClose: () => void;
+  refetch?: () => void;
   dataDrawer: TableHistoryData;
+  isCreateListing?: boolean;
 };
+
+const formSchema = z.object({
+  name: z.string().min(1, { message: "Please enter title" }),
+  beds: z.number().min(0, { message: "Please enter beds" }),
+  bedsrooms: z.number().min(0, { message: "Please enter bedsroom" }),
+  bathrooms: z.number().min(0, { message: "Please enter bathrooms" }),
+  guests: z.number().min(0, { message: "Please enter guest" }),
+});
+
 type Ref = {
   openDrawer: () => void;
   closeDrawer: () => void;
 };
+
 const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
-  { opened, dataDrawer, setClose, ...props },
+  { opened, dataDrawer, setClose, isCreateListing = false, refetch, ...props },
   ref
 ) => {
   const [openedDrawer, setOpened] = useState(false);
-  const editorRef = useRef<TinyMCEEditor | null>(null);
-  const [files, setFiles] = useState<FileWithPath[]>([]);
 
-  const previews = files.map((file, index) => {
+  const editorRef = useRef<TinyMCEEditor | null>(null);
+
+  const [filesGallery, setFiles] = useState<FileWithPath[]>([]);
+
+  const { data: session } = useSession();
+
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const { mutateAsync: apiCreate } = api.listing.create.useMutation();
+
+  const { mutateAsync: apiUpdate } = api.listing.update.useMutation();
+
+  const form = useForm<TableHistoryData>({
+    initialValues: dataDrawer,
+    validate: zodResolver(formSchema),
+  });
+
+  const handleSubmitCreateListing = async (values: TableHistoryData) => {
+    console.log(values, "day la value create");
+
+    try {
+      setIsUpdating(true);
+
+      // Prepare updated user data
+      const createListingData = {
+        name: values.name,
+        beds: values.beds,
+        bedsrooms: values.bedsrooms,
+        bathrooms: values.bathrooms,
+        guests: values.guests,
+        address: values.address,
+        priceLongTerm: values.priceLongTerm,
+        priceShortTerm: values.priceShortTerm,
+        gallery: "",
+        desc: values.desc,
+        active: true,
+        detail: "",
+        placeId: "123321",
+        province: values.province,
+        district: values.district,
+        ward: values.ward,
+        approved: false,
+      };
+
+      // Call the update user API endpoint
+      await apiCreate({
+        hostId: session?.user?.id || "",
+        ...createListingData,
+      });
+
+      // Refetch the updated user data
+
+      // Clear the file input and reset the form
+
+      form.reset();
+      setClose();
+      refetch && refetch();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleSubmitUpdateListing = async (values: TableHistoryData) => {
+    console.log(values, "day la value update");
+
+    try {
+      setIsUpdating(true);
+
+      // Prepare updated user data
+      const updateListingData = {
+        name: values.name,
+        beds: values.beds,
+        bedsrooms: values.bedsrooms,
+        bathrooms: values.bathrooms,
+        guests: values.guests,
+        address: values.address,
+        priceLongTerm: values.priceLongTerm,
+        priceShortTerm: values.priceShortTerm,
+        gallery: "",
+        desc: values.desc,
+        active: true,
+        detail: "",
+        placeId: "123321",
+        province: values.province,
+        district: values.district,
+        ward: values.ward,
+      };
+
+      // Call the update user API endpoint
+      await apiUpdate({
+        id: dataDrawer?.id || "",
+        ...updateListingData,
+      });
+
+      // Refetch the updated user data
+
+      // Clear the file input and reset the form
+
+      form.reset();
+      setClose();
+      refetch && refetch();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const previews = filesGallery.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);
     return (
       <Image
@@ -63,14 +184,11 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
       />
     );
   });
-  console.log(files, "oke");
-  const form = useForm({
-    initialValues: dataDrawer,
-  });
 
   useEffect(() => {
     // setCurrentData(dataDrawer);
     form.setValues(dataDrawer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataDrawer]);
 
   useImperativeHandle(ref, () => ({
@@ -85,6 +203,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
 
     form.reset();
   };
+
   return (
     <Drawer
       size={"100%"}
@@ -93,10 +212,18 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
       onClose={() => setClose()}
       padding={30}
       {...props}
-      title={<Title>Update Listing</Title>}
+      title={
+        <Title>{isCreateListing ? "Create Listing" : "Update Listing"} </Title>
+      }
     >
       <ScrollArea h={"90vh"}>
-        <form onSubmit={form.onSubmit((values) => console.log(values))}>
+        <form
+          onSubmit={form.onSubmit((values) =>
+            isCreateListing
+              ? void handleSubmitCreateListing(values)
+              : void handleSubmitUpdateListing(values)
+          )}
+        >
           <Flex py={40} px={40} gap={50} direction={"column"}>
             {" "}
             <Textarea
@@ -104,7 +231,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
               label="Title"
               radius="md"
               withAsterisk
-              {...form.getInputProps("title")}
+              {...form.getInputProps("name")}
             />
             <Flex justify={"space-between"} gap={50}>
               {" "}
@@ -149,7 +276,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
               label="Description"
               radius="md"
               withAsterisk
-              {...form.getInputProps("description")}
+              {...form.getInputProps("desc")}
             />
             <Flex justify={"space-between"} gap={50}>
               {" "}
@@ -192,6 +319,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
                   ? `${value}`.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
                   : ""
               }
+              {...form.getInputProps("priceLongTerm")}
             />
             <NumberInput
               label="Short-term rental price"
@@ -203,16 +331,33 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
                   ? `${value}`.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
                   : ""
               }
+              {...form.getInputProps("priceShortTerm")}
             />
-            <Select label="Province" placeholder="Pick one" data={data} />
-            <Select label="District" placeholder="Pick one" data={data} />
-            <Select label="Ward" placeholder="Pick one" data={data} />
+            <Select
+              label="Province"
+              placeholder="Pick one"
+              data={data}
+              {...form.getInputProps("province")}
+            />
+            <Select
+              label="District"
+              placeholder="Pick one"
+              data={data}
+              {...form.getInputProps("district")}
+            />
+            <Select
+              label="Ward"
+              placeholder="Pick one"
+              data={data}
+              {...form.getInputProps("ward")}
+            />
             <Textarea
               placeholder="Enter"
               label="Detail address(optional)"
               radius="md"
               withAsterisk
               // autosize
+              {...form.getInputProps("address")}
             />
             <Group>
               {" "}
