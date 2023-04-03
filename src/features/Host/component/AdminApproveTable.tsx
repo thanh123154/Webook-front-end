@@ -1,4 +1,4 @@
-import { Box, Container, Flex, LoadingOverlay, Text } from "@mantine/core";
+import { Box, LoadingOverlay } from "@mantine/core";
 import { DataTable } from "mantine-datatable";
 import type { ForwardRefRenderFunction } from "react";
 import React, {
@@ -16,9 +16,11 @@ import { useSession } from "next-auth/react";
 
 import { type Listing } from "@prisma/client";
 import { type QueryObserverResult } from "@tanstack/react-query";
+import { TableColunm } from "../../../constants/TableListingColunm";
+import { useRefPortal } from "../../../hooks";
 
 type Props = {
-  sth: string;
+  sth?: string;
 };
 
 type Ref = {
@@ -31,7 +33,15 @@ const _AdminApproveTable: ForwardRefRenderFunction<Ref, Props> = (
   { sth },
   ref
 ) => {
-  const [opened, setOpened] = useState(false);
+  const updateListingDrawerRef = useRefPortal<typeof UpdateListingDrawer>();
+
+  const handleOpen = (data: TableHistoryData) => {
+    return updateListingDrawerRef.current?.openDrawer(data);
+  };
+
+  const handleClose = () => {
+    return updateListingDrawerRef.current?.closeDrawer();
+  };
 
   const [dataTable, setDataTable] = useState<TableHistoryData[]>([]);
 
@@ -46,33 +56,11 @@ const _AdminApproveTable: ForwardRefRenderFunction<Ref, Props> = (
     { enabled: !!session?.user?.id, refetchOnWindowFocus: false }
   );
 
-  const [dataDrawer, setDataDrawer] = useState<TableHistoryData>({
-    id: "sth",
-    name: "",
-    address: "",
-    priceLongTerm: 0,
-    priceShortTerm: 0,
-    desc: "",
-    beds: 2,
-    bedsrooms: 2,
-    bathrooms: 2,
-    guests: 2,
-    detail: "",
-    province: "",
-    district: "",
-    ward: "",
-    destination: "",
-    active: true,
-    approved: false,
-  });
-
   useEffect(() => {
     if (currentListing) {
       setDataTable(currentListing);
     }
   }, [currentListing]);
-
-  const refDetailListing = useRef<DetailListing>(null);
 
   useImperativeHandle(ref, () => ({
     refetchFunc: refetch,
@@ -81,6 +69,7 @@ const _AdminApproveTable: ForwardRefRenderFunction<Ref, Props> = (
   return (
     <Box>
       <LoadingOverlay visible={isLoading} />
+
       <DataTable
         mt={20}
         withBorder
@@ -91,89 +80,8 @@ const _AdminApproveTable: ForwardRefRenderFunction<Ref, Props> = (
         // provide data
         records={dataTable}
         // define columns
-        columns={[
-          {
-            accessor: "name",
-            title: "Title",
-          },
-
-          {
-            accessor: "address",
-            title: "Address",
-          },
-          {
-            accessor: "price",
-            title: "Price",
-          },
-          // {
-          //   accessor: "gallery",
-          //   title: "Gallery",
-          //   render: ({ gallery }) => <img src={gallery} alt="gallery" />,
-          // },
-          {
-            accessor: "desc",
-            title: "Description",
-          },
-          {
-            accessor: "beds",
-            title: "Beds",
-          },
-          {
-            accessor: "bedrooms",
-            title: "Bedrooms",
-          },
-          {
-            accessor: "bathrooms",
-            title: "Bathrooms",
-          },
-          {
-            accessor: "guests",
-            title: "Guests",
-          },
-          {
-            accessor: "detail",
-            title: "Detail",
-          },
-          {
-            accessor: "province",
-            title: "Province",
-          },
-          {
-            accessor: "district",
-            title: "District",
-          },
-          {
-            accessor: "ward",
-            title: "Ward",
-          },
-          {
-            accessor: "destination",
-            title: "Destination",
-          },
-          {
-            accessor: "approved",
-            title: "Approved",
-            render: ({ active }) => (active === true ? "Yes" : "Pending"),
-          },
-          {
-            accessor: "active",
-            title: "Active",
-            render: ({ active }) => (active ? "Yes" : "No"),
-          },
-        ]}
+        columns={TableColunm.tableListingColunm}
         // execute this callback when a row is clicked
-        onRowClick={(a) => {
-          console.log(a, "table");
-          setDataDrawer(a);
-          setOpened(true);
-        }}
-      />
-
-      <UpdateListingDrawer
-        dataDrawer={dataDrawer}
-        opened={opened}
-        setClose={() => setOpened(false)}
-        ref={refDetailListing}
       />
     </Box>
   );

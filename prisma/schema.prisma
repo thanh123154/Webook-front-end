@@ -82,7 +82,7 @@ model Listing {
     name        String
     address     String
     priceLongTerm       Float
-     priceShortTerm       Float
+    priceShortTerm      Float
     gallery     String   @db.LongText
     desc        String   @db.LongText
     beds        Int
@@ -95,6 +95,7 @@ model Listing {
     province    String
     approved    Boolean
     district    String
+  
     ward        String
     destination String
     createdAt   DateTime @default(now())

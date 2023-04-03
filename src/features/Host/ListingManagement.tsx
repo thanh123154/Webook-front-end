@@ -1,68 +1,51 @@
 import { Button, Container, Flex, Tabs, Title } from "@mantine/core";
-import Link from "next/link";
-import React, { type ElementRef, useRef, useState } from "react";
+import React, { useState } from "react";
 import { Present } from "./component/Present";
 
 import { UpdateListingDrawer } from "../../components/UpdateListingDrawer";
 import { type TableHistoryData } from "../../types";
-import { type QueryObserverResult } from "@tanstack/react-query";
-import { type Listing } from "@prisma/client";
 import { AdminApproveTable } from "./component/AdminApproveTable";
+import { useRefPortal } from "../../hooks";
+import { TableColunm } from "../../constants/TableListingColunm";
 
-type Ref = {
-  refetchFunc: () => Promise<QueryObserverResult<Listing[]>>;
-};
-type DetailListing = ElementRef<typeof UpdateListingDrawer>;
 const ListingManagement = () => {
-  const refDetailListing = useRef<DetailListing>(null);
-  const presentRef = useRef<Ref>(null);
+  const presentRef = useRefPortal<typeof Present>();
+  const pendingAdminRef = useRefPortal<typeof AdminApproveTable>();
+  const updateListingDrawerRef = useRefPortal<typeof UpdateListingDrawer>();
 
-  const handleRefetch = () => {
-    presentRef.current?.refetchFunc;
+  const handleRefetch = async () => {
+    await presentRef.current?.refetchFunc();
+    await pendingAdminRef.current?.refetchFunc();
   };
 
-  const [opened, setOpened] = useState(false);
-  const [dataDrawer, setDataDrawer] = useState<TableHistoryData>({
-    id: "",
-    name: "",
-    address: "",
-    priceLongTerm: 0,
-    priceShortTerm: 0,
-    desc: "",
-    beds: 0,
-    bedsrooms: 0,
-    bathrooms: 0,
-    guests: 0,
-    detail: "",
-    province: "",
-    district: "",
-    ward: "",
-    destination: "",
-    active: true,
-    approved: false,
-  });
+  const handleOpen = (data: TableHistoryData) => {
+    return updateListingDrawerRef.current?.openDrawer(data);
+  };
+
+  const handleClose = () => {
+    return updateListingDrawerRef.current?.closeDrawer();
+  };
 
   return (
     <Container py={50} size={1440} px={{ base: "20px", sm: "20px" }}>
       <Flex justify={"space-between"} align={"center"} my={30}>
         {" "}
         <Title>Pending admin approval list</Title>{" "}
-        <Button onClick={() => setOpened(true)}>Add listing</Button>
+        <Button onClick={() => handleOpen(TableColunm.dataExampleTable)}>
+          Add listing
+        </Button>
         <UpdateListingDrawer
+          ref={updateListingDrawerRef}
           refetch={handleRefetch}
-          dataDrawer={dataDrawer}
-          opened={opened}
-          setClose={() => setOpened(false)}
-          ref={refDetailListing}
           isCreateListing={true}
         />
       </Flex>
 
-      <AdminApproveTable sth="" />
+      <AdminApproveTable ref={pendingAdminRef} />
 
       <Flex justify={"space-between"} align={"center"} my={30}>
         {" "}
-        <Title>Listing management</Title>{" "}
+        <Title mt={100}>Listing management</Title>{" "}
       </Flex>
       <Tabs defaultValue="Current">
         <Tabs.List>
@@ -72,7 +55,7 @@ const ListingManagement = () => {
         </Tabs.List>
 
         <Tabs.Panel value="Current" pt="xs">
-          <Present sth="" />
+          <Present handleRefetch={handleRefetch} ref={presentRef} />
         </Tabs.Panel>
 
         {/* <Tabs.Panel value="History" pt="xs">

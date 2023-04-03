@@ -1,6 +1,8 @@
 import {
+  AspectRatio,
   Box,
   Button,
+  Center,
   Drawer,
   Flex,
   Group,
@@ -27,6 +29,7 @@ import {
   type ForwardRefRenderFunction,
   forwardRef,
   useRef,
+  useMemo,
 } from "react";
 import { TextEditor } from "./text-editor";
 import { useForm, zodResolver } from "@mantine/form";
@@ -35,12 +38,12 @@ import { type TableHistoryData } from "../types";
 import { z } from "zod";
 import { useSession } from "next-auth/react";
 import { api } from "../utils/api";
+import { showNotification } from "@mantine/notifications";
+import { uploadFile } from "../helpers";
 
 type Props = {
-  opened: boolean;
-  setClose: () => void;
-  refetch?: () => void;
-  dataDrawer: TableHistoryData;
+  refetch?: () => Promise<void>;
+
   isCreateListing?: boolean;
 };
 
@@ -53,12 +56,12 @@ const formSchema = z.object({
 });
 
 type Ref = {
-  openDrawer: () => void;
+  openDrawer: (data: TableHistoryData) => void;
   closeDrawer: () => void;
 };
 
 const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
-  { opened, dataDrawer, setClose, isCreateListing = false, refetch, ...props },
+  { isCreateListing = false, refetch, ...props },
   ref
 ) => {
   const [openedDrawer, setOpened] = useState(false);
@@ -71,6 +74,10 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
 
   const [isUpdating, setIsUpdating] = useState(false);
 
+  const [dataDrawer, setDataDrawer] = useState<TableHistoryData>();
+
+  const [urlsGallery, setUrlsGallery] = useState<string[]>([]);
+
   const { mutateAsync: apiCreate } = api.listing.create.useMutation();
 
   const { mutateAsync: apiUpdate } = api.listing.update.useMutation();
@@ -82,117 +89,133 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
 
   const handleSubmitCreateListing = async (values: TableHistoryData) => {
     console.log(values, "day la value create");
+    if (previews.length >= 4) {
+      try {
+        setIsUpdating(true);
+        const uploadedGallery = await Promise.all(
+          filesGallery.map((file) => uploadFile(file))
+        );
+        const allGallery = [
+          ...urlsGallery,
+          ...uploadedGallery.filter((x) => x !== undefined),
+        ] as string[];
+        // Prepare updated user data
+        const createListingData = {
+          ...values,
+          gallery: JSON.stringify(allGallery),
+          active: true,
+          detail: "",
+          placeId: "123321",
+          approved: false,
+        };
 
-    try {
-      setIsUpdating(true);
+        // Call the update user API endpoint
+        await apiCreate({
+          hostId: session?.user?.id || "",
+          ...createListingData,
+        });
 
-      // Prepare updated user data
-      const createListingData = {
-        name: values.name,
-        beds: values.beds,
-        bedsrooms: values.bedsrooms,
-        bathrooms: values.bathrooms,
-        guests: values.guests,
-        address: values.address,
-        priceLongTerm: values.priceLongTerm,
-        priceShortTerm: values.priceShortTerm,
-        gallery: "",
-        desc: values.desc,
-        active: true,
-        detail: "",
-        placeId: "123321",
-        province: values.province,
-        district: values.district,
-        ward: values.ward,
-        approved: false,
-      };
+        // Refetch the updated user data
 
-      // Call the update user API endpoint
-      await apiCreate({
-        hostId: session?.user?.id || "",
-        ...createListingData,
+        // Clear the file input and reset the form
+        showNotification({
+          color: "green",
+          message: "Create listing successfully",
+        });
+        setFiles([]);
+        form.reset();
+        setOpened(false);
+        refetch && (await refetch());
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsUpdating(false);
+      }
+    } else {
+      showNotification({
+        color: "red",
+        message: "At least 4 picture needed",
       });
-
-      // Refetch the updated user data
-
-      // Clear the file input and reset the form
-
-      form.reset();
-      setClose();
-      refetch && refetch();
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsUpdating(false);
     }
   };
 
   const handleSubmitUpdateListing = async (values: TableHistoryData) => {
     console.log(values, "day la value update");
+    if (previews.length >= 4) {
+      try {
+        setIsUpdating(true);
+        const uploadedGallery = await Promise.all(
+          filesGallery.map((file) => uploadFile(file))
+        );
 
-    try {
-      setIsUpdating(true);
+        const allGallery = [
+          ...urlsGallery,
+          ...uploadedGallery.filter((x) => x !== undefined),
+        ] as string[];
+        // Prepare updated user data
+        const updateListingData = {
+          ...values,
+          gallery: JSON.stringify(allGallery),
+          active: true,
+          detail: "",
+          placeId: "123321",
+        };
 
-      // Prepare updated user data
-      const updateListingData = {
-        name: values.name,
-        beds: values.beds,
-        bedsrooms: values.bedsrooms,
-        bathrooms: values.bathrooms,
-        guests: values.guests,
-        address: values.address,
-        priceLongTerm: values.priceLongTerm,
-        priceShortTerm: values.priceShortTerm,
-        gallery: "",
-        desc: values.desc,
-        active: true,
-        detail: "",
-        placeId: "123321",
-        province: values.province,
-        district: values.district,
-        ward: values.ward,
-      };
+        // Call the update user API endpoint
+        await apiUpdate({
+          ...updateListingData,
+          id: dataDrawer?.id || "",
+        });
 
-      // Call the update user API endpoint
-      await apiUpdate({
-        id: dataDrawer?.id || "",
-        ...updateListingData,
+        // Refetch the updated user data
+
+        // Clear the file input and reset the form
+        showNotification({
+          color: "green",
+          message: "Update listing successfully",
+        });
+
+        form.reset();
+        setOpened(false);
+        refetch && (await refetch());
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsUpdating(false);
+      }
+    } else {
+      showNotification({
+        color: "red",
+        message: "At least 4 picture needed",
       });
-
-      // Refetch the updated user data
-
-      // Clear the file input and reset the form
-
-      form.reset();
-      setClose();
-      refetch && refetch();
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsUpdating(false);
     }
   };
 
-  const previews = filesGallery.map((file, index) => {
-    const imageUrl = URL.createObjectURL(file);
-    return (
-      <Image
-        key={nanoid()}
-        src={imageUrl}
-        imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
-        alt=""
-      />
-    );
-  });
-
-  useEffect(() => {
-    // setCurrentData(dataDrawer);
-    form.setValues(dataDrawer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataDrawer]);
+  const previews = useMemo(() => {
+    return [
+      ...filesGallery.map((file) => URL.createObjectURL(file)),
+      ...urlsGallery,
+    ].map((link) => {
+      return (
+        <AspectRatio key={nanoid()} ratio={1}>
+          {" "}
+          <Image
+            src={link}
+            // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+            alt=""
+          />
+        </AspectRatio>
+      );
+    });
+  }, [filesGallery, urlsGallery]);
 
   useImperativeHandle(ref, () => ({
-    openDrawer: () => {
+    openDrawer: (data) => {
+      setDataDrawer(data);
+      form.setValues(data);
+      if (data.gallery) {
+        setUrlsGallery(JSON.parse(data.gallery) as string[]);
+      }
       setOpened(true);
     },
     closeDrawer: handleClose,
@@ -200,16 +223,16 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
 
   const handleClose = () => {
     setOpened(false);
-
     form.reset();
+    setFiles([]);
   };
 
   return (
     <Drawer
       size={"100%"}
       position={"right"}
-      opened={opened}
-      onClose={() => setClose()}
+      opened={openedDrawer}
+      onClose={() => handleClose()}
       padding={30}
       {...props}
       title={
@@ -299,10 +322,24 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
               <SimpleGrid
                 cols={4}
                 breakpoints={[{ maxWidth: "sm", cols: 1 }]}
-                mt={previews.length > 0 ? "xl" : 0}
+                mt={"xl"}
               >
                 {previews}
               </SimpleGrid>
+              {previews.length > 0 && (
+                <Center mt={20}>
+                  {" "}
+                  <Button
+                    onClick={() => {
+                      setFiles([]);
+                      setUrlsGallery([]);
+                    }}
+                    variant="outline"
+                  >
+                    Remove files
+                  </Button>
+                </Center>
+              )}
             </Box>
             <Box>
               {" "}
@@ -361,7 +398,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
             />
             <Group>
               {" "}
-              <Button onClick={() => setClose()} variant="outline">
+              <Button onClick={() => handleClose()} variant="outline">
                 Cancel
               </Button>
               <Button type="submit">Submit</Button>
