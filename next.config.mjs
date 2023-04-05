@@ -17,6 +17,12 @@ const config = {
         port: "",
         pathname: "/private/**",
       },
+      {
+        protocol: "https",
+        hostname: "firebasestorage.googleapis.com",
+        port: "",
+        pathname: "/v0/b/**",
+      },
     ],
   },
   webpack(config) {

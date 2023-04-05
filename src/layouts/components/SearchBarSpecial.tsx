@@ -5,16 +5,20 @@ import {
   Text,
   TextInput,
   Popover,
-  NumberInputHandlers,
+  type NumberInputHandlers,
+  Autocomplete,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 
 import { useLocalStorage } from "@mantine/hooks";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Calenda, Location, Who } from "../../assets/svgs";
 import { BsSearch } from "react-icons/bs";
 import { GuestDropDown } from "./GuestDropDown";
+import axios from "axios";
+import { keys } from "../../constants";
+import { SearchApi, type SearchData } from "../../types";
 
 type Props = {
   index: number;
@@ -22,6 +26,8 @@ type Props = {
 
 export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
   const [peopleDropDown, setPeopleDropDown] = useState(false);
+  const [dataSearch, setDataSearch] = useState<SearchData[]>([]);
+  const [inputPlaceContent, setInputPlaceContent] = useState("");
   const [theme, setTheme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
     defaultValue: "dark",
@@ -49,6 +55,40 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
 
   const decrementChildren = () => {
     handlersChildren.current?.decrement();
+  };
+
+  const handleSearch = useCallback(async (input: string) => {
+    try {
+      const result = await axios.get<SearchData[]>(
+        `https://rsapi.goong.io/Place/AutoComplete?api_key=${
+          keys.YOUR_GOOGLE_MAPS_API_KEY
+        }&location=21.013715429594125,%20105.79829597455202&input=${input.replace(
+          /\s+/g,
+          "%"
+        )}`
+      );
+
+      const data = result.data[0];
+      console.log(data, "day");
+      // const dataConvert=data.
+      // return console.log(result.data.prediction);
+      // setDataSearch(data);
+    } catch (error) {
+      console.log(error);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  console.log(dataSearch, "data này");
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      console.log("Enter key pressed");
+      void handleSearch(inputPlaceContent);
+    } else if (event.key === "ArrowDown") {
+      console.log("Arrow down key pressed");
+    }
+    // handle other key presses here
   };
 
   return (
@@ -80,6 +120,13 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
           }}
         />
       </Flex>
+      <Autocomplete
+        label="Your favorite framework/library"
+        placeholder="Pick one"
+        onChange={(value) => setInputPlaceContent(value)}
+        onKeyDown={(e) => handleKeyDown(e)}
+        data={[]}
+      />
 
       <Flex sx={{ borderRight: " solid 1px #E9EBED " }} gap={10}>
         {" "}

@@ -21,21 +21,36 @@ import { GuestDropDown } from "../../../layouts/components/GuestDropDown";
 
 type Props = {
   dataPic?: Array<StaticImageData>;
+  longTermPrice: number | undefined;
+  shortTermPrice: number | undefined;
 };
 
-export const Reserve: React.FC<Props> = ({ dataPic }) => {
+export const Reserve: React.FC<Props> = ({
+  dataPic,
+  longTermPrice,
+  shortTermPrice,
+}) => {
   const [theme, setTheme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
     defaultValue: "dark",
   });
+
   const [valueCheckIn, setValueCheckIn] = useState<Date | null>();
   const [valueCheckOut, setValueCheckOut] = useState<Date | null>();
   const [dayDif, setDayDif] = useState(0);
-  const currentPrice = 500;
+
+  const [currentPrice, setCurrentPrice] = useState(longTermPrice);
 
   const [valueAdult, setValueAdult] = useState(0);
   const [valueChildren, setValueChildren] = useState(0);
   const handlersChildren = useRef<NumberInputHandlers>();
+
+  const formattedPriceLongTerm = `${
+    longTermPrice?.toLocaleString("en-US") ?? "N/A"
+  }`;
+  const formattedPriceShortTerm = `${
+    shortTermPrice?.toLocaleString("en-US") ?? "N/A"
+  }`;
 
   const handlersAdult = useRef<NumberInputHandlers>();
 
@@ -139,9 +154,22 @@ export const Reserve: React.FC<Props> = ({ dataPic }) => {
       <Center mt={24}>
         {" "}
         <SegmentedControl
+          onChange={(e) => {
+            if (e === "month") {
+              setCurrentPrice(longTermPrice);
+            } else {
+              setCurrentPrice(shortTermPrice);
+            }
+          }}
           data={[
-            { label: "500 vnđ/Month", value: "month" },
-            { label: "1000vnđ/Night", value: "day" },
+            {
+              label: `${formattedPriceLongTerm} vnđ/Month`,
+              value: "month",
+            },
+            {
+              label: `${formattedPriceShortTerm} vnđ/Night`,
+              value: "night",
+            },
           ]}
         />
       </Center>
@@ -160,7 +188,7 @@ export const Reserve: React.FC<Props> = ({ dataPic }) => {
           ${currentPrice} x {dayDif} days
         </Text>
         <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
-          ${currentPrice * dayDif}
+          ${currentPrice || 1 * dayDif}
         </Text>
       </Group>
 
@@ -199,7 +227,7 @@ export const Reserve: React.FC<Props> = ({ dataPic }) => {
           Total before taxes
         </Text>
         <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
-          ${currentPrice * dayDif - 10}
+          ${currentPrice || 1 * dayDif - 10}
         </Text>
       </Group>
     </Box>

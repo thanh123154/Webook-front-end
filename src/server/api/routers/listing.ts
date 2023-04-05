@@ -63,19 +63,10 @@ export const ListingRouter = createTRPCRouter({
       });
     }),
 
-  getAllListing: protectedProcedure
-    .input(
-      z.object({
-        destination: z.string().optional(),
-      })
-    )
-    .query(({ ctx, input: { destination } }) => {
-      return ctx.prisma.listing.findMany({
-        where: {
-          destination: { contains: destination },
-        },
-      });
-    }),
+  getAllListing: publicProcedure.query(({ ctx }) => {
+    return ctx.prisma.listing.findMany({});
+  }),
+
   getByHostId: protectedProcedure
     .input(
       z.object({
@@ -85,6 +76,19 @@ export const ListingRouter = createTRPCRouter({
     .query(({ input: { hostId }, ctx }) => {
       return ctx.prisma.listing.findMany({
         where: { hostId },
+      });
+    }),
+
+  getListingById: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(({ input: { id }, ctx }) => {
+      return ctx.prisma.listing.findUnique({
+        where: { id },
+        include: { host: true },
       });
     }),
 

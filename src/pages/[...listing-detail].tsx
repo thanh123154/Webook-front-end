@@ -6,6 +6,7 @@ import { Header } from "../layouts";
 
 import { type StaticImageData } from "next/image";
 import { ListingDetails } from "../features/Home/ListingDetails";
+import { useRouter } from "next/router";
 
 const ListingDetail: NextPage = () => {
   return (
@@ -15,8 +16,8 @@ const ListingDetail: NextPage = () => {
         <meta name="description" content="WEBOOK - Profile" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       <Header />
+
       <ListingDetails />
     </>
   );

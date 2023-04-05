@@ -1,3 +1,4 @@
+import { User } from "@prisma/client";
 import { type StaticImageData } from "next/image";
 
 export type Override<T1, T2> = Omit<T1, keyof T2> & T2;
@@ -50,6 +51,65 @@ export type TableHistoryData = {
   approved: boolean;
 };
 
+export type ListingData = {
+  id: string;
+  name: string;
+  address: string;
+  priceLongTerm: number;
+  priceShortTerm: number;
+  gallery: string;
+  desc: string;
+  beds: number;
+  bedsrooms: number;
+  bathrooms: number;
+  guests: number;
+  // host: UserData;
+  detail: string;
+  province: string;
+  district: string;
+  ward: string;
+  destination: string;
+  active: boolean;
+  approved: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type ListingAndUserData = {
+  id: string;
+  name: string;
+  address: string;
+  priceLongTerm: number;
+  priceShortTerm: number;
+  gallery: string;
+  desc: string;
+  beds: number;
+  bedsrooms: number;
+  bathrooms: number;
+  guests: number;
+  host: User & { email: string | null };
+  detail: string;
+  province: string;
+  district: string;
+  ward: string;
+  destination: string;
+  active: boolean;
+  approved: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 export type PicContent = {
   id: number;
 };
+export type predictionData = {
+  description: string;
+};
+
+export interface SearchData {
+  prediction: predictionData;
+}
+
+export interface SearchApi {
+  data: SearchData;
+}
