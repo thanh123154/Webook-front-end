@@ -18,7 +18,7 @@ import { BsSearch } from "react-icons/bs";
 import { GuestDropDown } from "./GuestDropDown";
 import axios from "axios";
 import { keys } from "../../constants";
-import { SearchApi, type SearchData } from "../../types";
+import { type SearchData } from "../../types";
 
 type Props = {
   index: number;
@@ -26,7 +26,7 @@ type Props = {
 
 export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
   const [peopleDropDown, setPeopleDropDown] = useState(false);
-  const [dataSearch, setDataSearch] = useState<SearchData[]>([]);
+  const [dataSearch, setDataSearch] = useState<string[]>([]);
   const [inputPlaceContent, setInputPlaceContent] = useState("");
   const [theme, setTheme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
@@ -59,7 +59,7 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
 
   const handleSearch = useCallback(async (input: string) => {
     try {
-      const result = await axios.get<SearchData[]>(
+      const result = await axios.get<SearchData>(
         `https://rsapi.goong.io/Place/AutoComplete?api_key=${
           keys.YOUR_GOOGLE_MAPS_API_KEY
         }&location=21.013715429594125,%20105.79829597455202&input=${input.replace(
@@ -68,11 +68,9 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
         )}`
       );
 
-      const data = result.data[0];
-      console.log(data, "day");
-      // const dataConvert=data.
-      // return console.log(result.data.prediction);
-      // setDataSearch(data);
+      const data = result.data.predictions;
+
+      setDataSearch(data.map((item) => item.description));
     } catch (error) {
       console.log(error);
     }
@@ -108,7 +106,7 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
       <Flex sx={{ borderRight: " solid 1px #E9EBED " }} gap={10}>
         {" "}
         <Location />
-        <TextInput
+        {/* <TextInput
           label={<Text fw={500}>Location</Text>}
           placeholder="Search destinations"
           sx={{
@@ -118,15 +116,22 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
               backgroundColor: "transparent",
             },
           }}
+        /> */}
+        <Autocomplete
+          label="Location"
+          placeholder="Enter"
+          onChange={(value) => setInputPlaceContent(value)}
+          onKeyDown={(e) => handleKeyDown(e)}
+          data={dataSearch}
+          sx={{
+            ".mantine-Input-input": {
+              padding: "0px",
+              border: "none",
+              backgroundColor: "transparent",
+            },
+          }}
         />
       </Flex>
-      <Autocomplete
-        label="Your favorite framework/library"
-        placeholder="Pick one"
-        onChange={(value) => setInputPlaceContent(value)}
-        onKeyDown={(e) => handleKeyDown(e)}
-        data={[]}
-      />
 
       <Flex sx={{ borderRight: " solid 1px #E9EBED " }} gap={10}>
         {" "}

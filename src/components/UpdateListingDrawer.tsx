@@ -1,5 +1,6 @@
 import {
   AspectRatio,
+  Autocomplete,
   Box,
   Button,
   Center,
@@ -40,6 +41,7 @@ import { useSession } from "next-auth/react";
 import { api } from "../utils/api";
 import { showNotification } from "@mantine/notifications";
 import { uploadFile } from "../helpers";
+import { DataXa } from "../constants";
 
 type Props = {
   refetch?: () => Promise<void>;
@@ -65,6 +67,11 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
   ref
 ) => {
   const [openedDrawer, setOpened] = useState(false);
+  const [initData, setInitData] = useState();
+
+  const dataProvince = Array.from(new Set(DataXa.map((item) => item.city)));
+  const dataWard = DataXa.map((item) => item.ward);
+  const dataDistrict = Array.from(new Set(DataXa.map((item) => item.district)));
 
   const editorRef = useRef<TinyMCEEditor | null>(null);
 
@@ -89,6 +96,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
 
   const handleSubmitCreateListing = async (values: TableHistoryData) => {
     console.log(values, "day la value create");
+    const info = editorRef.current?.getContent() || "";
     if (previews.length >= 4) {
       try {
         setIsUpdating(true);
@@ -104,7 +112,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
           ...values,
           gallery: JSON.stringify(allGallery),
           active: true,
-          detail: "",
+          detail: info,
           placeId: "123321",
           approved: false,
         };
@@ -141,6 +149,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
 
   const handleSubmitUpdateListing = async (values: TableHistoryData) => {
     console.log(values, "day la value update");
+    const info = editorRef.current?.getContent() || "";
     if (previews.length >= 4) {
       try {
         setIsUpdating(true);
@@ -157,7 +166,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
           ...values,
           gallery: JSON.stringify(allGallery),
           active: true,
-          detail: "",
+          detail: info,
           placeId: "123321",
         };
 
@@ -344,7 +353,12 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
             <Box>
               {" "}
               <Title mb={10}>Detail</Title>
-              <TextEditor editorRef={editorRef} />
+              <TextEditor
+                editorRef={editorRef}
+                label="Thông tin"
+                // initData={initData?.info}
+                // withAsterisk
+              />
             </Box>
             <NumberInput
               label="Long-term rental price"
@@ -370,22 +384,22 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
               }
               {...form.getInputProps("priceShortTerm")}
             />
-            <Select
+            <Autocomplete
               label="Province"
               placeholder="Pick one"
-              data={data}
+              data={dataProvince}
               {...form.getInputProps("province")}
             />
-            <Select
+            <Autocomplete
               label="District"
               placeholder="Pick one"
-              data={data}
+              data={dataDistrict}
               {...form.getInputProps("district")}
             />
-            <Select
+            <Autocomplete
               label="Ward"
               placeholder="Pick one"
-              data={data}
+              data={dataWard}
               {...form.getInputProps("ward")}
             />
             <Textarea

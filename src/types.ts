@@ -107,7 +107,7 @@ export type predictionData = {
 };
 
 export interface SearchData {
-  prediction: predictionData;
+  predictions: Array<predictionData>;
 }
 
 export interface SearchApi {

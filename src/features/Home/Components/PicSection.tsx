@@ -1,14 +1,20 @@
 import { AspectRatio, Flex } from "@mantine/core";
 import Image, { type StaticImageData } from "next/image";
 
-import React from "react";
+import React, { useState } from "react";
 import { Pic1 } from "../../../assets/imgs";
 
 type Props = {
-  dataPic?: Array<StaticImageData>;
+  dataPic?: string;
 };
 
 export const PicSection: React.FC<Props> = ({ dataPic }) => {
+  const [arrayPic, setArrayPic] = useState<string[]>([]);
+
+  React.useEffect(() => {
+    dataPic && setArrayPic(JSON.parse(dataPic) as string[]);
+  }, [dataPic]);
+
   return (
     <Flex gap={24}>
       <AspectRatio
@@ -20,7 +26,7 @@ export const PicSection: React.FC<Props> = ({ dataPic }) => {
         w={792}
         ratio={1.39}
       >
-        <Image src={Pic1} alt="" fill />
+        <Image src={arrayPic[2] || ""} alt="" fill />
       </AspectRatio>
 
       <Flex direction={"column"} gap={24}>
@@ -34,7 +40,7 @@ export const PicSection: React.FC<Props> = ({ dataPic }) => {
           w={384}
           ratio={1.4}
         >
-          <Image src={Pic1} alt="" fill />
+          <Image src={arrayPic[1] || ""} alt="" fill />
         </AspectRatio>
         <AspectRatio
           sx={{
@@ -45,7 +51,7 @@ export const PicSection: React.FC<Props> = ({ dataPic }) => {
           w={384}
           ratio={1.4}
         >
-          <Image src={Pic1} alt="" fill />
+          <Image src={arrayPic[0] || ""} alt="" fill />
         </AspectRatio>
       </Flex>
     </Flex>

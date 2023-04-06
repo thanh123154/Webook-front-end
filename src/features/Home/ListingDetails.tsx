@@ -57,7 +57,7 @@ export const ListingDetails = () => {
         <Title fz={48}>{dataListing?.name} </Title>
       </Flex>
 
-      <PicSection />
+      <PicSection dataPic={dataListing?.gallery} />
 
       <Flex mt={64} justify={"space-between"}>
         {" "}
@@ -106,7 +106,7 @@ export const ListingDetails = () => {
               <Button variant="default">40+ Review</Button>
             </Group>
 
-            <Overview />
+            <Overview info={dataListing?.detail} />
           </Box>
           <Amenity dataFood={["test 1", "test2", "test3"]} />
         </Box>
