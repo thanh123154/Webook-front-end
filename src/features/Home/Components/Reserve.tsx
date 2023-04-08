@@ -20,13 +20,13 @@ import { Calenda } from "../../../assets/svgs";
 import { GuestDropDown } from "../../../layouts/components/GuestDropDown";
 
 type Props = {
-  dataPic?: Array<StaticImageData>;
+  place?: string;
   longTermPrice: number | undefined;
   shortTermPrice: number | undefined;
 };
 
 export const Reserve: React.FC<Props> = ({
-  dataPic,
+  place,
   longTermPrice,
   shortTermPrice,
 }) => {
@@ -98,9 +98,9 @@ export const Reserve: React.FC<Props> = ({
 
       <Text mt={24}>
         <Box display={"inline"} fw={600}>
-          5 Days
+          {dayDif} Days&nbsp;
         </Box>
-        in Some Where
+        in {place}
       </Text>
 
       <Text mb={24} c={"#7D7C84"} mt={8}>
@@ -195,10 +195,10 @@ export const Reserve: React.FC<Props> = ({
       <Group p={12} mb={16} position="apart">
         {" "}
         <Text fw={500} fz={12} c={"#7D7C84"}>
-          10% campaign discount
+          0% campaign discount
         </Text>
         <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
-          -$10
+          -$0
         </Text>
       </Group>
 
