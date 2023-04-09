@@ -114,6 +114,15 @@ export interface SearchApi {
   data: SearchData;
 }
 
+export type LocationData = {
+  city: string;
+  city_code: string;
+  district: string;
+  district_id: string;
+  ward: string;
+  ward_id: string;
+};
+
 export type BookingData = {
   id: string;
   guestId: string;

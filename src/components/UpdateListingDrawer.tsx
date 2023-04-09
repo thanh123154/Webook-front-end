@@ -33,7 +33,7 @@ import {
 import { TextEditor } from "./text-editor";
 import { useForm, zodResolver } from "@mantine/form";
 import { nanoid } from "nanoid";
-import { type TableHistoryData } from "../types";
+import { type LocationData, type TableHistoryData } from "../types";
 import { z } from "zod";
 import { useSession } from "next-auth/react";
 import { api } from "../utils/api";
@@ -67,9 +67,13 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
   const [openedDrawer, setOpened] = useState(false);
   const [initData, setInitData] = useState();
 
-  const dataProvince = Array.from(new Set(DataXa.map((item) => item.city)));
-  const dataWard = DataXa.map((item) => item.ward);
-  const dataDistrict = Array.from(new Set(DataXa.map((item) => item.district)));
+  const dataProvince = Array.from(
+    new Set(DataXa.map((item: LocationData) => item.city))
+  );
+  const dataWard = DataXa.map((item: LocationData) => item.ward);
+  const dataDistrict = Array.from(
+    new Set(DataXa.map((item: LocationData) => item.district))
+  );
 
   const editorRef = useRef<TinyMCEEditor | null>(null);
 
