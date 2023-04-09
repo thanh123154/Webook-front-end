@@ -34,69 +34,69 @@ const formSchema = z.object({
 });
 
 export const Step1: React.FC<Props> = ({ nextStep, prevStep }) => {
-  const { data: session } = useSession();
-  const [isUpdating, setIsUpdating] = useState(false);
-  const { mutateAsync: apiCreate } = api.listing.create.useMutation();
+  // const { data: session } = useSession();
+  // const [isUpdating, setIsUpdating] = useState(false);
+  // const { mutateAsync: apiCreate } = api.listing.create.useMutation();
 
-  const form = useForm<PropsForm>({
-    initialValues: {
-      title: "",
-      beds: 0,
-      bedsrooms: 0,
-      bathrooms: 0,
-      guests: 0,
-    },
-    validate: zodResolver(formSchema),
-  });
+  // const form = useForm<PropsForm>({
+  //   initialValues: {
+  //     title: "",
+  //     beds: 0,
+  //     bedsrooms: 0,
+  //     bathrooms: 0,
+  //     guests: 0,
+  //   },
+  //   validate: zodResolver(formSchema),
+  // });
 
-  const handleSubmit = async (values: PropsForm) => {
-    console.log(values);
+  // const handleSubmit = async (values: PropsForm) => {
+  //   console.log(values);
 
-    try {
-      setIsUpdating(true);
+  //   try {
+  //     setIsUpdating(true);
 
-      // Prepare updated user data
-      const createListingData = {
-        name: values.title,
-        beds: values.beds,
-        bedsrooms: values.bedsrooms,
-        bathrooms: values.bathrooms,
-        guests: values.guests,
-        address: "",
-        price: 0,
-        gallery: "",
-        desc: "",
-        active: true,
-        detail: "",
-        placeId: "123321",
-        province: "",
-        district: "",
-        ward: "",
-      };
+  //     // Prepare updated user data
+  //     const createListingData = {
+  //       name: values.title,
+  //       beds: values.beds,
+  //       bedsrooms: values.bedsrooms,
+  //       bathrooms: values.bathrooms,
+  //       guests: values.guests,
+  //       address: "",
+  //       price: 0,
+  //       gallery: "",
+  //       desc: "",
+  //       active: true,
+  //       detail: "",
+  //       placeId: "123321",
+  //       province: "",
+  //       district: "",
+  //       ward: "",
+  //     };
 
-      // Call the update user API endpoint
-      await apiCreate({
-        hostId: session?.user?.id || "",
-        ...createListingData,
-      });
+  //     // Call the update user API endpoint
+  //     await apiCreate({
+  //       hostId: session?.user?.id || "",
+  //       ...createListingData,
+  //     });
 
-      // Refetch the updated user data
+  //     // Refetch the updated user data
 
-      // Clear the file input and reset the form
+  //     // Clear the file input and reset the form
 
-      form.reset();
+  //     form.reset();
 
-      nextStep();
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsUpdating(false);
-    }
-  };
+  //     nextStep();
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     setIsUpdating(false);
+  //   }
+  // };
 
   return (
     <Container h={"55vh"} mt={100} size={1000}>
-      <form onSubmit={form.onSubmit((values) => void handleSubmit(values))}>
+      {/* <form onSubmit={form.onSubmit((values) => void handleSubmit(values))}>
         <Flex gap={50} direction={"column"}>
           {" "}
           <Textarea
@@ -151,7 +151,7 @@ export const Step1: React.FC<Props> = ({ nextStep, prevStep }) => {
 
           <Button type="submit">Next step</Button>
         </Group>
-      </form>
+      </form> */}
     </Container>
   );
 };
