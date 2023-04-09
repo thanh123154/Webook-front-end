@@ -12,8 +12,18 @@ const tableListingColunm = [
     title: "Address",
   },
   {
-    accessor: "price",
-    title: "Price",
+    accessor: "priceLongTerm",
+    title: "Price Long Term",
+    render: ({ priceLongTerm }: { priceLongTerm: number }) => (
+      <Box>{priceLongTerm.toLocaleString("en-US") ?? "N/A"} vnđ</Box>
+    ),
+  },
+  {
+    accessor: "priceShortTerm",
+    title: "Price Short Term",
+    render: ({ priceShortTerm }: { priceShortTerm: number }) => (
+      <Box>{priceShortTerm.toLocaleString("en-US") ?? "N/A"} vnđ</Box>
+    ),
   },
   // {
   //   accessor: "gallery",
