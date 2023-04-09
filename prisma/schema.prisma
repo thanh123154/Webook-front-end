@@ -77,25 +77,25 @@ model User {
 }
 
 model Listing {
-    id          String   @id @default(cuid())
-    hostId      String
-    name        String
-    address     String
-    priceLongTerm       Float
-    priceShortTerm      Float
-    gallery     String   @db.LongText
-    desc        String   @db.LongText
-    beds        Int
-    bedsrooms   Int
-    bathrooms   Int
-    guests      Int
-    active      Boolean  @default(true)
-    detail      String   @db.LongText
-    placeId     String
-    province    String
-    approved    Boolean
-    district    String
-  
+    id             String  @id @default(cuid())
+    hostId         String
+    name           String
+    address        String
+    priceLongTerm  Float
+    priceShortTerm Float
+    gallery        String  @db.LongText
+    desc           String  @db.LongText
+    beds           Int
+    bedsrooms      Int
+    bathrooms      Int
+    guests         Int
+    active         Boolean @default(true)
+    detail         String  @db.LongText
+    placeId        String
+    province       String
+    approved       Boolean
+    district       String
+
     ward        String
     destination String
     createdAt   DateTime @default(now())
@@ -118,23 +118,21 @@ model place {
 }
 
 model booking {
-    guestId   String
-    listingId String
-    checkIn   DateTime
-    checkOut  DateTime
-    total     String
-    guest     Int
-    isDenied  Boolean
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    review    String   @db.Text
-    rating    Int
-
-    booked Listing @relation(fields: [listingId], references: [id])
-    guests User    @relation(fields: [guestId], references: [id])
-
-    @@id([guestId, listingId])
+    id          String   @id @default(cuid())
+    guestId     String
+    listingId   String
+    checkIn     DateTime
+    checkOut    DateTime
+    total       Float
+    phoneNumber String
+    guest       Int
+    isDenied    Boolean
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    review      String   @db.Text
+    rating      Int
+    booked      Listing  @relation(fields: [listingId], references: [id])
+    guests      User     @relation(fields: [guestId], references: [id])
 }
 
 model transaction {

@@ -11,7 +11,6 @@ import {
   MultiSelect,
   NumberInput,
   ScrollArea,
-  Select,
   SimpleGrid,
   Text,
   Textarea,
@@ -24,7 +23,6 @@ import {
 } from "@mantine/dropzone";
 import { type Editor as TinyMCEEditor } from "tinymce";
 import {
-  useEffect,
   useImperativeHandle,
   useState,
   type ForwardRefRenderFunction,
@@ -356,7 +354,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
               <TextEditor
                 editorRef={editorRef}
                 label="Thông tin"
-                // initData={initData?.info}
+                initData={dataDrawer?.detail}
                 // withAsterisk
               />
             </Box>
@@ -415,7 +413,9 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
               <Button onClick={() => handleClose()} variant="outline">
                 Cancel
               </Button>
-              <Button type="submit">Submit</Button>
+              <Button loading={isUpdating} type="submit">
+                Submit
+              </Button>
             </Group>
           </Flex>
         </form>

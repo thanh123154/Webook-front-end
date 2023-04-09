@@ -8,42 +8,57 @@ import {
   SegmentedControl,
   Center,
   type ColorScheme,
+  InputBase,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { useLocalStorage } from "@mantine/hooks";
 import moment, { Moment } from "moment";
 
-import { type StaticImageData } from "next/image";
-
 import React, { useEffect, useRef, useState } from "react";
-import { Calenda } from "../../../assets/svgs";
+import { IoCalendar } from "react-icons/io5";
 import { GuestDropDown } from "../../../layouts/components/GuestDropDown";
+import { IMaskInput } from "react-imask";
+import { api } from "../../../utils/api";
+import { type BookingData } from "../../../types";
+import { useSession } from "next-auth/react";
+import { useForm, zodResolver } from "@mantine/form";
+import { z } from "zod";
+import { showNotification } from "@mantine/notifications";
 
 type Props = {
   place?: string;
   longTermPrice: number | undefined;
   shortTermPrice: number | undefined;
+  listingId?: string;
 };
 
 export const Reserve: React.FC<Props> = ({
   place,
   longTermPrice,
   shortTermPrice,
+  listingId,
 }) => {
   const [theme, setTheme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
     defaultValue: "dark",
   });
+  const [isUpdating, setIsUpdating] = useState(false);
+  const { data: session } = useSession();
 
-  const [valueCheckIn, setValueCheckIn] = useState<Date | null>();
-  const [valueCheckOut, setValueCheckOut] = useState<Date | null>();
   const [dayDif, setDayDif] = useState(0);
 
-  const [currentPrice, setCurrentPrice] = useState(longTermPrice);
+  const [currentPrice, setCurrentPrice] = useState(
+    longTermPrice ? longTermPrice : 0
+  );
+
+  const totalPrice = currentPrice * dayDif || 0;
+
+  useEffect(() => {
+    setCurrentPrice(longTermPrice || 0);
+  }, [longTermPrice]);
 
   const [valueAdult, setValueAdult] = useState(0);
-  const [valueChildren, setValueChildren] = useState(0);
-  const handlersChildren = useRef<NumberInputHandlers>();
+  // const [valueChildren, setValueChildren] = useState(0);
 
   const formattedPriceLongTerm = `${
     longTermPrice?.toLocaleString("en-US") ?? "N/A"
@@ -51,6 +66,8 @@ export const Reserve: React.FC<Props> = ({
   const formattedPriceShortTerm = `${
     shortTermPrice?.toLocaleString("en-US") ?? "N/A"
   }`;
+
+  const { mutateAsync: apiCreateBooking } = api.booking.create.useMutation();
 
   const handlersAdult = useRef<NumberInputHandlers>();
 
@@ -62,26 +79,66 @@ export const Reserve: React.FC<Props> = ({
     handlersAdult.current?.decrement();
   };
 
-  const incrementChildren = () => {
-    handlersChildren.current?.increment();
-  };
+  const formSchema = z
+    .object({
+      checkIn: z.date(),
+      checkOut: z.date(),
+      guest: z.number().min(1, { message: "Enter" }),
+      phoneNumber: z.string().min(1, { message: "Please enter phone number" }),
+    })
+    .refine((data) => data.checkIn < data.checkOut, {
+      message: "Check-out date must be after check-in date",
+      path: ["checkOut"],
+    });
 
-  const decrementChildren = () => {
-    handlersChildren.current?.decrement();
-  };
+  const form = useForm<BookingData>({
+    // initialValues: dataDrawer,
+    validate: zodResolver(formSchema),
+  });
 
-  console.log(valueCheckIn, valueCheckOut, "data");
+  const handleSubmitCreateBooking = async (values: BookingData) => {
+    try {
+      setIsUpdating(true);
+
+      // Prepare updated user data
+      const createBookingData = {
+        ...values,
+        total: totalPrice,
+        isDenied: true,
+        rating: 0,
+        review: "",
+      };
+
+      // Call the update user API endpoint
+      await apiCreateBooking({
+        ...createBookingData,
+        guestId: session?.user?.id || "",
+        listingId: listingId || "",
+      });
+
+      // Refetch the updated user data
+
+      showNotification({
+        color: "green",
+        message: "Booking successfully, please wait for the host to approve",
+      });
+
+      form.reset();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   useEffect(() => {
-    if (valueCheckOut && valueCheckIn) {
-      const start = moment(valueCheckIn);
-      const end = moment(valueCheckOut);
+    const start = moment(form.values.checkIn);
+    const end = moment(form.values.checkOut);
 
-      const duration = moment.duration(end.diff(start));
-      setDayDif(duration.days());
-      // console.log(duration.days(), "day");
-    }
-  }, [valueCheckIn, valueCheckOut]);
+    const duration = moment.duration(end.diff(start));
+    setDayDif(duration.days());
+    // console.log(duration.days(), "day");
+  }, [form.values.checkIn, form.values.checkOut]);
 
   return (
     <Box
@@ -104,80 +161,97 @@ export const Reserve: React.FC<Props> = ({
       </Text>
 
       <Text mb={24} c={"#7D7C84"} mt={8}>
-        {valueCheckIn ? moment(valueCheckIn).format("MMMM D, YYYY") : ""} -
-        &nbsp;
-        {valueCheckOut ? moment(valueCheckOut).format("MMMM D, YYYY") : ""}
+        {form.values.checkIn
+          ? moment(form.values.checkIn).format("MMMM D, YYYY")
+          : ""}{" "}
+        - &nbsp;
+        {form.values.checkOut
+          ? moment(form.values.checkOut).format("MMMM D, YYYY")
+          : ""}
       </Text>
+      <form
+        onSubmit={form.onSubmit(
+          (values) => void handleSubmitCreateBooking(values)
+        )}
+      >
+        <Group align="start" mb={24}>
+          <DatePicker
+            label="Check in"
+            placeholder="Pick date"
+            // value={valueCheckIn}
+            // onChange={setValueCheckIn}
+            mx="auto"
+            maw={173}
+            icon={<IoCalendar />}
+            radius={32}
+            {...form.getInputProps("checkIn")}
+          />
 
-      <Group mb={24}>
-        <DatePicker
-          label="Check out"
-          placeholder="Pick date"
-          value={valueCheckIn}
-          onChange={setValueCheckIn}
-          mx="auto"
-          maw={173}
-          icon={<Calenda />}
-          radius={32}
+          <DatePicker
+            label="Check out"
+            placeholder="Pick date"
+            mx="auto"
+            maw={173}
+            icon={<IoCalendar />}
+            radius={32}
+            {...form.getInputProps("checkOut")}
+          />
+        </Group>
+
+        <GuestDropDown
+          form={form}
+          xref={handlersAdult}
+          decrement={decrementAdult}
+          title={"Guests"}
+          increment={incrementAdult}
+          setValue={setValueAdult}
+          value={valueAdult}
         />
 
-        <DatePicker
-          label="Check out"
-          placeholder="Pick date"
-          value={valueCheckOut}
-          onChange={setValueCheckOut}
-          mx="auto"
-          maw={173}
-          icon={<Calenda />}
-          radius={32}
+        <InputBase
+          mt={20}
+          label="Your phone"
+          component={IMaskInput}
+          mask="+84 (000) 000-0000"
+          {...form.getInputProps("phoneNumber")}
         />
-      </Group>
 
-      <GuestDropDown
-        xref={handlersAdult}
-        decrement={decrementAdult}
-        title={"Adult"}
-        increment={incrementAdult}
-        setValue={setValueAdult}
-        value={valueAdult}
-      />
+        <Box my={24}></Box>
 
-      <Box my={24}></Box>
-      <GuestDropDown
-        xref={handlersChildren}
-        decrement={decrementChildren}
-        title={"Children"}
-        increment={incrementChildren}
-        setValue={setValueChildren}
-        value={valueChildren}
-      />
-      <Center mt={24}>
-        {" "}
-        <SegmentedControl
-          onChange={(e) => {
-            if (e === "month") {
-              setCurrentPrice(longTermPrice);
-            } else {
-              setCurrentPrice(shortTermPrice);
-            }
-          }}
-          data={[
-            {
-              label: `${formattedPriceLongTerm} vnđ/Month`,
-              value: "month",
-            },
-            {
-              label: `${formattedPriceShortTerm} vnđ/Night`,
-              value: "night",
-            },
-          ]}
-        />
-      </Center>
+        <Center mt={24}>
+          {" "}
+          <SegmentedControl
+            onChange={(e) => {
+              if (e === "month") {
+                setCurrentPrice(longTermPrice || 0);
+              } else {
+                setCurrentPrice(shortTermPrice || 0);
+              }
+            }}
+            data={[
+              {
+                label: `${formattedPriceLongTerm} vnđ/Month`,
+                value: "month",
+              },
+              {
+                label: `${formattedPriceShortTerm} vnđ/Night`,
+                value: "night",
+              },
+            ]}
+          />
+        </Center>
 
-      <Button mt={32} size="lg" w={"100%"} bg={"#3B71FE"}>
-        Reserve
-      </Button>
-
+        <Button
+          loading={isUpdating}
+          type="submit"
+          mt={32}
+          size="lg"
+          w={"100%"}
+          bg={"#3B71FE"}
+        >
+          Reserve
+        </Button>
+      </form>
       <Text fz={14} c={"#7D7C84"} my={32}>
         You won&apos;t be charged yet
       </Text>
@@ -185,10 +259,11 @@ export const Reserve: React.FC<Props> = ({
       <Group p={12} mt={44} mb={16} position="apart">
         {" "}
         <Text fw={500} fz={12} c={"#7D7C84"}>
-          ${currentPrice} x {dayDif} days
+          {currentPrice?.toLocaleString("en-US") ?? "N/A"} vnđ x {dayDif || 0}{" "}
+          days
         </Text>
         <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
-          ${currentPrice || 1 * dayDif}
+          {(0 || totalPrice.toLocaleString("en-US")) ?? "N/A"} vnđ
         </Text>
       </Group>
 
@@ -198,7 +273,7 @@ export const Reserve: React.FC<Props> = ({
           0% campaign discount
         </Text>
         <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
-          -$0
+          -0 vnđ
         </Text>
       </Group>
 
@@ -208,7 +283,7 @@ export const Reserve: React.FC<Props> = ({
           Service fee
         </Text>
         <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
-          $0
+          0 vnđ
         </Text>
       </Group>
 
@@ -227,7 +302,7 @@ export const Reserve: React.FC<Props> = ({
           Total before taxes
         </Text>
         <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
-          ${currentPrice || 1 * dayDif - 10}
+          {totalPrice?.toLocaleString("en-US") ?? "N/A"} vnđ
         </Text>
       </Group>
     </Box>

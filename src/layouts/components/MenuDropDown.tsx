@@ -80,7 +80,7 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
           <Menu.Item icon={<AiFillSetting />}>Profile</Menu.Item>
         </Link>
 
-        <Link href={"/booking-status"}>
+        <Link href={"/host/booking-status"}>
           {" "}
           <Menu.Item icon={<AiFillSetting />}>Booking Status</Menu.Item>
         </Link>

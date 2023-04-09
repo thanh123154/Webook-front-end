@@ -113,3 +113,17 @@ export interface SearchData {
 export interface SearchApi {
   data: SearchData;
 }
+
+export type BookingData = {
+  id: string;
+  guestId: string;
+  listingId: string;
+  checkIn: Date;
+  checkOut: Date;
+  total: number;
+  guest: number;
+  isDenied: boolean;
+  rating: number;
+  phoneNumber: string;
+  review: string;
+};

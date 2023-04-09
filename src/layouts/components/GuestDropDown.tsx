@@ -6,8 +6,10 @@ import {
   type NumberInputHandlers,
   Text,
 } from "@mantine/core";
+import { type UseFormReturnType } from "@mantine/form";
 
 import React from "react";
+import { type BookingData } from "../../types";
 
 type Props = {
   value: number;
@@ -17,6 +19,7 @@ type Props = {
   decrement: () => void;
   setValue: React.Dispatch<React.SetStateAction<number>>;
   title: string;
+  form: UseFormReturnType<any>;
 };
 
 export const GuestDropDown: React.FC<Props> = ({
@@ -26,6 +29,7 @@ export const GuestDropDown: React.FC<Props> = ({
   setValue,
   xref,
   title,
+  form,
   ...props
 }) => {
   return (
@@ -38,14 +42,15 @@ export const GuestDropDown: React.FC<Props> = ({
         </ActionIcon>
 
         <NumberInput
+          maw={56}
+          mah={36}
           hideControls
-          value={value}
-          onChange={(val: number) => setValue(val)}
           handlersRef={xref}
           max={10}
           min={0}
           step={1}
           styles={{ input: { width: 54, textAlign: "center" } }}
+          {...form.getInputProps("guest")}
         />
 
         <ActionIcon size={32} variant="default" onClick={() => increment()}>

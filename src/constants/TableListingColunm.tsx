@@ -1,3 +1,6 @@
+import { Box, Button } from "@mantine/core";
+import moment from "moment";
+
 const tableListingColunm = [
   {
     accessor: "name",
@@ -37,10 +40,10 @@ const tableListingColunm = [
     accessor: "guests",
     title: "Guests",
   },
-  {
-    accessor: "detail",
-    title: "Detail",
-  },
+  // {
+  //   accessor: "detail",
+  //   title: "Detail",
+  // },
   {
     accessor: "province",
     title: "Province",
@@ -70,6 +73,57 @@ const tableListingColunm = [
   },
 ];
 
+const tableBookingColunm = [
+  {
+    accessor: "guests.name",
+    title: "User name",
+  },
+
+  {
+    accessor: "phoneNumber",
+    title: "Phone Number",
+  },
+
+  {
+    accessor: "guests.email",
+    title: "Email",
+  },
+  {
+    accessor: "booked.name",
+    title: "Listing Name",
+  },
+  {
+    accessor: "checkIn",
+    title: "Check in",
+    render: ({ checkIn }: { checkIn: Date }) => (
+      <Box>{moment(checkIn).format("MMMM D, YYYY")}</Box>
+    ),
+  },
+  {
+    accessor: "checkOut",
+    title: "Check out",
+    render: ({ checkOut }: { checkOut: Date }) => (
+      <Box>{moment(checkOut).format("MMMM D, YYYY")}</Box>
+    ),
+  },
+  {
+    accessor: "total",
+    title: "Total",
+    render: ({ total }: { total: number }) => (
+      <Box>{total.toLocaleString("en-US") ?? "N/A"} vnđ</Box>
+    ),
+  },
+  {
+    accessor: "isDenied",
+    title: "Approved",
+    render: ({ isDenied }: { isDenied: boolean }) => (
+      <Button fz={10} radius={"xs"} disabled={!isDenied}>
+        Accept booking
+      </Button>
+    ),
+  },
+];
+
 const dataExampleTable = {
   id: "sth",
   name: "",
@@ -94,4 +148,5 @@ const dataExampleTable = {
 export const TableColunm = {
   tableListingColunm,
   dataExampleTable,
+  tableBookingColunm,
 };

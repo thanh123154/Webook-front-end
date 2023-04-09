@@ -112,6 +112,7 @@ export const ListingDetails = () => {
         </Box>
         {/* reverse  */}
         <Reserve
+          listingId={dataListing?.id}
           place={dataListing?.province}
           longTermPrice={dataListing?.priceLongTerm}
           shortTermPrice={dataListing?.priceShortTerm}

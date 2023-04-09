@@ -1,8 +1,9 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 
-import { Header } from "../layouts";
-import ListingManagement from "../features/Host/ListingManagement";
+import { Header } from "../../layouts";
+
+import BookingManagement from "../../features/Host/BookingManagement";
 
 const BookingStatus: NextPage = () => {
   return (
@@ -13,7 +14,7 @@ const BookingStatus: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <ListingManagement />
+      <BookingManagement />
     </>
   );
 };
