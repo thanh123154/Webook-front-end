@@ -67,11 +67,11 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
   const [openedDrawer, setOpened] = useState(false);
   const [initData, setInitData] = useState();
 
-  const dataProvince = Array.from(
+  const dataProvince: string[] = Array.from(
     new Set(DataXa.map((item: LocationData) => item.city))
   );
-  const dataWard = DataXa.map((item: LocationData) => item.ward);
-  const dataDistrict = Array.from(
+  const dataWard: string[] = DataXa.map((item: LocationData) => item.ward);
+  const dataDistrict: string[] = Array.from(
     new Set(DataXa.map((item: LocationData) => item.district))
   );
 
