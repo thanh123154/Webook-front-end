@@ -39,6 +39,7 @@ export type TableHistoryData = {
   gallery: string;
   desc: string;
   beds: number;
+  price: number;
   bedsrooms: number;
   bathrooms: number;
   guests: number;
