@@ -76,8 +76,9 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
       );
 
       const data = result.data.predictions;
+      console.log(result, "kq");
 
-      setDataSearch(data.map((item) => item.description));
+      setDataSearch(data.map((item) => (item.value = item.description)));
     } catch (error) {
       console.log(error);
     }

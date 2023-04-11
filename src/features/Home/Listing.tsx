@@ -31,12 +31,12 @@ export const Listing = () => {
   return (
     <Container py={50} size={1440} px={{ base: "20px", sm: "120px" }}>
       <LoadingOverlay visible={isLoading} />
-      <SegmentedControl
+      {/* <SegmentedControl
         fullWidth
         data={data}
         value={value}
         onChange={onChange}
-      />
+      /> */}
       <Grid mt={50}>
         {listing.map((item) => (
           <Grid.Col key={nanoid()} span={3}>
