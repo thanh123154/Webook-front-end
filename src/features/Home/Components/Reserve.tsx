@@ -83,7 +83,7 @@ export const Reserve: React.FC<Props> = ({
     .object({
       checkIn: z.date(),
       checkOut: z.date(),
-      guest: z.number().min(1, { message: "Enter" }),
+      guests: z.number().min(1, { message: "Enter" }),
       phoneNumber: z.string().min(1, { message: "Please enter phone number" }),
     })
     .refine((data) => data.checkIn < data.checkOut, {

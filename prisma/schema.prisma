@@ -77,29 +77,30 @@ model User {
 }
 
 model Listing {
-    id             String  @id @default(cuid())
+    id             String   @id @default(cuid())
     hostId         String
     name           String
     address        String
     priceLongTerm  Float
     priceShortTerm Float
-    gallery        String  @db.LongText
-    desc           String  @db.LongText
+    gallery        String   @db.LongText
+    desc           String   @db.LongText
     beds           Int
     bedsrooms      Int
     bathrooms      Int
     guests         Int
-    active         Boolean @default(true)
-    detail         String  @db.LongText
+    active         Boolean  @default(true)
+    detail         String   @db.LongText
     placeId        String
     province       String
     approved       Boolean
     district       String
-
-    ward        String
-    destination String
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+    latitude       Float
+    longitude      Float
+    ward           String
+    destination    String
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
 
     host           User             @relation(fields: [hostId], references: [id])
     location       place            @relation(fields: [placeId], references: [id])

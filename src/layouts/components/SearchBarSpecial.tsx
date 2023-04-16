@@ -7,6 +7,7 @@ import {
   Popover,
   type NumberInputHandlers,
   Autocomplete,
+  AutocompleteItem,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 
@@ -18,8 +19,15 @@ import { BsSearch } from "react-icons/bs";
 import { GuestDropDown } from "./GuestDropDown";
 import axios from "axios";
 import { keys } from "../../constants";
-import { type BookingData, type SearchData } from "../../types";
+import type { FormSearchListingProps } from "../../types";
+import {
+  type predictionData,
+  type BookingData,
+  type SearchData,
+} from "../../types";
 import { useForm } from "@mantine/form";
+import moment from "moment";
+import { useSearchListing } from "../../hooks/useSearchListing";
 
 type Props = {
   index: number;
@@ -27,16 +35,25 @@ type Props = {
 
 export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
   const [peopleDropDown, setPeopleDropDown] = useState(false);
-  const [dataSearch, setDataSearch] = useState<string[]>([]);
-  const [inputPlaceContent, setInputPlaceContent] = useState("");
+  const setSearchValue = useSearchListing((state) => state.setValue);
+
+  const [coordinate, setCoordinate] = useState<{
+    longitude: number;
+    latitude: number;
+  }>();
+  const [dataSearch, setDataSearch] = useState<predictionData[]>([]);
   const [theme, setTheme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
     defaultValue: "dark",
   });
 
   ///vi du thoi nhe
-  const form = useForm<BookingData>({
-    // initialValues: dataDrawer,
+  const form = useForm<FormSearchListingProps>({
+    initialValues: {
+      checkIn: undefined,
+      checkOut: undefined,
+      guest: undefined,
+    },
     // validate: zodResolver(formSchema),
   });
 
@@ -55,15 +72,6 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
     handlersAdult.current?.decrement();
   };
 
-  const incrementChildren = () => {
-    console.log("first");
-    handlersChildren.current?.increment();
-  };
-
-  const decrementChildren = () => {
-    handlersChildren.current?.decrement();
-  };
-
   const handleSearch = useCallback(async (input: string) => {
     try {
       const result = await axios.get<SearchData>(
@@ -78,29 +86,53 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
       const data = result.data.predictions;
       console.log(result, "kq");
 
-      setDataSearch(data.map((item) => (item.value = item.description)));
+      setDataSearch(
+        data.map((item) => ({
+          ...item,
+          value: item.description,
+          place_id: item.place_id,
+        }))
+      );
     } catch (error) {
       console.log(error);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-      console.log("Enter key pressed");
-      void handleSearch(inputPlaceContent);
-    } else if (event.key === "ArrowDown") {
-      console.log("Arrow down key pressed");
+  const handleGetCoordinate = useCallback(async (input: string) => {
+    try {
+      const result = await axios.get<{
+        result: { geometry: { location: { lat: number; lng: number } } };
+      }>(
+        `https://rsapi.goong.io/Place/Detail?place_id=${input}&api_key=${keys.YOUR_GOOGLE_MAPS_API_KEY}`
+      );
+
+      const { lat, lng } = result.data.result.geometry.location;
+
+      setCoordinate({ latitude: lat, longitude: lng });
+    } catch (error) {
+      console.log(error);
     }
-    // handle other key presses here
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSubmitSearch = (values: FormSearchListingProps) => {
+    try {
+      const data = {
+        ...values,
+        ...coordinate,
+      };
+
+      console.log(data);
+
+      setSearchValue(data);
+
+      // console.log(moment(data.checkIn).format("DD/MM/YYYY"));
+    } catch (error) {}
   };
 
   return (
-    <form
-    // onSubmit={form.onSubmit(
-    //   (values) => void handleSubmitCreateBooking(values)
-    // )}
-    >
+    <form onSubmit={form.onSubmit(handleSubmitSearch)}>
       <Flex
         bg={
           theme === "light"
@@ -131,9 +163,15 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
           <Autocomplete
             label="Location"
             placeholder="Enter"
-            onChange={(value) => setInputPlaceContent(value)}
-            onKeyDown={(e) => handleKeyDown(e)}
+            onChange={(e) => void handleSearch(e)}
+            // onChange={(value) => setInputPlaceContent(value)}
+            // onKeyDown={(e) => handleKeyDown(e)}
             data={dataSearch}
+            onItemSubmit={(item: predictionData) => {
+              const placeId = item.place_id;
+
+              void handleGetCoordinate(placeId);
+            }}
             sx={{
               ".mantine-Input-input": {
                 padding: "0px",
@@ -159,6 +197,7 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
             label="Check in"
             withAsterisk
             dropdownPosition={"bottom-start"}
+            {...form.getInputProps("checkIn")}
           />
         </Flex>
 
@@ -177,6 +216,7 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
             placeholder="Add dates"
             label="Check out"
             withAsterisk
+            {...form.getInputProps("checkOut")}
           />
         </Flex>
 
@@ -197,7 +237,7 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
                 }}
                 placeholder={
                   form.values.guest != 0
-                    ? `${form.values.guest} Guests s`
+                    ? `${form.values.guest || 0} Guests s`
                     : "Add guests"
                 }
                 label="Add guests"
@@ -229,7 +269,7 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
           </Popover>
         </Flex>
 
-        <Button bg={"#3B71FE"} size="lg" leftIcon={<BsSearch />}>
+        <Button bg={"#3B71FE"} size="lg" leftIcon={<BsSearch />} type="submit">
           Search
         </Button>
       </Flex>

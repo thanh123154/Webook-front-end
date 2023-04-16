@@ -1,44 +1,34 @@
-import {
-  Container,
-  Grid,
-  LoadingOverlay,
-  SegmentedControl,
-} from "@mantine/core";
-import React, { useEffect, useState } from "react";
+import { Container, Grid, LoadingOverlay } from "@mantine/core";
+import React from "react";
 import { BoxListing } from "./Components/BoxListing";
-import { useSession } from "next-auth/react";
 import { api } from "../../utils/api";
-import { type ListingData } from "../../types";
 import { nanoid } from "nanoid";
+import { useSearchListing } from "../../hooks/useSearchListing";
 
 export const Listing = () => {
-  const [value, onChange] = useState("react");
-  const [listing, setListing] = useState<ListingData[]>([]);
+  const { checkIn, checkOut, guest, latitude, longitude } = useSearchListing(
+    (state) => state.value
+  );
 
-  const { data: session } = useSession();
-  const {
-    data: allListing,
-    isLoading,
-    refetch,
-  } = api.listing.getAllListing.useQuery();
-
-  useEffect(() => {
-    if (allListing) {
-      setListing(allListing);
+  const { data: allListing, isLoading } = api.listing.getAllListing.useQuery(
+    {
+      checkInDate: checkIn,
+      checkOutDate: checkOut,
+      totalGuests: guest,
+      latitude,
+      longitude,
+    },
+    {
+      refetchOnWindowFocus: false,
     }
-  }, [allListing]);
+  );
 
   return (
     <Container py={50} size={1440} px={{ base: "20px", sm: "120px" }}>
       <LoadingOverlay visible={isLoading} />
-      {/* <SegmentedControl
-        fullWidth
-        data={data}
-        value={value}
-        onChange={onChange}
-      /> */}
+
       <Grid mt={50}>
-        {listing.map((item) => (
+        {allListing?.map((item) => (
           <Grid.Col key={nanoid()} span={3}>
             <BoxListing
               dataListing={item}

@@ -105,6 +105,8 @@ export type PicContent = {
 };
 export type predictionData = {
   description: string;
+  value: string;
+  place_id: string;
 };
 
 export interface SearchData {
@@ -136,4 +138,10 @@ export type BookingData = {
   rating: number;
   phoneNumber: string;
   review: string;
+};
+
+export type FormSearchListingProps = {
+  checkIn: Date | undefined;
+  checkOut: Date | undefined;
+  guest: number | undefined;
 };

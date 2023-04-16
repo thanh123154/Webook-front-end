@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
+import moment from "moment";
 
 export const ListingRouter = createTRPCRouter({
   create: protectedProcedure
@@ -24,6 +25,8 @@ export const ListingRouter = createTRPCRouter({
         district: z.string(),
         ward: z.string(),
         approved: z.boolean(),
+        latitude: z.number(),
+        longitude: z.number(),
       })
     )
     .mutation(({ ctx, input }) => {
@@ -63,9 +66,58 @@ export const ListingRouter = createTRPCRouter({
       });
     }),
 
-  getAllListing: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.listing.findMany({});
-  }),
+  getAllListing: publicProcedure
+    .input(
+      z.object({
+        totalGuests: z.number().optional(),
+        checkInDate: z.date().optional(),
+        checkOutDate: z.date().optional(),
+        latitude: z.number().optional(),
+        longitude: z.number().optional(),
+      })
+    )
+    .query(
+      async ({
+        ctx,
+        input: { checkInDate, checkOutDate, latitude, longitude, totalGuests },
+      }) => {
+        const data = await ctx.prisma.listing.findMany({
+          where: {
+            active: true,
+            guests: {
+              gte: totalGuests,
+            },
+            latitude,
+            longitude,
+          },
+          include: {
+            booking: {
+              select: {
+                checkIn: true,
+                checkOut: true,
+              },
+            },
+          },
+        });
+
+        return data.filter((item) => {
+          const bookingList = item.booking.map(({ checkIn, checkOut }) => ({
+            checkIn: moment(checkIn),
+            checkOut: moment(checkOut),
+          }));
+
+          // -- -> --
+
+          return !bookingList.some(
+            ({ checkIn, checkOut }) =>
+              (checkIn.isSameOrAfter(checkInDate) &&
+                checkIn.isSameOrBefore(checkOutDate)) ||
+              (checkOut.isSameOrAfter(checkInDate) &&
+                checkOut.isSameOrBefore(checkOutDate))
+          );
+        });
+      }
+    ),
 
   getByHostId: protectedProcedure
     .input(
