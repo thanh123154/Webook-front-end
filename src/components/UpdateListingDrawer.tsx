@@ -29,17 +29,24 @@ import {
   forwardRef,
   useRef,
   useMemo,
+  useCallback,
 } from "react";
 import { TextEditor } from "./text-editor";
 import { useForm, zodResolver } from "@mantine/form";
 import { nanoid } from "nanoid";
-import { type LocationData, type TableHistoryData } from "../types";
+import {
+  SearchData,
+  type LocationData,
+  type TableHistoryData,
+  predictionData,
+} from "../types";
 import { z } from "zod";
 import { useSession } from "next-auth/react";
 import { api } from "../utils/api";
 import { showNotification } from "@mantine/notifications";
 import { uploadFile } from "../helpers";
-import { DataXa } from "../constants";
+import { DataXa, keys } from "../constants";
+import axios from "axios";
 
 type Props = {
   refetch?: () => Promise<void>;
@@ -52,7 +59,9 @@ const formSchema = z.object({
   beds: z.number().min(0, { message: "Please enter beds" }),
   bedsrooms: z.number().min(0, { message: "Please enter bedsroom" }),
   bathrooms: z.number().min(0, { message: "Please enter bathrooms" }),
-  guests: z.number().min(0, { message: "Please enter guest" }),
+  guests: z.number().min(1, { message: "Please enter guest" }),
+  priceLongTerm: z.number().min(1, { message: "Please enter price" }),
+  priceShortTerm: z.number().min(1, { message: "Please enter price" }),
 });
 
 type Ref = {
@@ -65,7 +74,13 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
   ref
 ) => {
   const [openedDrawer, setOpened] = useState(false);
-  const [initData, setInitData] = useState();
+
+  const [dataSearch, setDataSearch] = useState<predictionData[]>([]);
+
+  const [coordinate, setCoordinate] = useState<{
+    longitude: number;
+    latitude: number;
+  }>();
 
   const dataProvince: string[] = Array.from(
     new Set(DataXa.map((item: LocationData) => item.city))
@@ -117,6 +132,9 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
           detail: info,
           placeId: "123321",
           approved: false,
+          address: dataSearch.description,
+          latitude: coordinate?.latitude || 0,
+          longitude: coordinate?.longitude || 0,
         };
 
         // Call the update user API endpoint
@@ -238,6 +256,50 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
     setFiles([]);
   };
 
+  const handleSearch = useCallback(async (input: string) => {
+    try {
+      const result = await axios.get<SearchData>(
+        `https://rsapi.goong.io/Place/AutoComplete?api_key=${
+          keys.YOUR_GOOGLE_MAPS_API_KEY
+        }&location=21.013715429594125,%20105.79829597455202&input=${input.replace(
+          /\s+/g,
+          "%"
+        )}`
+      );
+
+      const data = result.data.predictions;
+      console.log(result, "kq");
+
+      setDataSearch(
+        data.map((item) => ({
+          ...item,
+          value: item.description,
+          place_id: item.place_id,
+        }))
+      );
+    } catch (error) {
+      console.log(error);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleGetCoordinate = useCallback(async (input: string) => {
+    try {
+      const result = await axios.get<{
+        result: { geometry: { location: { lat: number; lng: number } } };
+      }>(
+        `https://rsapi.goong.io/Place/Detail?place_id=${input}&api_key=${keys.YOUR_GOOGLE_MAPS_API_KEY}`
+      );
+
+      const { lat, lng } = result.data.result.geometry.location;
+
+      setCoordinate({ latitude: lat, longitude: lng });
+    } catch (error) {
+      console.log(error);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Drawer
       size={"100%"}
@@ -315,12 +377,12 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
             <Flex justify={"space-between"} gap={50}>
               {" "}
               <MultiSelect
-                data={data}
+                data={dataAmenity}
                 label="Amenity"
                 placeholder="Pick all amenity you have"
                 clearable
                 w={"100%"}
-                defaultValue={["US", "FI"]}
+                defaultValue={["WiFi"]}
                 {...form.getInputProps("amenity")}
               />
             </Flex>
@@ -337,6 +399,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
               >
                 {previews}
               </SimpleGrid>
+
               {previews.length > 0 && (
                 <Center mt={20}>
                   {" "}
@@ -387,30 +450,16 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
               {...form.getInputProps("priceShortTerm")}
             />
             <Autocomplete
-              label="Province"
-              placeholder="Pick one"
-              data={dataProvince}
-              {...form.getInputProps("province")}
-            />
-            <Autocomplete
-              label="District"
-              placeholder="Pick one"
-              data={dataDistrict}
-              {...form.getInputProps("district")}
-            />
-            <Autocomplete
-              label="Ward"
-              placeholder="Pick one"
-              data={dataWard}
-              {...form.getInputProps("ward")}
-            />
-            <Textarea
+              label="Detail address"
               placeholder="Enter"
-              label="Detail address(optional)"
-              radius="md"
-              withAsterisk
-              // autosize
-              {...form.getInputProps("address")}
+              onChange={(e) => void handleSearch(e)}
+              // onChange={(value) => setInputPlaceContent(value)}
+              // onKeyDown={(e) => handleKeyDown(e)}
+              data={dataSearch}
+              onItemSubmit={(item: predictionData) => {
+                const placeId = item.place_id;
+                void handleGetCoordinate(placeId);
+              }}
             />
             <Group>
               {" "}
@@ -438,4 +487,27 @@ const data = [
   { value: "riot", label: "Riot" },
   { value: "next", label: "Next.js" },
   { value: "blitz", label: "Blitz.js" },
+];
+
+const dataAmenity = [
+  { value: "Fridge", label: "Fridge" },
+  { value: "Pc", label: "Pc" },
+  { value: "RoomService", label: "Room service" },
+  { value: "WiFi", label: "WiFi" },
+  { value: "TV", label: "TV" },
+  { value: "Pool", label: "Pool" },
+  { value: "Gym", label: "Gym" },
+  { value: "AirCon", label: "Air conditioning" },
+  { value: "Parking", label: "Parking" },
+  { value: "Laundry", label: "Laundry" },
+  { value: "Kitchen", label: "Kitchen" },
+  { value: "Microwave", label: "Microwave" },
+  { value: "Oven", label: "Oven" },
+  { value: "Dishwasher", label: "Dishwasher" },
+  { value: "HairDryer", label: "Hair dryer" },
+  { value: "Iron", label: "Iron" },
+  { value: "Heating", label: "Heating" },
+  { value: "Balcony", label: "Balcony" },
+  { value: "Fireplace", label: "Fireplace" },
+  { value: "PetFriendly", label: "Pet friendly" },
 ];
