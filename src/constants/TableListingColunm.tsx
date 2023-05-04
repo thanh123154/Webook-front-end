@@ -39,8 +39,8 @@ const tableListingColunm = [
     title: "Beds",
   },
   {
-    accessor: "bedrooms",
-    title: "Bedrooms",
+    accessor: "bedsrooms",
+    title: "Bedsrooms",
   },
   {
     accessor: "bathrooms",
@@ -54,22 +54,11 @@ const tableListingColunm = [
   //   accessor: "detail",
   //   title: "Detail",
   // },
-  {
-    accessor: "province",
-    title: "Province",
-  },
-  {
-    accessor: "district",
-    title: "District",
-  },
-  {
-    accessor: "ward",
-    title: "Ward",
-  },
-  {
-    accessor: "destination",
-    title: "Destination",
-  },
+  // {
+  //   accessor: "address",
+  //   title: "address",
+  // },
+
   {
     accessor: "approved",
     title: "Approved",

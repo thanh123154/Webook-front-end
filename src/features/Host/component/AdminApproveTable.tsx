@@ -27,7 +27,7 @@ type Ref = {
   refetchFunc: () => Promise<QueryObserverResult<Listing[]>>;
 };
 
-type DetailListing = ElementRef<typeof UpdateListingDrawer>;
+// type DetailListing = ElementRef<typeof UpdateListingDrawer>;
 
 const _AdminApproveTable: ForwardRefRenderFunction<Ref, Props> = (
   { sth },
@@ -35,13 +35,13 @@ const _AdminApproveTable: ForwardRefRenderFunction<Ref, Props> = (
 ) => {
   const updateListingDrawerRef = useRefPortal<typeof UpdateListingDrawer>();
 
-  const handleOpen = (data: TableHistoryData) => {
-    return updateListingDrawerRef.current?.openDrawer(data);
-  };
+  // const handleOpen = (data: TableHistoryData) => {
+  //   return updateListingDrawerRef.current?.openDrawer(data);
+  // };
 
-  const handleClose = () => {
-    return updateListingDrawerRef.current?.closeDrawer();
-  };
+  // const handleClose = () => {
+  //   return updateListingDrawerRef.current?.closeDrawer();
+  // };
 
   const [dataTable, setDataTable] = useState<TableHistoryData[]>([]);
 

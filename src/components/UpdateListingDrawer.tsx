@@ -34,12 +34,8 @@ import {
 import { TextEditor } from "./text-editor";
 import { useForm, zodResolver } from "@mantine/form";
 import { nanoid } from "nanoid";
-import {
-  SearchData,
-  type LocationData,
-  type TableHistoryData,
-  predictionData,
-} from "../types";
+import type { SearchData, predictionData } from "../types";
+import { type LocationData, type TableHistoryData } from "../types";
 import { z } from "zod";
 import { useSession } from "next-auth/react";
 import { api } from "../utils/api";
@@ -62,6 +58,9 @@ const formSchema = z.object({
   guests: z.number().min(1, { message: "Please enter guest" }),
   priceLongTerm: z.number().min(1, { message: "Please enter price" }),
   priceShortTerm: z.number().min(1, { message: "Please enter price" }),
+  desc: z
+    .string()
+    .min(1, { message: "Please enter description for your place" }),
 });
 
 type Ref = {
@@ -74,6 +73,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
   ref
 ) => {
   const [openedDrawer, setOpened] = useState(false);
+  const [addressToSubmit, setAddressToSubmit] = useState("");
 
   const [dataSearch, setDataSearch] = useState<predictionData[]>([]);
 
@@ -82,13 +82,13 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
     latitude: number;
   }>();
 
-  const dataProvince: string[] = Array.from(
-    new Set(DataXa.map((item: LocationData) => item.city))
-  );
-  const dataWard: string[] = DataXa.map((item: LocationData) => item.ward);
-  const dataDistrict: string[] = Array.from(
-    new Set(DataXa.map((item: LocationData) => item.district))
-  );
+  // const dataProvince: string[] = Array.from(
+  //   new Set(DataXa.map((item: LocationData) => item.city))
+  // );
+  // const dataWard: string[] = DataXa.map((item: LocationData) => item.ward);
+  // const dataDistrict: string[] = Array.from(
+  //   new Set(DataXa.map((item: LocationData) => item.district))
+  // );
 
   const editorRef = useRef<TinyMCEEditor | null>(null);
 
@@ -114,7 +114,17 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
   const handleSubmitCreateListing = async (values: TableHistoryData) => {
     console.log(values, "day la value create");
     const info = editorRef.current?.getContent() || "";
-    if (previews.length >= 4) {
+    if (previews.length < 4) {
+      showNotification({
+        color: "red",
+        message: "At least 4 picture needed",
+      });
+    } else if (addressToSubmit.length < 10) {
+      showNotification({
+        color: "red",
+        message: "Please enter address",
+      });
+    } else {
       try {
         setIsUpdating(true);
         const uploadedGallery = await Promise.all(
@@ -132,7 +142,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
           detail: info,
           placeId: "123321",
           approved: false,
-          address: dataSearch.description,
+          address: addressToSubmit,
           latitude: coordinate?.latitude || 0,
           longitude: coordinate?.longitude || 0,
         };
@@ -153,24 +163,30 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
         setFiles([]);
         form.reset();
         setOpened(false);
+        setAddressToSubmit("");
         refetch && (await refetch());
       } catch (error) {
         console.log(error);
       } finally {
         setIsUpdating(false);
       }
-    } else {
-      showNotification({
-        color: "red",
-        message: "At least 4 picture needed",
-      });
     }
   };
 
   const handleSubmitUpdateListing = async (values: TableHistoryData) => {
     console.log(values, "day la value update");
     const info = editorRef.current?.getContent() || "";
-    if (previews.length >= 4) {
+    if (previews.length < 4) {
+      showNotification({
+        color: "red",
+        message: "At least 4 picture needed",
+      });
+    } else if (addressToSubmit.length < 10) {
+      showNotification({
+        color: "red",
+        message: "Please enter address",
+      });
+    } else {
       try {
         setIsUpdating(true);
         const uploadedGallery = await Promise.all(
@@ -188,6 +204,9 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
           active: true,
           detail: info,
           placeId: "123321",
+          address: addressToSubmit,
+          latitude: coordinate?.latitude || 0,
+          longitude: coordinate?.longitude || 0,
         };
 
         // Call the update user API endpoint
@@ -212,11 +231,6 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
       } finally {
         setIsUpdating(false);
       }
-    } else {
-      showNotification({
-        color: "red",
-        message: "At least 4 picture needed",
-      });
     }
   };
 
@@ -245,6 +259,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
       if (data.gallery) {
         setUrlsGallery(JSON.parse(data.gallery) as string[]);
       }
+      setAddressToSubmit(data.address);
       setOpened(true);
     },
     closeDrawer: handleClose,
@@ -254,6 +269,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
     setOpened(false);
     form.reset();
     setFiles([]);
+    setAddressToSubmit("");
   };
 
   const handleSearch = useCallback(async (input: string) => {
@@ -417,7 +433,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
             </Box>
             <Box>
               {" "}
-              <Title mb={10}>Detail</Title>
+              <Title mb={10}>Detail (optional)</Title>
               <TextEditor
                 editorRef={editorRef}
                 label="Thông tin"
@@ -452,6 +468,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
             <Autocomplete
               label="Detail address"
               placeholder="Enter"
+              defaultValue={addressToSubmit}
               onChange={(e) => void handleSearch(e)}
               // onChange={(value) => setInputPlaceContent(value)}
               // onKeyDown={(e) => handleKeyDown(e)}
@@ -459,6 +476,8 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
               onItemSubmit={(item: predictionData) => {
                 const placeId = item.place_id;
                 void handleGetCoordinate(placeId);
+
+                setAddressToSubmit(item.description);
               }}
             />
             <Group>
