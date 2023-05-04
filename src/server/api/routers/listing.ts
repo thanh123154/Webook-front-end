@@ -34,7 +34,6 @@ export const ListingRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        // hostId: z.string(),
         name: z.string().optional(),
         address: z.string().optional(),
         priceLongTerm: z.number().optional(),
