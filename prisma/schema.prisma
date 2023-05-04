@@ -92,13 +92,9 @@ model Listing {
     active         Boolean  @default(true)
     detail         String   @db.LongText
     placeId        String
-    province       String
     approved       Boolean
-    district       String
     latitude       Float
     longitude      Float
-    ward           String
-    destination    String
     createdAt      DateTime @default(now())
     updatedAt      DateTime @updatedAt
 

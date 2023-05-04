@@ -21,18 +21,13 @@ export const ListingRouter = createTRPCRouter({
         active: z.boolean(),
         detail: z.string(),
         placeId: z.string(),
-        province: z.string(),
-        district: z.string(),
-        ward: z.string(),
         approved: z.boolean(),
         latitude: z.number(),
         longitude: z.number(),
       })
     )
     .mutation(({ ctx, input }) => {
-      const destination = `${input.address}, ${input.ward}, ${input.district}, ${input.province}`;
-
-      return ctx.prisma.listing.create({ data: { ...input, destination } });
+      return ctx.prisma.listing.create({ data: { ...input } });
     }),
 
   update: protectedProcedure

@@ -29,7 +29,7 @@ export const Hero = () => {
           </Text>
         </Flex>
 
-        <Title mt={20} maw={641} fw={600} fz={64}>
+        <Title mt={20} maw={641} fw={600} fz={{ base: 20, lg: 64 }}>
           Don&apos;t just dream about it, plan it. Travel.
         </Title>
 

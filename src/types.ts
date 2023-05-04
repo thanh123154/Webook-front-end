@@ -44,10 +44,7 @@ export type TableHistoryData = {
   bathrooms: number;
   guests: number;
   detail: string;
-  province: string;
-  district: string;
-  ward: string;
-  destination: string;
+
   active: boolean;
   approved: boolean;
 };
@@ -64,12 +61,8 @@ export type ListingData = {
   bedsrooms: number;
   bathrooms: number;
   guests: number;
-  // host: UserData;
   detail: string;
-  province: string;
-  district: string;
-  ward: string;
-  destination: string;
+
   active: boolean;
   approved: boolean;
   createdAt: Date;
@@ -90,10 +83,7 @@ export type ListingAndUserData = {
   guests: number;
   host: User & { email: string | null };
   detail: string;
-  province: string;
-  district: string;
-  ward: string;
-  destination: string;
+
   active: boolean;
   approved: boolean;
   createdAt: Date;

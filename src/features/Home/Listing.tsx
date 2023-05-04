@@ -33,7 +33,7 @@ export const Listing = () => {
             <BoxListing
               dataListing={item}
               title={item.name}
-              location={item.destination}
+              location={item.address}
               dataPic={item.gallery}
               longTermPrice={item.priceLongTerm}
             />
