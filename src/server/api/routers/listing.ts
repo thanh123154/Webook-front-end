@@ -48,9 +48,8 @@ export const ListingRouter = createTRPCRouter({
         active: z.boolean().optional(),
         detail: z.string().optional(),
         placeId: z.string().optional(),
-        province: z.string().optional(),
-        district: z.string().optional(),
-        ward: z.string().optional(),
+        latitude: z.number(),
+        longitude: z.number(),
       })
     )
     .mutation(({ input, ctx }) => {

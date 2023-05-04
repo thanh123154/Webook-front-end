@@ -135,36 +135,42 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
           ...uploadedGallery.filter((x) => x !== undefined),
         ] as string[];
         // Prepare updated user data
-        const createListingData = {
-          ...values,
-          gallery: JSON.stringify(allGallery),
-          active: true,
-          detail: info,
-          placeId: "123321",
-          approved: false,
-          address: addressToSubmit,
-          latitude: coordinate?.latitude || 0,
-          longitude: coordinate?.longitude || 0,
-        };
+
+        if (coordinate?.latitude) {
+          const createListingData = {
+            ...values,
+            gallery: JSON.stringify(allGallery),
+            active: true,
+            detail: info,
+            placeId: "123321",
+            approved: false,
+            address: addressToSubmit,
+            latitude: coordinate.latitude,
+            longitude: coordinate.longitude,
+          };
+          await apiCreate({
+            hostId: session?.user?.id || "",
+            ...createListingData,
+          });
+
+          showNotification({
+            color: "green",
+            message: "Create listing successfully",
+          });
+          setFiles([]);
+          form.reset();
+          setOpened(false);
+          setAddressToSubmit("");
+          refetch && (await refetch());
+        } else {
+          throw "";
+        }
 
         // Call the update user API endpoint
-        await apiCreate({
-          hostId: session?.user?.id || "",
-          ...createListingData,
-        });
 
         // Refetch the updated user data
 
         // Clear the file input and reset the form
-        showNotification({
-          color: "green",
-          message: "Create listing successfully",
-        });
-        setFiles([]);
-        form.reset();
-        setOpened(false);
-        setAddressToSubmit("");
-        refetch && (await refetch());
       } catch (error) {
         console.log(error);
       } finally {
@@ -174,7 +180,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
   };
 
   const handleSubmitUpdateListing = async (values: TableHistoryData) => {
-    console.log(values, "day la value update");
+    // console.log(values, "day la value update");
     const info = editorRef.current?.getContent() || "";
     if (previews.length < 4) {
       showNotification({
@@ -198,34 +204,40 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
           ...uploadedGallery.filter((x) => x !== undefined),
         ] as string[];
         // Prepare updated user data
-        const updateListingData = {
-          ...values,
-          gallery: JSON.stringify(allGallery),
-          active: true,
-          detail: info,
-          placeId: "123321",
-          address: addressToSubmit,
-          latitude: coordinate?.latitude || 0,
-          longitude: coordinate?.longitude || 0,
-        };
 
-        // Call the update user API endpoint
-        await apiUpdate({
-          ...updateListingData,
-          id: dataDrawer?.id || "",
-        });
+        if (coordinate?.latitude) {
+          const updateListingData = {
+            ...values,
+            gallery: JSON.stringify(allGallery),
+            active: true,
+            detail: info,
+            placeId: "123321",
+            address: addressToSubmit,
+            latitude: coordinate.latitude,
+            longitude: coordinate.longitude,
+          };
+          // return console.log(updateListingData, "219");
 
-        // Refetch the updated user data
+          // Call the update user API endpoint
+          await apiUpdate({
+            ...updateListingData,
+            id: dataDrawer?.id || "",
+          });
 
-        // Clear the file input and reset the form
-        showNotification({
-          color: "green",
-          message: "Update listing successfully",
-        });
+          // Refetch the updated user data
 
-        form.reset();
-        setOpened(false);
-        refetch && (await refetch());
+          // Clear the file input and reset the form
+          showNotification({
+            color: "green",
+            message: "Update listing successfully",
+          });
+
+          form.reset();
+          setOpened(false);
+          refetch && (await refetch());
+        } else {
+          throw "";
+        }
       } catch (error) {
         console.log(error);
       } finally {
@@ -337,7 +349,6 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
           )}
         >
           <Flex py={40} px={40} gap={50} direction={"column"}>
-            {" "}
             <Textarea
               placeholder="Make it descriptive and unique so guests will understand what you’re offering."
               label="Title"
