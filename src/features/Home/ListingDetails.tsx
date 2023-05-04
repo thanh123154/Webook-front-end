@@ -116,6 +116,7 @@ export const ListingDetails = () => {
           place={dataListing?.province}
           longTermPrice={dataListing?.priceLongTerm}
           shortTermPrice={dataListing?.priceShortTerm}
+          listingName={dataListing?.name}
         />
       </Flex>
     </Container>

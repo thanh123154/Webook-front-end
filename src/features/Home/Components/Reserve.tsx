@@ -12,7 +12,7 @@ import {
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { useLocalStorage } from "@mantine/hooks";
-import moment, { Moment } from "moment";
+import moment from "moment";
 
 import React, { useEffect, useRef, useState } from "react";
 import { IoCalendar } from "react-icons/io5";
@@ -23,13 +23,16 @@ import { type BookingData } from "../../../types";
 import { useSession } from "next-auth/react";
 import { useForm, zodResolver } from "@mantine/form";
 import { z } from "zod";
-import { showNotification } from "@mantine/notifications";
+import { keys } from "../../../constants";
+import { getStripe } from "../../../libs/stripe-client";
+import { TRPCClientError } from "@trpc/client";
 
 type Props = {
   place?: string;
   longTermPrice: number | undefined;
   shortTermPrice: number | undefined;
   listingId?: string;
+  listingName?: string;
 };
 
 export const Reserve: React.FC<Props> = ({
@@ -37,19 +40,16 @@ export const Reserve: React.FC<Props> = ({
   longTermPrice,
   shortTermPrice,
   listingId,
+  listingName,
 }) => {
-  const [theme, setTheme] = useLocalStorage<ColorScheme>({
+  const [theme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
     defaultValue: "dark",
   });
-  const [isUpdating, setIsUpdating] = useState(false);
-  const { data: session } = useSession();
 
   const [dayDif, setDayDif] = useState(0);
 
-  const [currentPrice, setCurrentPrice] = useState(
-    longTermPrice ? longTermPrice : 0
-  );
+  const [currentPrice, setCurrentPrice] = useState(longTermPrice ? longTermPrice : 0);
 
   const totalPrice = currentPrice * dayDif || 0;
 
@@ -60,14 +60,11 @@ export const Reserve: React.FC<Props> = ({
   const [valueAdult, setValueAdult] = useState(0);
   // const [valueChildren, setValueChildren] = useState(0);
 
-  const formattedPriceLongTerm = `${
-    longTermPrice?.toLocaleString("en-US") ?? "N/A"
-  }`;
-  const formattedPriceShortTerm = `${
-    shortTermPrice?.toLocaleString("en-US") ?? "N/A"
-  }`;
+  const formattedPriceLongTerm = `${longTermPrice?.toLocaleString("en-US") ?? "N/A"}`;
+  const formattedPriceShortTerm = `${shortTermPrice?.toLocaleString("en-US") ?? "N/A"}`;
 
-  const { mutateAsync: apiCreateBooking } = api.booking.create.useMutation();
+  const { mutateAsync: apiCheckout, isLoading: isLoadingCheckout } =
+    api.stripe.checkoutSession.useMutation();
 
   const handlersAdult = useRef<NumberInputHandlers>();
 
@@ -83,7 +80,7 @@ export const Reserve: React.FC<Props> = ({
     .object({
       checkIn: z.date(),
       checkOut: z.date(),
-      guests: z.number().min(1, { message: "Enter" }),
+      guest: z.number().min(1, { message: "Enter" }),
       phoneNumber: z.string().min(1, { message: "Please enter phone number" }),
     })
     .refine((data) => data.checkIn < data.checkOut, {
@@ -97,37 +94,29 @@ export const Reserve: React.FC<Props> = ({
   });
 
   const handleSubmitCreateBooking = async (values: BookingData) => {
-    try {
-      setIsUpdating(true);
+    if (listingName) {
+      localStorage.setItem(keys.BOOKING_TEMP, JSON.stringify(values));
 
-      // Prepare updated user data
-      const createBookingData = {
-        ...values,
-        total: totalPrice,
-        isDenied: true,
-        rating: 0,
-        review: "",
-      };
+      try {
+        const { id: sessionId } = await apiCheckout({
+          productName: listingName,
+          amount: currentPrice,
+        });
 
-      // Call the update user API endpoint
-      await apiCreateBooking({
-        ...createBookingData,
-        guestId: session?.user?.id || "",
-        listingId: listingId || "",
-      });
+        const stripe = await getStripe();
 
-      // Refetch the updated user data
+        if (stripe) {
+          const { error } = await stripe.redirectToCheckout({ sessionId });
 
-      showNotification({
-        color: "green",
-        message: "Booking successfully, please wait for the host to approve",
-      });
-
-      form.reset();
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsUpdating(false);
+          alert(error);
+        }
+      } catch (error) {
+        if (error instanceof TRPCClientError) {
+          alert(error.message);
+        } else {
+          console.log(error);
+        }
+      }
     }
   };
 
@@ -161,19 +150,10 @@ export const Reserve: React.FC<Props> = ({
       </Text>
 
       <Text mb={24} c={"#7D7C84"} mt={8}>
-        {form.values.checkIn
-          ? moment(form.values.checkIn).format("MMMM D, YYYY")
-          : ""}{" "}
-        - &nbsp;
-        {form.values.checkOut
-          ? moment(form.values.checkOut).format("MMMM D, YYYY")
-          : ""}
+        {form.values.checkIn ? moment(form.values.checkIn).format("MMMM D, YYYY") : ""} - &nbsp;
+        {form.values.checkOut ? moment(form.values.checkOut).format("MMMM D, YYYY") : ""}
       </Text>
-      <form
-        onSubmit={form.onSubmit(
-          (values) => void handleSubmitCreateBooking(values)
-        )}
-      >
+      <form onSubmit={form.onSubmit((values) => void handleSubmitCreateBooking(values))}>
         <Group align="start" mb={24}>
           <DatePicker
             label="Check in"
@@ -242,7 +222,7 @@ export const Reserve: React.FC<Props> = ({
         </Center>
 
         <Button
-          loading={isUpdating}
+          loading={isLoadingCheckout}
           type="submit"
           mt={32}
           size="lg"
@@ -259,8 +239,7 @@ export const Reserve: React.FC<Props> = ({
       <Group p={12} mt={44} mb={16} position="apart">
         {" "}
         <Text fw={500} fz={12} c={"#7D7C84"}>
-          {currentPrice?.toLocaleString("en-US") ?? "N/A"} vnđ x {dayDif || 0}{" "}
-          days
+          {currentPrice?.toLocaleString("en-US") ?? "N/A"} vnđ x {dayDif || 0} days
         </Text>
         <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
           {(0 || totalPrice.toLocaleString("en-US")) ?? "N/A"} vnđ

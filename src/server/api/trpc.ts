@@ -23,6 +23,8 @@ import { prisma } from "../db";
 
 type CreateContextOptions = {
   session: Session | null;
+  req: NextApiRequest;
+  res: NextApiResponse;
 };
 
 /**
@@ -36,9 +38,14 @@ type CreateContextOptions = {
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
+  const { req, res, session } = opts;
+
   return {
-    session: opts.session,
+    session,
     prisma,
+    req,
+    res,
+    stripe,
   };
 };
 
@@ -56,6 +63,8 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
 
   return createInnerTRPCContext({
     session,
+    req,
+    res,
   });
 };
 
@@ -67,6 +76,8 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
  */
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { stripe } from "../../libs/stripe-server";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
