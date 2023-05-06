@@ -80,10 +80,19 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
           <Menu.Item icon={<AiFillSetting />}>Profile</Menu.Item>
         </Link>
 
-        <Link href={"/host/booking-status"}>
-          {" "}
-          <Menu.Item icon={<AiFillSetting />}>Booking Status</Menu.Item>
-        </Link>
+        {router.asPath.includes("/host") && (
+          <Link href={"/host/booking-status"}>
+            {" "}
+            <Menu.Item icon={<AiFillSetting />}>Booking Status</Menu.Item>
+          </Link>
+        )}
+
+        {!router.asPath.includes("/host") && (
+          <Link href={"/manage-booking"}>
+            {" "}
+            <Menu.Item icon={<AiFillSetting />}>Manage Booking</Menu.Item>
+          </Link>
+        )}
       </Menu.Dropdown>
 
       <Modal

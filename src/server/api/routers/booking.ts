@@ -22,7 +22,7 @@ export const BookingRouter = createTRPCRouter({
       return ctx.prisma.booking.create({ data: { ...input } });
     }),
 
-  getByHostId: protectedProcedure
+  getCurrentBookingByHostId: protectedProcedure
     .input(
       z.object({
         guestId: z.string(),
@@ -30,7 +30,30 @@ export const BookingRouter = createTRPCRouter({
     )
     .query(({ input: { guestId }, ctx }) => {
       return ctx.prisma.booking.findMany({
-        where: { guestId },
+        where: {
+          guestId,
+          checkIn: {
+            gte: new Date(),
+          },
+        },
+        include: { guests: true, booked: true },
+      });
+    }),
+
+  getHistoryBookingByHostId: protectedProcedure
+    .input(
+      z.object({
+        guestId: z.string(),
+      })
+    )
+    .query(({ input: { guestId }, ctx }) => {
+      return ctx.prisma.booking.findMany({
+        where: {
+          guestId,
+          checkOut: {
+            lt: new Date(),
+          },
+        },
         include: { guests: true, booked: true },
       });
     }),

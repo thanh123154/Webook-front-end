@@ -2,13 +2,16 @@ import { Container, Flex, Tabs, Title } from "@mantine/core";
 import React from "react";
 
 import { useRefPortal } from "../../hooks";
-import { PresentBooking } from "./component/PresentBooking";
+import { PresentBooking } from "./Components/PresentBooking";
+import { HistoryBooking } from "./Components/HistoryBooking";
 
-const BookingManagement = () => {
+const UserBookingManagement = () => {
   const presentRef = useRefPortal<typeof PresentBooking>();
+  const historyRef = useRefPortal<typeof HistoryBooking>();
 
   const handleRefetch = async () => {
     await presentRef.current?.refetchFunc();
+    await historyRef.current?.refetchFunc();
   };
 
   return (
@@ -27,9 +30,9 @@ const BookingManagement = () => {
           <PresentBooking handleRefetch={handleRefetch} ref={presentRef} />
         </Tabs.Panel>
 
-        {/* <Tabs.Panel value="History" pt="xs">
-          <Past sth="" />
-        </Tabs.Panel> */}
+        <Tabs.Panel value="History" pt="xs">
+          <HistoryBooking handleRefetch={handleRefetch} ref={historyRef} />
+        </Tabs.Panel>
 
         {/* <Tabs.Panel value="Upcoming" pt="xs">
           <Upcoming sth="" />
@@ -39,4 +42,4 @@ const BookingManagement = () => {
   );
 };
 
-export default BookingManagement;
+export default UserBookingManagement;
