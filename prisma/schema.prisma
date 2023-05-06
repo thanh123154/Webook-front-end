@@ -97,7 +97,7 @@ model Listing {
     longitude      Float
     createdAt      DateTime @default(now())
     updatedAt      DateTime @updatedAt
-
+    
     host           User             @relation(fields: [hostId], references: [id])
     location       place            @relation(fields: [placeId], references: [id])
     booking        booking[]

@@ -20,14 +20,11 @@ import { GuestDropDown } from "./GuestDropDown";
 import axios from "axios";
 import { keys } from "../../constants";
 import type { FormSearchListingProps } from "../../types";
-import {
-  type predictionData,
-  type BookingData,
-  type SearchData,
-} from "../../types";
+import { type predictionData, type BookingData, type SearchData } from "../../types";
 import { useForm } from "@mantine/form";
 import moment from "moment";
 import { useSearchListing } from "../../hooks/useSearchListing";
+import { throttle } from "lodash";
 
 type Props = {
   index: number;
@@ -72,32 +69,33 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
     handlersAdult.current?.decrement();
   };
 
-  const handleSearch = useCallback(async (input: string) => {
-    try {
-      const result = await axios.get<SearchData>(
-        `https://rsapi.goong.io/Place/AutoComplete?api_key=${
-          keys.YOUR_GOOGLE_MAPS_API_KEY
-        }&location=21.013715429594125,%20105.79829597455202&input=${input.replace(
-          /\s+/g,
-          "%"
-        )}`
-      );
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const handleSearch = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    throttle(async (input: string) => {
+      try {
+        const result = await axios.get<SearchData>(
+          `https://rsapi.goong.io/Place/AutoComplete?api_key=${
+            keys.YOUR_GOOGLE_MAPS_API_KEY
+          }&location=21.013715429594125,%20105.79829597455202&input=${input.replace(/\s+/g, "%")}`
+        );
 
-      const data = result.data.predictions;
-      console.log(result, "kq");
+        const data = result.data.predictions;
+        console.log(result, "kq");
 
-      setDataSearch(
-        data.map((item) => ({
-          ...item,
-          value: item.description,
-          place_id: item.place_id,
-        }))
-      );
-    } catch (error) {
-      console.log(error);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+        setDataSearch(
+          data.map((item) => ({
+            ...item,
+            value: item.description,
+            place_id: item.place_id,
+          }))
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    }, 2000),
+    []
+  );
 
   const handleGetCoordinate = useCallback(async (input: string) => {
     try {
@@ -163,6 +161,7 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
           <Autocomplete
             label="Location"
             placeholder="Enter"
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             onChange={(e) => void handleSearch(e)}
             // onChange={(value) => setInputPlaceContent(value)}
             // onKeyDown={(e) => handleKeyDown(e)}
@@ -236,9 +235,7 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
                   },
                 }}
                 placeholder={
-                  form.values.guest != 0
-                    ? `${form.values.guest || 0} Guests s`
-                    : "Add guests"
+                  form.values.guest != 0 ? `${form.values.guest || 0} Guests s` : "Add guests"
                 }
                 label="Add guests"
                 withAsterisk
