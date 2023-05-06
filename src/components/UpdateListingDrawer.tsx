@@ -53,7 +53,7 @@ type Props = {
 const formSchema = z.object({
   name: z.string().min(1, { message: "Please enter title" }),
   beds: z.number().min(0, { message: "Please enter beds" }),
-  bedsrooms: z.number().min(0, { message: "Please enter bedsroom" }),
+  bedsrooms: z.number().min(0, { message: "Please enter bedsrooms" }),
   bathrooms: z.number().min(0, { message: "Please enter bathrooms" }),
   guests: z.number().min(1, { message: "Please enter guest" }),
   priceLongTerm: z.number().min(1, { message: "Please enter price" }),
@@ -180,69 +180,72 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
   };
 
   const handleSubmitUpdateListing = async (values: TableHistoryData) => {
-    // console.log(values, "day la value update");
+    console.log("hello", values);
     const info = editorRef.current?.getContent() || "";
-    if (previews.length < 4) {
-      showNotification({
-        color: "red",
-        message: "At least 4 picture needed",
-      });
-    } else if (addressToSubmit.length < 10) {
-      showNotification({
-        color: "red",
-        message: "Please enter address",
-      });
-    } else {
-      try {
-        setIsUpdating(true);
-        const uploadedGallery = await Promise.all(
-          filesGallery.map((file) => uploadFile(file))
-        );
+    switch (true) {
+      case previews.length < 4:
+        showNotification({
+          color: "red",
+          message: "At least 4 picture needed",
+        });
+        break;
+      case addressToSubmit.length < 10:
+        showNotification({
+          color: "red",
+          message: "Please enter address",
+        });
+        break;
+      default:
+        try {
+          setIsUpdating(true);
+          const uploadedGallery = await Promise.all(
+            filesGallery.map((file) => uploadFile(file))
+          );
 
-        const allGallery = [
-          ...urlsGallery,
-          ...uploadedGallery.filter((x) => x !== undefined),
-        ] as string[];
-        // Prepare updated user data
+          const allGallery = [
+            ...urlsGallery,
+            ...uploadedGallery.filter((x) => x !== undefined),
+          ] as string[];
+          // Prepare updated user data
 
-        if (coordinate?.latitude) {
-          const updateListingData = {
-            ...values,
-            gallery: JSON.stringify(allGallery),
-            active: true,
-            detail: info,
-            placeId: "123321",
-            address: addressToSubmit,
-            latitude: coordinate.latitude,
-            longitude: coordinate.longitude,
-          };
-          // return console.log(updateListingData, "219");
+          if (coordinate?.latitude) {
+            const updateListingData = {
+              ...values,
+              gallery: JSON.stringify(allGallery),
+              active: true,
+              detail: info,
+              placeId: "123321",
+              address: addressToSubmit,
+              latitude: coordinate.latitude,
+              longitude: coordinate.longitude,
+            };
+            // return console.log(updateListingData, "219");
 
-          // Call the update user API endpoint
-          await apiUpdate({
-            ...updateListingData,
-            id: dataDrawer?.id || "",
-          });
+            // Call the update user API endpoint
+            await apiUpdate({
+              ...updateListingData,
+              id: dataDrawer?.id || "",
+            });
 
-          // Refetch the updated user data
+            // Refetch the updated user data
 
-          // Clear the file input and reset the form
-          showNotification({
-            color: "green",
-            message: "Update listing successfully",
-          });
+            // Clear the file input and reset the form
+            showNotification({
+              color: "green",
+              message: "Update listing successfully",
+            });
 
-          form.reset();
-          setOpened(false);
-          refetch && (await refetch());
-        } else {
-          throw "";
+            form.reset();
+            setOpened(false);
+            refetch && (await refetch());
+          } else {
+            throw "";
+          }
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setIsUpdating(false);
         }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsUpdating(false);
-      }
     }
   };
 
@@ -268,6 +271,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
     openDrawer: (data) => {
       setDataDrawer(data);
       form.setValues(data);
+      console.log(data, "data khi mo drawer");
       if (data.gallery) {
         setUrlsGallery(JSON.parse(data.gallery) as string[]);
       }
@@ -372,7 +376,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
                 label="Bedsroom"
                 withAsterisk
                 w={"50%"}
-                {...form.getInputProps("bedsroom")}
+                {...form.getInputProps("bedsrooms")}
               />
             </Flex>
             <Flex justify={"space-between"} gap={50}>
