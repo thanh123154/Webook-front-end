@@ -39,6 +39,8 @@ const Home: NextPage = () => {
       } else {
         setIsAuthenticating(false);
       }
+    } else {
+      setIsAuthenticating(false);
     }
   }, [adminSession, router]);
 
