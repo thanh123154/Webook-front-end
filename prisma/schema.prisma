@@ -97,6 +97,7 @@ model Listing {
     longitude      Float
     createdAt      DateTime @default(now())
     updatedAt      DateTime @updatedAt
+    amenity        String  
 
     host           User             @relation(fields: [hostId], references: [id])
     location       place            @relation(fields: [placeId], references: [id])

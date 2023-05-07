@@ -18,7 +18,7 @@ const ListingManagement = () => {
     await pendingAdminRef.current?.refetchFunc();
   };
 
-  const handleOpen = (data: TableHistoryData) => {
+  const handleOpen = (data?: TableHistoryData) => {
     return updateListingDrawerRef.current?.openDrawer(data);
   };
 
@@ -31,9 +31,7 @@ const ListingManagement = () => {
       <Flex justify={"space-between"} align={"center"} my={30}>
         {" "}
         <Title>Pending admin approval list</Title>{" "}
-        <Button onClick={() => handleOpen(TableColunm.dataExampleTable)}>
-          Add listing
-        </Button>
+        <Button onClick={() => handleOpen()}>Add listing</Button>
         <UpdateListingDrawer
           ref={updateListingDrawerRef}
           refetch={handleRefetch}

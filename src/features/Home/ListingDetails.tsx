@@ -71,7 +71,7 @@ export const ListingDetails = () => {
             </Group>
             <Group>
               <Flag />
-              {dataListing?.bedsrooms} Bedrooms
+              {dataListing?.beds} Bedrooms
             </Group>
             <Group>
               <Flag /> {dataListing?.bathrooms} Bathrooms
@@ -113,7 +113,7 @@ export const ListingDetails = () => {
         {/* reverse  */}
         <Reserve
           listingId={dataListing?.id}
-          place={dataListing?.province}
+          place={dataListing?.address}
           longTermPrice={dataListing?.priceLongTerm}
           shortTermPrice={dataListing?.priceShortTerm}
           listingName={dataListing?.name}

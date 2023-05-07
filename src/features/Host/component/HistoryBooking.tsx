@@ -20,7 +20,7 @@ type Ref = {
   refetchFunc: () => Promise<QueryObserverResult<Listing[]>>;
 };
 
-const _PresentBooking: ForwardRefRenderFunction<Ref, Props> = () => {
+const _HistoryBooking: ForwardRefRenderFunction<Ref, Props> = () => {
   const [dataTable, setDataTable] = useState<BookingData[]>([]);
   // const [isUpdating, setIsUpdating] = useState(false);
 
@@ -30,7 +30,7 @@ const _PresentBooking: ForwardRefRenderFunction<Ref, Props> = () => {
     data: currentListing,
     isLoading,
     refetch,
-  } = api.booking.getCurrentBookingByHostId.useQuery(
+  } = api.booking.getHistoryBookingByHostId.useQuery(
     { guestId: session?.user?.id || "" },
 
     { enabled: !!session?.user?.id, refetchOnWindowFocus: false }
@@ -147,8 +147,14 @@ const _PresentBooking: ForwardRefRenderFunction<Ref, Props> = () => {
             ),
           },
         ]}
+        // execute this callback when a row is clicked
+        // onRowClick={(a) => {
+        //   console.log(a, "table");
+
+        //   handleOpen(a);
+        // }}
       />
     </Box>
   );
 };
-export const PresentBooking = forwardRef<Ref, Props>(_PresentBooking);
+export const HistoryBooking = forwardRef<Ref, Props>(_HistoryBooking);

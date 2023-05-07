@@ -37,6 +37,7 @@ export type TableHistoryData = {
   priceLongTerm: number;
   priceShortTerm: number;
   gallery: string;
+  amenity: string;
   desc: string;
   beds: number;
 
@@ -44,6 +45,30 @@ export type TableHistoryData = {
   bathrooms: number;
   guests: number;
   detail: string;
+  longitude: number;
+  latitude: number;
+
+  active: boolean;
+  approved: boolean;
+};
+
+export type NewTableHistoryData = {
+  id: string;
+  name: string;
+  address: string;
+  priceLongTerm: number;
+  priceShortTerm: number;
+  gallery: string;
+  amenity: Array<string>;
+  desc: string;
+  beds: number;
+
+  bedsrooms: number;
+  bathrooms: number;
+  guests: number;
+  detail: string;
+  longitude: number;
+  latitude: number;
 
   active: boolean;
   approved: boolean;
@@ -78,6 +103,7 @@ export type ListingAndUserData = {
   gallery: string;
   desc: string;
   beds: number;
+  // amenity:Array<>;
   bedsrooms: number;
   bathrooms: number;
   guests: number;
@@ -89,6 +115,10 @@ export type ListingAndUserData = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+// export type Amenity = {
+//   label: ;
+// };
 
 export type PicContent = {
   id: number;

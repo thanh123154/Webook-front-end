@@ -34,7 +34,7 @@ import {
 import { TextEditor } from "./text-editor";
 import { useForm, zodResolver } from "@mantine/form";
 import { nanoid } from "nanoid";
-import type { SearchData, predictionData } from "../types";
+import type { NewTableHistoryData, SearchData, predictionData } from "../types";
 import { type LocationData, type TableHistoryData } from "../types";
 import { z } from "zod";
 import { useSession } from "next-auth/react";
@@ -43,6 +43,7 @@ import { showNotification } from "@mantine/notifications";
 import { uploadFile } from "../helpers";
 import { DataXa, keys } from "../constants";
 import axios from "axios";
+import { amenityListings } from "../constants/AmenityListing";
 
 type Props = {
   refetch?: () => Promise<void>;
@@ -58,13 +59,16 @@ const formSchema = z.object({
   guests: z.number().min(1, { message: "Please enter guest" }),
   priceLongTerm: z.number().min(1, { message: "Please enter price" }),
   priceShortTerm: z.number().min(1, { message: "Please enter price" }),
+  amenity: z
+    .array(z.string())
+    .min(1, { message: "Please enter at least 1 amenity" }),
   desc: z
     .string()
     .min(1, { message: "Please enter description for your place" }),
 });
 
 type Ref = {
-  openDrawer: (data: TableHistoryData) => void;
+  openDrawer: (data?: TableHistoryData) => void;
   closeDrawer: () => void;
 };
 
@@ -98,7 +102,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
 
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const [dataDrawer, setDataDrawer] = useState<TableHistoryData>();
+  const [dataDrawer, setDataDrawer] = useState<NewTableHistoryData>();
 
   const [urlsGallery, setUrlsGallery] = useState<string[]>([]);
 
@@ -106,12 +110,12 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
 
   const { mutateAsync: apiUpdate } = api.listing.update.useMutation();
 
-  const form = useForm<TableHistoryData>({
+  const form = useForm<NewTableHistoryData>({
     initialValues: dataDrawer,
     validate: zodResolver(formSchema),
   });
 
-  const handleSubmitCreateListing = async (values: TableHistoryData) => {
+  const handleSubmitCreateListing = async (values: NewTableHistoryData) => {
     console.log(values, "day la value create");
     const info = editorRef.current?.getContent() || "";
     if (previews.length < 4) {
@@ -140,6 +144,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
           const createListingData = {
             ...values,
             gallery: JSON.stringify(allGallery),
+            amenity: JSON.stringify(values.amenity),
             active: true,
             detail: info,
             placeId: "123321",
@@ -179,73 +184,72 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
     }
   };
 
-  const handleSubmitUpdateListing = async (values: TableHistoryData) => {
-    console.log("hello", values);
+  const handleSubmitUpdateListing = async (values: NewTableHistoryData) => {
+    console.log("before else", values);
     const info = editorRef.current?.getContent() || "";
-    switch (true) {
-      case previews.length < 4:
-        showNotification({
-          color: "red",
-          message: "At least 4 picture needed",
-        });
-        break;
-      case addressToSubmit.length < 10:
-        showNotification({
-          color: "red",
-          message: "Please enter address",
-        });
-        break;
-      default:
-        try {
-          setIsUpdating(true);
-          const uploadedGallery = await Promise.all(
-            filesGallery.map((file) => uploadFile(file))
-          );
+    if (previews.length < 4) {
+      showNotification({
+        color: "red",
+        message: "At least 4 picture needed",
+      });
+    } else if (addressToSubmit.length < 10) {
+      showNotification({
+        color: "red",
+        message: "Please enter address",
+      });
+    } else {
+      console.log("hello", values);
+      try {
+        setIsUpdating(true);
+        const uploadedGallery = await Promise.all(
+          filesGallery.map((file) => uploadFile(file))
+        );
 
-          const allGallery = [
-            ...urlsGallery,
-            ...uploadedGallery.filter((x) => x !== undefined),
-          ] as string[];
-          // Prepare updated user data
+        const allGallery = [
+          ...urlsGallery,
+          ...uploadedGallery.filter((x) => x !== undefined),
+        ] as string[];
+        // Prepare updated user data
 
-          if (coordinate?.latitude) {
-            const updateListingData = {
-              ...values,
-              gallery: JSON.stringify(allGallery),
-              active: true,
-              detail: info,
-              placeId: "123321",
-              address: addressToSubmit,
-              latitude: coordinate.latitude,
-              longitude: coordinate.longitude,
-            };
-            // return console.log(updateListingData, "219");
+        if (coordinate?.latitude) {
+          const updateListingData = {
+            ...values,
+            gallery: JSON.stringify(allGallery),
+            amenity: JSON.stringify(values.amenity),
+            active: true,
+            detail: info,
+            placeId: "123321",
+            address: addressToSubmit,
+            latitude: coordinate.latitude,
+            longitude: coordinate.longitude,
+          };
+          // return console.log(updateListingData, "219");
 
-            // Call the update user API endpoint
-            await apiUpdate({
-              ...updateListingData,
-              id: dataDrawer?.id || "",
-            });
+          // Call the update user API endpoint
+          await apiUpdate({
+            ...updateListingData,
+            id: dataDrawer?.id || "",
+          });
 
-            // Refetch the updated user data
+          // Refetch the updated user data
 
-            // Clear the file input and reset the form
-            showNotification({
-              color: "green",
-              message: "Update listing successfully",
-            });
+          // Clear the file input and reset the form
+          showNotification({
+            color: "green",
+            message: "Update listing successfully",
+          });
 
-            form.reset();
-            setOpened(false);
-            refetch && (await refetch());
-          } else {
-            throw "";
-          }
-        } catch (error) {
-          console.log(error);
-        } finally {
-          setIsUpdating(false);
+          form.reset();
+          setOpened(false);
+          refetch && (await refetch());
+        } else {
+          throw "error";
         }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsUpdating(false);
+      }
     }
   };
 
@@ -269,13 +273,34 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
 
   useImperativeHandle(ref, () => ({
     openDrawer: (data) => {
-      setDataDrawer(data);
-      form.setValues(data);
-      console.log(data, "data khi mo drawer");
-      if (data.gallery) {
-        setUrlsGallery(JSON.parse(data.gallery) as string[]);
+      // const newData = data.map(item => {
+      //   return {
+      //     ...item,
+      //     amenity: JSON.parse(item.amenity) as string[]
+      //   };
+      // });
+
+      if (data) {
+        const newData: NewTableHistoryData = {
+          ...data,
+          amenity: JSON.parse(data.amenity) as string[],
+        };
+
+        setDataDrawer(newData);
+        form.setValues(newData);
+        console.log(data, "data khi mo drawer");
+        if (data.gallery) {
+          setUrlsGallery(JSON.parse(data.gallery) as string[]);
+        }
+
+        setCoordinate({
+          longitude: data.longitude,
+          latitude: data.latitude,
+        });
+
+        setAddressToSubmit(data.address);
       }
-      setAddressToSubmit(data.address);
+
       setOpened(true);
     },
     closeDrawer: handleClose,
@@ -408,12 +433,12 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
             <Flex justify={"space-between"} gap={50}>
               {" "}
               <MultiSelect
-                data={dataAmenity}
+                data={amenityListings}
                 label="Amenity"
                 placeholder="Pick all amenity you have"
                 clearable
                 w={"100%"}
-                defaultValue={["WiFi"]}
+                // defaultValue={["WiFi"]}
                 {...form.getInputProps("amenity")}
               />
             </Flex>
@@ -456,10 +481,11 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
                 // withAsterisk
               />
             </Box>
+
             <NumberInput
               label="Long-term rental price"
               rightSection={<Box mr={50}> vnđ</Box>}
-              defaultValue={1000}
+              // defaultValue={1000}
               parser={(value) => value && value.replace(/\$\s?|(,*)/g, "")}
               formatter={(value) =>
                 value && !Number.isNaN(parseFloat(value))
@@ -468,10 +494,11 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
               }
               {...form.getInputProps("priceLongTerm")}
             />
+
             <NumberInput
               label="Short-term rental price"
               rightSection={<Box mr={50}> vnđ</Box>}
-              defaultValue={1000}
+              // defaultValue={1000}
               parser={(value) => value && value.replace(/\$\s?|(,*)/g, "")}
               formatter={(value) =>
                 value && !Number.isNaN(parseFloat(value))
@@ -521,27 +548,4 @@ const data = [
   { value: "riot", label: "Riot" },
   { value: "next", label: "Next.js" },
   { value: "blitz", label: "Blitz.js" },
-];
-
-const dataAmenity = [
-  { value: "Fridge", label: "Fridge" },
-  { value: "Pc", label: "Pc" },
-  { value: "RoomService", label: "Room service" },
-  { value: "WiFi", label: "WiFi" },
-  { value: "TV", label: "TV" },
-  { value: "Pool", label: "Pool" },
-  { value: "Gym", label: "Gym" },
-  { value: "AirCon", label: "Air conditioning" },
-  { value: "Parking", label: "Parking" },
-  { value: "Laundry", label: "Laundry" },
-  { value: "Kitchen", label: "Kitchen" },
-  { value: "Microwave", label: "Microwave" },
-  { value: "Oven", label: "Oven" },
-  { value: "Dishwasher", label: "Dishwasher" },
-  { value: "HairDryer", label: "Hair dryer" },
-  { value: "Iron", label: "Iron" },
-  { value: "Heating", label: "Heating" },
-  { value: "Balcony", label: "Balcony" },
-  { value: "Fireplace", label: "Fireplace" },
-  { value: "PetFriendly", label: "Pet friendly" },
 ];

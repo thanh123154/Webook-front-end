@@ -137,9 +137,12 @@ const dataExampleTable = {
   detail: "",
   province: "",
   district: "",
+  amenity: "",
   gallery: "",
   ward: "",
   destination: "",
+  longitude: 1,
+  latitude: 1,
   active: true,
   approved: false,
 };
