@@ -197,3 +197,20 @@ export interface ISelectedConversation {
   otherPerson: User;
   conversation: IConversation;
 }
+export type StaticType = {
+  listing: TempList[];
+};
+
+export type TempList = {
+  booking: TempBook[];
+};
+
+export type TempBook = {
+  total: number;
+  createAt: Date;
+};
+
+export type TotalStatic = {
+  country: string;
+  value: number;
+};
