@@ -82,7 +82,7 @@ const Statistic = () => {
     data.forEach((item) => {
       item.listing.forEach((listing) => {
         listing.booking.forEach((booking) => {
-          const month = new Date(booking.createAt).toLocaleString("en-US", {
+          const month = new Date(booking.createdAt).toLocaleString("en-US", {
             month: "long",
           });
           if (totalsByMonth[month]) {
@@ -111,118 +111,118 @@ const Statistic = () => {
         listing: item.listings.map((listing) => ({
           booking: listing.booking.map((booking) => ({
             total: booking.total,
-            createAt: booking.createdAt,
+            createdAt: booking.createdAt,
           })),
         })),
       }));
-      setDataTest(newDataTest);
+      // setDataTest(newDataTest);
       const total = calculateTotalByMonth(newDataTest);
-      setDataTotalStatic(total);
+      // setDataTotalStatic(total);
       console.log(total, "tong tien"); // Kết quả: 4227126
-      console.log(dataTest, "kq");
+      // console.log(dataTest, "kq");
+
+      const root = am5.Root.new("chartdiv");
+      // Set themes
+      // https://www.amcharts.com/docs/v5/concepts/themes/
+      if (theme === "dark") {
+        root.setThemes([themeDark.new(root)]);
+      } else {
+        root.setThemes([am5themes_Animated.new(root)]);
+      }
+
+      // Create chart
+      // https://www.amcharts.com/docs/v5/charts/xy-chart/
+      const chart = root.container.children.push(
+        am5xy.XYChart.new(root, {
+          panX: true,
+          panY: true,
+          wheelX: "panX",
+          wheelY: "zoomX",
+          pinchZoomX: true,
+        })
+      );
+
+      // Add cursor
+      // https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/
+      const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
+      cursor.lineY.set("visible", false);
+
+      // Create axes
+      // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
+      const xRenderer = am5xy.AxisRendererX.new(root, { minGridDistance: 30 });
+      xRenderer.labels.template.setAll({
+        rotation: -90,
+        centerY: am5.p50,
+        centerX: am5.p100,
+        paddingRight: 15,
+      });
+
+      xRenderer.grid.template.setAll({
+        location: 1,
+      });
+
+      const xAxis = chart.xAxes.push(
+        am5xy.CategoryAxis.new(root, {
+          maxDeviation: 0.3,
+          categoryField: "country",
+          renderer: xRenderer,
+          tooltip: am5.Tooltip.new(root, {}),
+        })
+      );
+
+      const yAxis = chart.yAxes.push(
+        am5xy.ValueAxis.new(root, {
+          maxDeviation: 0.3,
+          renderer: am5xy.AxisRendererY.new(root, {
+            strokeOpacity: 0.1,
+          }),
+        })
+      );
+
+      // Create series
+      // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
+      const series = chart.series.push(
+        am5xy.ColumnSeries.new(root, {
+          name: "Series 1",
+          xAxis: xAxis,
+          yAxis: yAxis,
+          valueYField: "value",
+          sequencedInterpolation: true,
+          categoryXField: "country",
+          tooltip: am5.Tooltip.new(root, {
+            labelText: "{valueY}",
+          }),
+        })
+      );
+
+      series.columns.template.setAll({
+        cornerRadiusTL: 5,
+        cornerRadiusTR: 5,
+        strokeOpacity: 0,
+      });
+
+      series.columns.template.adapters.add("fill", function (fill, target) {
+        return chart.get("colors")?.getIndex(series.columns.indexOf(target));
+      });
+
+      series.columns.template.adapters.add("stroke", function (stroke, target) {
+        return chart.get("colors")?.getIndex(series.columns.indexOf(target));
+      });
+
+      // Set data
+
+      xAxis.data.setAll(total);
+      series.data.setAll(total);
+
+      // Make stuff animate on load
+      // https://www.amcharts.com/docs/v5/concepts/animations/
+      void series.appear(1000);
+      void chart.appear(1000, 100);
+
+      return () => {
+        root.dispose();
+      };
     }
-
-    const root = am5.Root.new("chartdiv");
-    // Set themes
-    // https://www.amcharts.com/docs/v5/concepts/themes/
-    if (theme === "dark") {
-      root.setThemes([themeDark.new(root)]);
-    } else {
-      root.setThemes([am5themes_Animated.new(root)]);
-    }
-
-    // Create chart
-    // https://www.amcharts.com/docs/v5/charts/xy-chart/
-    const chart = root.container.children.push(
-      am5xy.XYChart.new(root, {
-        panX: true,
-        panY: true,
-        wheelX: "panX",
-        wheelY: "zoomX",
-        pinchZoomX: true,
-      })
-    );
-
-    // Add cursor
-    // https://www.amcharts.com/docs/v5/charts/xy-chart/cursor/
-    const cursor = chart.set("cursor", am5xy.XYCursor.new(root, {}));
-    cursor.lineY.set("visible", false);
-
-    // Create axes
-    // https://www.amcharts.com/docs/v5/charts/xy-chart/axes/
-    const xRenderer = am5xy.AxisRendererX.new(root, { minGridDistance: 30 });
-    xRenderer.labels.template.setAll({
-      rotation: -90,
-      centerY: am5.p50,
-      centerX: am5.p100,
-      paddingRight: 15,
-    });
-
-    xRenderer.grid.template.setAll({
-      location: 1,
-    });
-
-    const xAxis = chart.xAxes.push(
-      am5xy.CategoryAxis.new(root, {
-        maxDeviation: 0.3,
-        categoryField: "country",
-        renderer: xRenderer,
-        tooltip: am5.Tooltip.new(root, {}),
-      })
-    );
-
-    const yAxis = chart.yAxes.push(
-      am5xy.ValueAxis.new(root, {
-        maxDeviation: 0.3,
-        renderer: am5xy.AxisRendererY.new(root, {
-          strokeOpacity: 0.1,
-        }),
-      })
-    );
-
-    // Create series
-    // https://www.amcharts.com/docs/v5/charts/xy-chart/series/
-    const series = chart.series.push(
-      am5xy.ColumnSeries.new(root, {
-        name: "Series 1",
-        xAxis: xAxis,
-        yAxis: yAxis,
-        valueYField: "value",
-        sequencedInterpolation: true,
-        categoryXField: "country",
-        tooltip: am5.Tooltip.new(root, {
-          labelText: "{valueY}",
-        }),
-      })
-    );
-
-    series.columns.template.setAll({
-      cornerRadiusTL: 5,
-      cornerRadiusTR: 5,
-      strokeOpacity: 0,
-    });
-
-    series.columns.template.adapters.add("fill", function (fill, target) {
-      return chart.get("colors")?.getIndex(series.columns.indexOf(target));
-    });
-
-    series.columns.template.adapters.add("stroke", function (stroke, target) {
-      return chart.get("colors")?.getIndex(series.columns.indexOf(target));
-    });
-
-    // Set data
-
-    xAxis.data.setAll(dataTotalStatic);
-    series.data.setAll(dataTotalStatic);
-
-    // Make stuff animate on load
-    // https://www.amcharts.com/docs/v5/concepts/animations/
-    void series.appear(1000);
-    void chart.appear(1000, 100);
-
-    return () => {
-      root.dispose();
-    };
   }, [theme, dataStatic]);
 
   return (

@@ -82,7 +82,12 @@ const _PresentBooking: ForwardRefRenderFunction<Ref, Props> = () => {
         <tr>
           <td
             colSpan={6}
-            style={{ textAlign: "center", fontSize: 20, paddingBlock: 50, fontWeight: "bold" }}
+            style={{
+              textAlign: "center",
+              fontSize: 20,
+              paddingBlock: 50,
+              fontWeight: "bold",
+            }}
           >
             Loading...
           </td>
@@ -91,7 +96,12 @@ const _PresentBooking: ForwardRefRenderFunction<Ref, Props> = () => {
         <tr>
           <td
             colSpan={6}
-            style={{ textAlign: "center", fontSize: 20, paddingBlock: 50, fontWeight: "bold" }}
+            style={{
+              textAlign: "center",
+              fontSize: 20,
+              paddingBlock: 50,
+              fontWeight: "bold",
+            }}
           >
             No Data
           </td>
@@ -104,7 +114,7 @@ const _PresentBooking: ForwardRefRenderFunction<Ref, Props> = () => {
             <td>{moment(item.checkIn).format("MMMM D, YYYY")}</td>
             <td>{moment(item.checkOut).format("MMMM D, YYYY")}</td>
             <td>{item.total.toLocaleString("en-US") ?? "N/A"} vnđ</td>
-            <td>{!item.isDenied ? "Has approved" : "Pending"}</td>
+            <td>{item.isDenied ? "Has approved" : "Pending"}</td>
           </tr>
         ))
       )}

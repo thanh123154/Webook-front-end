@@ -188,7 +188,7 @@ export type TempList = {
 
 export type TempBook = {
   total: number;
-  createAt: Date;
+  createdAt: Date;
 };
 
 export type TotalStatic = {
