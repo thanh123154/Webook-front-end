@@ -48,9 +48,7 @@ const Profile: NextPage = () => {
   );
   const { mutateAsync: apiUpdate } = api.user.update.useMutation();
 
-  const [avatar, setAvatar] = useState<
-    StaticImageData | string | undefined | null
-  >();
+  const [avatar, setAvatar] = useState<StaticImageData | string | undefined | null>();
   const [file, setFile] = useState<File | undefined | null>();
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -126,26 +124,13 @@ const Profile: NextPage = () => {
 
         <form onSubmit={form.onSubmit((values) => void handleSubmit(values))}>
           <Center>
-            <AvatarUser
-              src={avatar?.toString()}
-              setAvatar={setAvatar}
-              setFile={setFile}
-            >
+            <AvatarUser src={avatar?.toString()} setAvatar={setAvatar} setFile={setFile}>
               {formatName(session?.user?.name)}
             </AvatarUser>
           </Center>
 
-          <TextInput
-            label="Name"
-            placeholder="Name"
-            {...form.getInputProps("name")}
-          />
-          <TextInput
-            mt="md"
-            label="Email"
-            placeholder="Email"
-            {...form.getInputProps("email")}
-          />
+          <TextInput label="Name" placeholder="Name" {...form.getInputProps("name")} />
+          <TextInput mt="md" label="Email" placeholder="Email" {...form.getInputProps("email")} />
 
           <Group mt="xs">
             <Radio.Group

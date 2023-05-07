@@ -5172,10 +5172,10 @@ magic-string@0.25.1:
   dependencies:
     sourcemap-codec "^1.4.1"
 
-mantine-datatable@^2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-2.0.3.tgz#c7e034991864ddca603f95995a7eeb64652d33d4"
-  integrity sha512-SfeR5WTaw8ErtUlR33jVf5fO1dL9/dPHpvA6xuRwwDXsMLbVmSrdEfawWGvlIfqX4xjJFOJUf1R2TAVMCZ9+Kw==
+mantine-datatable@^2.4.16:
+  version "2.4.16"
+  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-2.4.16.tgz#34ef9f4d7079704254bd7e6a3b67abea57128749"
+  integrity sha512-FHN2m9bIhzkKKA76ZfGVM6gB1lmkse4o013LEV3S2j+or1dYLysc1amgYJ9wt3yk6hIWLGvzDDwoQCKQ2098hw==
 
 markerjs2@^2.17.2:
   version "2.29.0"
