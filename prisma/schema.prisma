@@ -131,14 +131,25 @@ model booking {
     total       Float
     phoneNumber String
     guest       Int
-    isDenied    Boolean
-    isReview    Boolean @default(false)
+    isDenied    Boolean?
+    isReview    Boolean?  @default(false)
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
     // review      String   @db.Text
-    rating      Int
+    rating      Int?
     booked      Listing  @relation(fields: [listingId], references: [id])
     guests      User     @relation(fields: [guestId], references: [id])
+}
+
+model prepaidBooking {
+    id          String   @id @default(cuid())
+    guestId     String
+    listingId   String
+    checkIn     DateTime
+    checkOut    DateTime
+    total       Float
+    guest       Int
+    phoneNumber String
 }
 
 model transaction {
@@ -158,17 +169,15 @@ model transaction {
 }
 
 model review {
-    id        String   @id @default(cuid())
+    id String @id @default(cuid())
 
     guestId   String
     listingId String
     comment   String @db.Text
     rating    Int
-  
+
     guests   User    @relation(fields: [guestId], references: [id])
     listings Listing @relation(fields: [listingId], references: [id])
-
-  
 }
 
 model wishList {
@@ -197,7 +206,7 @@ model ListingAmenity {
 }
 
 model Amenity {
-    id   String @id @default(cuid())
-    name String
+    id             String           @id @default(cuid())
+    name           String
     ListingAmenity ListingAmenity[]
 }

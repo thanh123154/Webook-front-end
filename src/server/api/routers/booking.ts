@@ -1,9 +1,10 @@
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { nanoid } from "nanoid";
 
 export const BookingRouter = createTRPCRouter({
-  create: protectedProcedure
+  prepaid: protectedProcedure
     .input(
       z.object({
         guestId: z.string(),
@@ -12,14 +13,38 @@ export const BookingRouter = createTRPCRouter({
         checkOut: z.date(),
         total: z.number(),
         guest: z.number(),
-        isDenied: z.boolean(),
-        rating: z.number(),
         phoneNumber: z.string(),
-        review: z.string(),
       })
     )
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.booking.create({ data: { ...input } });
+    .mutation(async ({ ctx, input }) => {
+      const id = nanoid();
+
+      await ctx.prisma.prepaidBooking.create({
+        data: {
+          id,
+          ...input,
+        },
+      });
+
+      return id;
+    }),
+
+  create: protectedProcedure
+    .input(
+      z.object({
+        prepaidId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input: { prepaidId } }) => {
+      const dataPrepaid = await ctx.prisma.prepaidBooking.findUnique({ where: { id: prepaidId } });
+
+      if (!!dataPrepaid) {
+        await ctx.prisma.prepaidBooking.delete({ where: { id: prepaidId } });
+
+        return ctx.prisma.booking.create({ data: { ...dataPrepaid, isDenied: false } });
+      } else {
+        throw "Prepaid booking not found!";
+      }
     }),
 
   getCurrentBookingByHostId: protectedProcedure
