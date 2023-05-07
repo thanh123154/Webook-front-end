@@ -219,6 +219,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
             active: true,
             detail: info,
             placeId: "123321",
+            approved: false,
             address: addressToSubmit,
             latitude: coordinate.latitude,
             longitude: coordinate.longitude,
