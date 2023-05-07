@@ -39,6 +39,13 @@ model Account {
     @@unique([provider, providerAccountId])
 }
 
+model AdminAccount {
+    id        String   @id @default(cuid())
+    username  String
+    password  String
+    createdAt DateTime @default(now())
+}
+
 model Session {
     id           String   @id @default(cuid())
     sessionToken String   @unique
@@ -97,7 +104,7 @@ model Listing {
     longitude      Float
     createdAt      DateTime @default(now())
     updatedAt      DateTime @updatedAt
-    amenity        String  
+    amenity        String
 
     host           User             @relation(fields: [hostId], references: [id])
     location       place            @relation(fields: [placeId], references: [id])
