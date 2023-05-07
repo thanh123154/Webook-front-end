@@ -82,6 +82,7 @@ export const ListingRouter = createTRPCRouter({
         const data = await ctx.prisma.listing.findMany({
           where: {
             active: true,
+            approved: true,
             guests: {
               gte: totalGuests,
             },

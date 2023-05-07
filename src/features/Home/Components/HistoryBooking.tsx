@@ -43,7 +43,7 @@ const _HistoryBooking: ForwardRefRenderFunction<Ref, Props> = () => {
       setDataTable(currentListing);
     }
   }, [currentListing]);
-  console.log(currentListing, " data table present");
+  console.log(currentListing, "data table present");
 
   // useImperativeHandle(ref, () => ({
   //   refetchFunc: refetch,

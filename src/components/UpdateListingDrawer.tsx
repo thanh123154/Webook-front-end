@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Center,
+  Checkbox,
   Drawer,
   Flex,
   Group,
@@ -12,6 +13,7 @@ import {
   NumberInput,
   ScrollArea,
   SimpleGrid,
+  Switch,
   Text,
   Textarea,
   Title,
@@ -77,6 +79,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
   ref
 ) => {
   const [openedDrawer, setOpened] = useState(false);
+  const [checked, setChecked] = useState(false);
   const [addressToSubmit, setAddressToSubmit] = useState("");
 
   const [dataSearch, setDataSearch] = useState<predictionData[]>([]);
@@ -145,7 +148,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
             ...values,
             gallery: JSON.stringify(allGallery),
             amenity: JSON.stringify(values.amenity),
-            active: true,
+            active: checked,
             detail: info,
             placeId: "123321",
             approved: false,
@@ -216,10 +219,10 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
             ...values,
             gallery: JSON.stringify(allGallery),
             amenity: JSON.stringify(values.amenity),
-            active: true,
             detail: info,
             placeId: "123321",
             approved: false,
+            active: checked,
             address: addressToSubmit,
             latitude: coordinate.latitude,
             longitude: coordinate.longitude,
@@ -274,13 +277,6 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
 
   useImperativeHandle(ref, () => ({
     openDrawer: (data) => {
-      // const newData = data.map(item => {
-      //   return {
-      //     ...item,
-      //     amenity: JSON.parse(item.amenity) as string[]
-      //   };
-      // });
-
       if (data) {
         const newData: NewTableHistoryData = {
           ...data,
@@ -288,7 +284,10 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
         };
 
         setDataDrawer(newData);
+
         form.setValues(newData);
+        setChecked(newData.active);
+        console.log(newData.active, "active data");
         console.log(data, "data khi mo drawer");
         if (data.gallery) {
           setUrlsGallery(JSON.parse(data.gallery) as string[]);
@@ -523,8 +522,14 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
                 setAddressToSubmit(item.description);
               }}
             />
+            <Checkbox
+              checked={checked}
+              onChange={(event) => setChecked(event.currentTarget.checked)}
+              label="Active"
+            />
+            {/* <Switch size="md" title="Active" onLabel="ON" offLabel="OFF" /> */}
+
             <Group>
-              {" "}
               <Button onClick={() => handleClose()} variant="outline">
                 Cancel
               </Button>
