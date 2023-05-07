@@ -6,8 +6,13 @@ import { Header } from "../../layouts";
 // import { Statistic } from "../../features/Host";
 import dynamic from "next/dynamic";
 import ListingManagement from "../../features/Host/ListingManagement";
+import { useProtectedPage } from "../../hooks/useProtectedPage";
 
 const Listing: NextPage = () => {
+  const { isAuthenticating } = useProtectedPage();
+
+  if (isAuthenticating) return <></>;
+
   return (
     <>
       <Head>

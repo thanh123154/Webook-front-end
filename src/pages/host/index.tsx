@@ -5,12 +5,17 @@ import { Box } from "@mantine/core";
 import { Header } from "../../layouts";
 // import { Statistic } from "../../features/Host";
 import dynamic from "next/dynamic";
+import { useProtectedPage } from "../../hooks/useProtectedPage";
 
 const Statistic = dynamic(() => import("../../features/Host/Statistic"), {
   ssr: false,
 });
 
 const Host: NextPage = () => {
+  const { isAuthenticating } = useProtectedPage();
+
+  if (isAuthenticating) return <></>;
+
   return (
     <>
       <Head>

@@ -4,8 +4,13 @@ import Head from "next/head";
 import { Header } from "../../layouts";
 
 import BookingManagement from "../../features/Host/BookingManagement";
+import { useProtectedPage } from "../../hooks/useProtectedPage";
 
 const BookingStatus: NextPage = () => {
+  const { isAuthenticating } = useProtectedPage();
+
+  if (isAuthenticating) return <></>;
+
   return (
     <>
       <Head>

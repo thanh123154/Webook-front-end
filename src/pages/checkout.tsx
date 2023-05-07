@@ -5,8 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { api } from "../utils/api";
+import { useProtectedPage } from "../hooks/useProtectedPage";
 
 const Checkout: NextPage = () => {
+  const { isAuthenticating } = useProtectedPage();
   const { query } = useRouter();
   const effectRan = useRef(false);
 
@@ -39,6 +41,8 @@ const Checkout: NextPage = () => {
       console.log(error);
     }
   };
+
+  if (isAuthenticating) return <></>;
 
   return (
     <Container>

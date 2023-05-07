@@ -3,8 +3,13 @@ import Head from "next/head";
 
 import { Header } from "../layouts";
 import UserBookingManagement from "../features/Home/UserBookingManagement";
+import { useProtectedPage } from "../hooks/useProtectedPage";
 
 const ManageBooking: NextPage = () => {
+  const { isAuthenticating } = useProtectedPage();
+
+  if (isAuthenticating) return <></>;
+
   return (
     <>
       <Head>

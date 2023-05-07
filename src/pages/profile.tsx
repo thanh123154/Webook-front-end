@@ -21,6 +21,7 @@ import { useSession } from "next-auth/react";
 import { AvatarUser } from "../components";
 import { api } from "../utils/api";
 import { z } from "zod";
+import { useProtectedPage } from "../hooks/useProtectedPage";
 
 type PropsForm = {
   name: string;
@@ -38,6 +39,7 @@ const formSchema = z.object({
 });
 
 const Profile: NextPage = () => {
+  const { isAuthenticating } = useProtectedPage();
   const { data: session } = useSession();
   const {
     data: userInfo,
@@ -49,9 +51,7 @@ const Profile: NextPage = () => {
   );
   const { mutateAsync: apiUpdate } = api.user.update.useMutation();
 
-  const [avatar, setAvatar] = useState<
-    StaticImageData | string | undefined | null
-  >();
+  const [avatar, setAvatar] = useState<StaticImageData | string | undefined | null>();
   const [file, setFile] = useState<File | undefined | null>();
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -106,6 +106,9 @@ const Profile: NextPage = () => {
       setIsUpdating(false);
     }
   };
+
+  if (isAuthenticating) return <></>;
+
   return (
     <>
       <Head>
@@ -121,26 +124,13 @@ const Profile: NextPage = () => {
 
         <form onSubmit={form.onSubmit((values) => void handleSubmit(values))}>
           <Center>
-            <AvatarUser
-              src={avatar?.toString()}
-              setAvatar={setAvatar}
-              setFile={setFile}
-            >
+            <AvatarUser src={avatar?.toString()} setAvatar={setAvatar} setFile={setFile}>
               {formatName(session?.user?.name)}
             </AvatarUser>
           </Center>
 
-          <TextInput
-            label="Name"
-            placeholder="Name"
-            {...form.getInputProps("name")}
-          />
-          <TextInput
-            mt="md"
-            label="Email"
-            placeholder="Email"
-            {...form.getInputProps("email")}
-          />
+          <TextInput label="Name" placeholder="Name" {...form.getInputProps("name")} />
+          <TextInput mt="md" label="Email" placeholder="Email" {...form.getInputProps("email")} />
           <TextInput
             mt="md"
             label="Gender"

@@ -3,8 +3,13 @@ import Head from "next/head";
 import { Container, type Sx } from "@mantine/core";
 import { CreateListing } from "../../features/Listing";
 import { Header } from "../../layouts";
+import { useProtectedPage } from "../../hooks/useProtectedPage";
 
-const createListing: NextPage = () => {
+const CreateListingPage: NextPage = () => {
+  const { isAuthenticating } = useProtectedPage();
+
+  if (isAuthenticating) return <></>;
+
   return (
     <>
       <Head>
@@ -20,7 +25,7 @@ const createListing: NextPage = () => {
   );
 };
 
-export default createListing;
+export default CreateListingPage;
 
 const container: Sx = () => ({
   overflow: "hidden",
