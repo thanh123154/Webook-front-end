@@ -108,7 +108,7 @@ export const ListingDetails = () => {
 
             <Overview info={dataListing?.detail} />
           </Box>
-          <Amenity dataFood={["test 1", "test2", "test3"]} />
+          <Amenity dataFood={dataListing?.amenity} />
         </Box>
         {/* reverse  */}
         <Reserve

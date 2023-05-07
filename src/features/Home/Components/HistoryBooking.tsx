@@ -10,6 +10,8 @@ import { type Listing } from "@prisma/client";
 import { type QueryObserverResult } from "@tanstack/react-query";
 import { showNotification } from "@mantine/notifications";
 import moment from "moment";
+import { ReviewModal } from "./ReviewModal";
+import { useDisclosure } from "@mantine/hooks";
 
 type Props = {
   sth?: string;
@@ -36,6 +38,8 @@ const _HistoryBooking: ForwardRefRenderFunction<Ref, Props> = () => {
     { enabled: !!session?.user?.id, refetchOnWindowFocus: false }
   );
   const { mutateAsync: apiAprove } = api.booking.aproveBooking.useMutation();
+  const [opened, { open, close }] = useDisclosure(false);
+
   useEffect(() => {
     if (currentListing) {
       setDataTable(currentListing);
@@ -134,15 +138,28 @@ const _HistoryBooking: ForwardRefRenderFunction<Ref, Props> = () => {
           {
             accessor: "review",
             title: "Review",
-            render: ({ total, id }) => <Button>Review</Button>,
+            render: ({ total, listingId }) => {
+              return (
+                <Box>
+                  <ReviewModal
+                    listingId={listingId}
+                    close={close}
+                    opened={opened}
+                  />
+                  <Button
+                    onClick={open}
+                    // loading={isUpdating}
+                    fz={10}
+                    radius={"xs"}
+                    // disabled={!isDenied}
+                  >
+                    Review
+                  </Button>
+                </Box>
+              );
+            },
           },
         ]}
-        // execute this callback when a row is clicked
-        // onRowClick={(a) => {
-        //   console.log(a, "table");
-
-        //   handleOpen(a);
-        // }}
       />
     </Box>
   );
