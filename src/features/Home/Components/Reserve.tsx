@@ -42,6 +42,8 @@ export const Reserve: React.FC<Props> = ({
   listingId,
   listingName,
 }) => {
+  const { data: session } = useSession();
+
   const [theme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
     defaultValue: "dark",
@@ -63,8 +65,9 @@ export const Reserve: React.FC<Props> = ({
   const formattedPriceLongTerm = `${longTermPrice?.toLocaleString("en-US") ?? "N/A"}`;
   const formattedPriceShortTerm = `${shortTermPrice?.toLocaleString("en-US") ?? "N/A"}`;
 
-  const { mutateAsync: apiCheckout, isLoading: isLoadingCheckout } =
-    api.stripe.checkoutSession.useMutation();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const { mutateAsync: apiCheckout } = api.stripe.checkoutSession.useMutation();
+  const { mutateAsync: apiPrepaid } = api.booking.prepaid.useMutation();
 
   const handlersAdult = useRef<NumberInputHandlers>();
 
@@ -94,14 +97,31 @@ export const Reserve: React.FC<Props> = ({
   });
 
   const handleSubmitCreateBooking = async (values: BookingData) => {
-    if (listingName && listingId) {
+    if (listingName && listingId && session && session.user) {
       localStorage.setItem(keys.BOOKING_TEMP, JSON.stringify(values));
 
       try {
+        setIsCheckingOut(true);
+
+        const prepaidData = {
+          checkIn: values.checkIn,
+          checkOut: values.checkOut,
+          guest: values.guest,
+          phoneNumber: values.phoneNumber,
+          guestId: session.user.id,
+          listingId,
+          total: totalPrice,
+        };
+
+        console.log(prepaidData);
+
+        const bookingId = await apiPrepaid(prepaidData);
+
         const { id: sessionId } = await apiCheckout({
           productName: listingName,
           amount: totalPrice,
           cancelPath: `/listing-details/${listingId}`,
+          bookingId,
         });
 
         const stripe = await getStripe();
@@ -117,6 +137,8 @@ export const Reserve: React.FC<Props> = ({
         } else {
           console.log(error);
         }
+      } finally {
+        setIsCheckingOut(false);
       }
     }
   };
@@ -224,14 +246,7 @@ export const Reserve: React.FC<Props> = ({
           />
         </Center>
 
-        <Button
-          loading={isLoadingCheckout}
-          type="submit"
-          mt={32}
-          size="lg"
-          w={"100%"}
-          bg={"#3B71FE"}
-        >
+        <Button loading={isCheckingOut} type="submit" mt={32} size="lg" w={"100%"} bg={"#3B71FE"}>
           Reserve
         </Button>
       </form>

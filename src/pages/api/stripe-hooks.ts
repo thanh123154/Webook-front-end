@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { stripe } from "../../libs/stripe-server";
 import Cors from "micro-cors";
 import { buffer } from "micro";
+import { prisma } from "../../server/db";
 
 const cors = Cors({
   allowMethods: ["POST", "HEAD"],
@@ -19,9 +20,24 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       if (signature) {
         const event = stripe.webhooks.constructEvent(reqBuffer, signature, signingSecret);
 
-        console.log();
-        console.log("Data isssss", event.data.object);
-        console.log();
+        const data = JSON.parse(JSON.stringify(event.data.object)) as { success_url: string };
+        const code = new URLSearchParams(new URL(data.success_url).search).get("code");
+
+        console.log("Booking id", code);
+
+        if (code) {
+          const dataPrepaid = await prisma.prepaidBooking.findUnique({ where: { id: code } });
+
+          if (!!dataPrepaid) {
+            await prisma.prepaidBooking.delete({ where: { id: code } });
+
+            return prisma.booking.create({ data: { ...dataPrepaid, isDenied: false } });
+          } else {
+            throw "Prepaid booking not found!";
+          }
+        } else {
+          throw "Prepaid booking id not found!";
+        }
       }
     } catch (error) {
       console.log(error);
