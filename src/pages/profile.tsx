@@ -8,6 +8,7 @@ import {
   Group,
   Center,
   LoadingOverlay,
+  Radio,
 } from "@mantine/core";
 
 import React, { Suspense, useState } from "react";
@@ -32,10 +33,6 @@ type PropsForm = {
 const formSchema = z.object({
   name: z.string().min(1, { message: "Please enter name" }),
   email: z.string().email({ message: "Invalid email" }),
-  gender: z.enum(["Male", "Female", "Other"], {
-    required_error: "Please select gender",
-    invalid_type_error: "Please select gender",
-  }),
 });
 
 const Profile: NextPage = () => {
@@ -51,9 +48,13 @@ const Profile: NextPage = () => {
   );
   const { mutateAsync: apiUpdate } = api.user.update.useMutation();
 
-  const [avatar, setAvatar] = useState<StaticImageData | string | undefined | null>();
+  const [avatar, setAvatar] = useState<
+    StaticImageData | string | undefined | null
+  >();
   const [file, setFile] = useState<File | undefined | null>();
   const [isUpdating, setIsUpdating] = useState(false);
+
+  const [valueGender, setValueGender] = useState("");
 
   const form = useForm<PropsForm>({
     initialValues: {
@@ -70,7 +71,8 @@ const Profile: NextPage = () => {
     if (userInfo) {
       form.setFieldValue("name", userInfo.name || "");
       form.setFieldValue("email", userInfo.email || "");
-      form.setFieldValue("gender", userInfo.gender || "");
+      setValueGender(userInfo.gender || "male");
+      // form.setFieldValue("gender", userInfo.gender || "");
 
       setAvatar(userInfo.image);
     }
@@ -87,7 +89,7 @@ const Profile: NextPage = () => {
       const updatedUserData = {
         name: values.name,
         email: values.email,
-        gender: values.gender,
+        gender: valueGender,
         image: avatar,
       };
 
@@ -124,19 +126,42 @@ const Profile: NextPage = () => {
 
         <form onSubmit={form.onSubmit((values) => void handleSubmit(values))}>
           <Center>
-            <AvatarUser src={avatar?.toString()} setAvatar={setAvatar} setFile={setFile}>
+            <AvatarUser
+              src={avatar?.toString()}
+              setAvatar={setAvatar}
+              setFile={setFile}
+            >
               {formatName(session?.user?.name)}
             </AvatarUser>
           </Center>
 
-          <TextInput label="Name" placeholder="Name" {...form.getInputProps("name")} />
-          <TextInput mt="md" label="Email" placeholder="Email" {...form.getInputProps("email")} />
+          <TextInput
+            label="Name"
+            placeholder="Name"
+            {...form.getInputProps("name")}
+          />
           <TextInput
             mt="md"
-            label="Gender"
-            placeholder="Gender"
-            {...form.getInputProps("gender")}
+            label="Email"
+            placeholder="Email"
+            {...form.getInputProps("email")}
           />
+
+          <Group mt="xs">
+            <Radio.Group
+              value={valueGender}
+              onChange={setValueGender}
+              // name="favoriteFramework"
+              label="Gender"
+              // description="This is anonymous"
+              withAsterisk
+            >
+              {" "}
+              <Radio value="male" label="Male" />
+              <Radio value="female" label="Female" />
+              <Radio value="other" label="Other" />
+            </Radio.Group>
+          </Group>
 
           <Group position="center" mt="xl">
             <Button

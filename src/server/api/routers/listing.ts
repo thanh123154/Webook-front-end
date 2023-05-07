@@ -156,7 +156,7 @@ export const ListingRouter = createTRPCRouter({
     .query(({ input: { id }, ctx }) => {
       return ctx.prisma.listing.findUnique({
         where: { id },
-        include: { host: true },
+        include: { host: true, review: true },
       });
     }),
 

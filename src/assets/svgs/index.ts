@@ -12,8 +12,10 @@ import Calenda from "./Calenda.svg";
 import Who from "./Who.svg";
 import Flag from "./Flag.svg";
 import Person from "./Person.svg";
+import Star from "./Star.svg";
 
 export {
+  Star,
   Person,
   Flag,
   Calenda,

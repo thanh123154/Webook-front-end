@@ -20,6 +20,7 @@ type Props = {
   setValue: React.Dispatch<React.SetStateAction<number>>;
   title: string;
   form: UseFormReturnType<any>;
+  maxGuests: number;
 };
 
 export const GuestDropDown: React.FC<Props> = ({
@@ -30,6 +31,7 @@ export const GuestDropDown: React.FC<Props> = ({
   xref,
   title,
   form,
+  maxGuests,
   ...props
 }) => {
   return (
@@ -46,7 +48,7 @@ export const GuestDropDown: React.FC<Props> = ({
           mah={36}
           hideControls
           handlersRef={xref}
-          max={10}
+          max={maxGuests}
           min={0}
           step={1}
           styles={{ input: { width: 54, textAlign: "center" } }}

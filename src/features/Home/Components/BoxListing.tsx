@@ -7,6 +7,7 @@ import { AiFillStar } from "react-icons/ai";
 import { nanoid } from "nanoid";
 import Link from "next/link";
 import { type ListingData, type TableHistoryData } from "../../../types";
+import moment from "moment";
 
 type Props = {
   dataPic: string;
@@ -81,12 +82,12 @@ export const BoxListing: React.FC<Props> = ({
 
       <Flex mt={14} align={"center"} justify={"space-between"}>
         <Text pos={"relative"} top={5} pb={16} c={"#7D7C84"} fz={16}>
-          Jul 20-24
+          {moment(dataListing.createdAt).format("MMM D")}
         </Text>
 
         <Flex align={"flex-end"}>
           <Title fw={500} fz={16}>
-            {longTermPrice} vnd
+            {longTermPrice.toLocaleString()} vnd
           </Title>
 
           <Title fw={500} fz={13}>

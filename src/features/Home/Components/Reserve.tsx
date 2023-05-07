@@ -33,6 +33,7 @@ type Props = {
   shortTermPrice: number | undefined;
   listingId?: string;
   listingName?: string;
+  guests: number;
 };
 
 export const Reserve: React.FC<Props> = ({
@@ -41,6 +42,7 @@ export const Reserve: React.FC<Props> = ({
   shortTermPrice,
   listingId,
   listingName,
+  guests,
 }) => {
   const [theme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
@@ -138,6 +140,7 @@ export const Reserve: React.FC<Props> = ({
   return (
     <Box
       w={418}
+      mah={900}
       sx={{
         border: "1px solid #E9EBED",
         borderRadius: "24px",
@@ -196,6 +199,7 @@ export const Reserve: React.FC<Props> = ({
         </Group>
 
         <GuestDropDown
+          maxGuests={guests}
           form={form}
           xref={handlersAdult}
           decrement={decrementAdult}

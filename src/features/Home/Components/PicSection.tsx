@@ -14,7 +14,7 @@ export const PicSection: React.FC<Props> = ({ dataPic }) => {
   React.useEffect(() => {
     dataPic && setArrayPic(JSON.parse(dataPic) as string[]);
   }, [dataPic]);
-
+  // console.log(arrayPic, "pic");
   return (
     <Flex gap={24}>
       <AspectRatio

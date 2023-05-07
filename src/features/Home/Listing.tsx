@@ -23,6 +23,7 @@ export const Listing = () => {
     }
   );
 
+  console.log(allListing, "all listing");
   return (
     <Container py={50} size={1440} px={{ base: "20px", sm: "120px" }}>
       <LoadingOverlay visible={isLoading} />

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const ReviewRouter = createTRPCRouter({
   create: protectedProcedure
@@ -31,5 +31,18 @@ export const ReviewRouter = createTRPCRouter({
       delete input.bookingId;
 
       return ctx.prisma.review.create({ data: { ...input } });
+    }),
+
+  getReviewByListingId: publicProcedure
+    .input(
+      z.object({
+        listingId: z.string(),
+      })
+    )
+    .query(({ input: { listingId }, ctx }) => {
+      return ctx.prisma.review.findMany({
+        where: { listingId },
+        include: { guests: true },
+      });
     }),
 });

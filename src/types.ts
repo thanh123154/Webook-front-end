@@ -93,7 +93,7 @@ export type ListingData = {
   createdAt: Date;
   updatedAt: Date;
 
-  review: Array<ReviewType>;
+  review: ReviewType[];
 };
 
 export type ListingAndUserData = {
@@ -116,6 +116,7 @@ export type ListingAndUserData = {
   approved: boolean;
   createdAt: Date;
   updatedAt: Date;
+  // review: Array<ReviewType>;
 };
 
 // export type Amenity = {
@@ -175,4 +176,5 @@ export type ReviewType = {
   listingId: string;
   comment: string;
   rating: number;
+  guests: User;
 };

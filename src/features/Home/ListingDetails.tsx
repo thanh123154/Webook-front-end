@@ -21,6 +21,7 @@ import { api } from "../../utils/api";
 import { useRouter } from "next/router";
 import { type ListingAndUserData } from "../../types";
 import moment from "moment";
+import { Review } from "./Components/Review";
 
 export const ListingDetails = () => {
   const [currentAction, setCurrentAction] = useState("overview");
@@ -101,26 +102,34 @@ export const ListingDetails = () => {
             <Group>
               <Button
                 onClick={() => setCurrentAction("overview")}
-                c={"white"}
-                bg={"black"}
+                c={currentAction === "overview" ? "white" : "black"}
+                variant={currentAction === "overview" ? "white" : "default"}
+                bg={currentAction === "overview" ? "black" : "white"}
               >
                 Overview
               </Button>
 
               <Button
                 onClick={() => setCurrentAction("review")}
-                variant="default"
+                c={currentAction === "review" ? "white" : "black"}
+                variant={currentAction === "review" ? "white" : "default"}
+                bg={currentAction === "review" ? "black" : "white"}
               >
                 Review
               </Button>
             </Group>
-            {}
-            <Overview info={dataListing?.detail} />
+
+            {currentAction === "review" ? (
+              <Review listingId={dataListing?.id} />
+            ) : (
+              <Overview info={dataListing?.detail} />
+            )}
           </Box>
           <Amenity dataFood={dataListing?.amenity} />
         </Box>
         {/* reverse  */}
         <Reserve
+          guests={dataListing?.guests || 10}
           listingId={dataListing?.id}
           place={dataListing?.address}
           longTermPrice={dataListing?.priceLongTerm}
