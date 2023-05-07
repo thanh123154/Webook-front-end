@@ -7,7 +7,6 @@ import React, { useEffect, useState } from "react";
 import { MdSwapHorizontalCircle } from "react-icons/md";
 import { AiFillSetting } from "react-icons/ai";
 import { RiLoginCircleFill } from "react-icons/ri";
-import { api } from "../../utils/api";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useDisclosure } from "@mantine/hooks";
@@ -24,7 +23,7 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
   const label = opened ? "Close navigation" : "Open navigation";
   const [openedLogin, setOpenedLogin] = useState(false);
 
-  const { data: sessionData } = useSession();
+  const { data: sessionData, status } = useSession();
 
   useEffect(() => {
     !isRendered && setIsRendered(true);
@@ -44,15 +43,11 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
         <Menu.Label>Application</Menu.Label>
         {router.asPath.includes("host") && sessionData ? (
           <Link href={"/"}>
-            <Menu.Item icon={<MdSwapHorizontalCircle />}>
-              Switch to guest
-            </Menu.Item>
+            <Menu.Item icon={<MdSwapHorizontalCircle />}>Switch to guest</Menu.Item>
           </Link>
         ) : sessionData ? (
           <Link href={"/host"}>
-            <Menu.Item icon={<MdSwapHorizontalCircle />}>
-              Switch to hosting
-            </Menu.Item>
+            <Menu.Item icon={<MdSwapHorizontalCircle />}>Switch to hosting</Menu.Item>
           </Link>
         ) : (
           ""
@@ -62,34 +57,31 @@ export const MenuDropDown: React.FC<Props> = ({ index }) => {
 
         <Menu.Label>Danger zone</Menu.Label>
         <Menu.Item
-          onClick={
-            sessionData ? () => void signOut() : () => void signIn("google")
-          }
+          onClick={sessionData ? () => void signOut() : () => void signIn("google")}
           icon={<RiLoginCircleFill />}
         >
           {sessionData ? "Log out" : "Log in as google"}
         </Menu.Item>
 
-        {router.asPath.includes("/host") && (
+        {status === "authenticated" && router.asPath.includes("/host") && (
           <Link href={"/host/listing"}>
             <Menu.Item icon={<MdSwapHorizontalCircle />}>Listing</Menu.Item>
           </Link>
         )}
-        <Link href={"/profile"}>
-          {" "}
-          <Menu.Item icon={<AiFillSetting />}>Profile</Menu.Item>
-        </Link>
+        {status === "authenticated" && (
+          <Link href={"/profile"}>
+            <Menu.Item icon={<AiFillSetting />}>Profile</Menu.Item>
+          </Link>
+        )}
 
-        {router.asPath.includes("/host") && (
+        {status === "authenticated" && router.asPath.includes("/host") && (
           <Link href={"/host/booking-status"}>
-            {" "}
             <Menu.Item icon={<AiFillSetting />}>Booking Status</Menu.Item>
           </Link>
         )}
 
-        {!router.asPath.includes("/host") && (
+        {status === "authenticated" && !router.asPath.includes("/host") && (
           <Link href={"/manage-booking"}>
-            {" "}
             <Menu.Item icon={<AiFillSetting />}>Manage Booking</Menu.Item>
           </Link>
         )}
