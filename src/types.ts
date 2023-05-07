@@ -92,6 +92,8 @@ export type ListingData = {
   approved: boolean;
   createdAt: Date;
   updatedAt: Date;
+
+  review: Array<ReviewType>;
 };
 
 export type ListingAndUserData = {
@@ -157,7 +159,8 @@ export type BookingData = {
   isDenied: boolean;
   rating: number;
   phoneNumber: string;
-  review: string;
+
+  isReview: boolean;
 };
 
 export type FormSearchListingProps = {
@@ -167,7 +170,8 @@ export type FormSearchListingProps = {
 };
 
 export type ReviewType = {
-  hostId: string;
+  guestId: string;
+  id: string;
   listingId: string;
   comment: string;
   rating: number;

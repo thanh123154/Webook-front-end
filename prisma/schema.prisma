@@ -132,9 +132,10 @@ model booking {
     phoneNumber String
     guest       Int
     isDenied    Boolean
+    isReview    Boolean @default(false)
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
-    review      String   @db.Text
+    // review      String   @db.Text
     rating      Int
     booked      Listing  @relation(fields: [listingId], references: [id])
     guests      User     @relation(fields: [guestId], references: [id])
@@ -157,15 +158,17 @@ model transaction {
 }
 
 model review {
+    id        String   @id @default(cuid())
+
     guestId   String
     listingId String
     comment   String @db.Text
     rating    Int
-    isReview Boolean @default(false)
+  
     guests   User    @relation(fields: [guestId], references: [id])
     listings Listing @relation(fields: [listingId], references: [id])
 
-    @@id([guestId, listingId])
+  
 }
 
 model wishList {

@@ -37,8 +37,6 @@ const _HistoryBooking: ForwardRefRenderFunction<Ref, Props> = () => {
 
     { enabled: !!session?.user?.id, refetchOnWindowFocus: false }
   );
-  const { mutateAsync: apiAprove } = api.booking.aproveBooking.useMutation();
-  const [opened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {
     if (currentListing) {
@@ -50,36 +48,40 @@ const _HistoryBooking: ForwardRefRenderFunction<Ref, Props> = () => {
   // useImperativeHandle(ref, () => ({
   //   refetchFunc: refetch,
   // }));
+  const handleRefetch = async () => {
+    await refetch();
+  };
 
-  const handleUpdateApprove = async (id: string) => {
-    try {
-      // setIsUpdating(true);
-
-      // Prepare updated user data
-      const data = {
-        isDenied: false,
-      };
-
-      // Call the update user API endpoint
-      await apiAprove({
-        ...data,
-        id: id,
-      });
-
-      // Refetch the updated user data
-      await refetch();
-      // Clear the file input and reset the form
-      showNotification({
-        color: "green",
-        message: "Approve booking successfully",
-      });
-
-      refetch;
-    } catch (error) {
-      console.log(error);
-    } finally {
-      // setIsLo(false);
-    }
+  const ButtonReview = ({
+    id,
+    listingId,
+    isReview,
+  }: {
+    id: string;
+    listingId: string;
+    isReview: boolean;
+  }) => {
+    const [opened, { open, close }] = useDisclosure(false);
+    return (
+      <Box>
+        <ReviewModal
+          refetch={() => handleRefetch()}
+          idBooking={id}
+          listingId={listingId}
+          close={close}
+          opened={opened}
+        />
+        <Button
+          onClick={open}
+          // loading={isUpdating}
+          fz={10}
+          radius={"xs"}
+          disabled={isReview}
+        >
+          Review
+        </Button>
+      </Box>
+    );
   };
 
   return (
@@ -100,16 +102,6 @@ const _HistoryBooking: ForwardRefRenderFunction<Ref, Props> = () => {
             accessor: "guests.name",
             title: "Host name",
           },
-
-          // {
-          //   accessor: "phoneNumber",
-          //   title: "Phone Number",
-          // },
-
-          // {
-          //   accessor: "guests.email",
-          //   title: "Email",
-          // },
           {
             accessor: "booked.name",
             title: "Listing Name",
@@ -138,26 +130,15 @@ const _HistoryBooking: ForwardRefRenderFunction<Ref, Props> = () => {
           {
             accessor: "review",
             title: "Review",
-            render: ({ total, listingId }) => {
-              return (
-                <Box>
-                  <ReviewModal
-                    listingId={listingId}
-                    close={close}
-                    opened={opened}
-                  />
-                  <Button
-                    onClick={open}
-                    // loading={isUpdating}
-                    fz={10}
-                    radius={"xs"}
-                    // disabled={!isDenied}
-                  >
-                    Review
-                  </Button>
-                </Box>
-              );
-            },
+            render: ({ id, isReview, listingId }) => (
+              <Box>
+                <ButtonReview
+                  id={id}
+                  isReview={isReview}
+                  listingId={listingId}
+                />
+              </Box>
+            ),
           },
         ]}
       />

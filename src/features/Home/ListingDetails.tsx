@@ -23,6 +23,7 @@ import { type ListingAndUserData } from "../../types";
 import moment from "moment";
 
 export const ListingDetails = () => {
+  const [currentAction, setCurrentAction] = useState("overview");
   const router = useRouter();
   const listingDetail = router.query["listing-detail"] as string[] | undefined;
   const productId = listingDetail ? listingDetail[1] : undefined;
@@ -48,7 +49,6 @@ export const ListingDetails = () => {
     }
   }, [listing]);
 
-  console.log(dataListing, "data listing");
   return (
     <Container mt={0} py={50} size={1440} px={{ base: "20px", sm: "120px" }}>
       <LoadingOverlay visible={isLoading} />
@@ -99,13 +99,22 @@ export const ListingDetails = () => {
           {/* overview hay review */}
           <Box mt={48}>
             <Group>
-              <Button c={"white"} bg={"black"}>
+              <Button
+                onClick={() => setCurrentAction("overview")}
+                c={"white"}
+                bg={"black"}
+              >
                 Overview
               </Button>
 
-              <Button variant="default">40+ Review</Button>
+              <Button
+                onClick={() => setCurrentAction("review")}
+                variant="default"
+              >
+                Review
+              </Button>
             </Group>
-
+            {}
             <Overview info={dataListing?.detail} />
           </Box>
           <Amenity dataFood={dataListing?.amenity} />
