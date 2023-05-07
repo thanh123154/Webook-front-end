@@ -84,6 +84,8 @@ export const ReviewModal: React.FC<Props> = ({ opened, close, listingId }) => {
     validate: zodResolver(formSchema),
   });
 
+  console.log(listingId, "id");
+
   const handleSubmit = async (values: ReviewType) => {
     console.log(values, "day la value review");
 
