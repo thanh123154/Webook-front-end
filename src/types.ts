@@ -1,4 +1,5 @@
 import { type User } from "@prisma/client";
+import { DocumentData, QueryDocumentSnapshot, Timestamp } from "firebase/firestore";
 import { type StaticImageData } from "next/image";
 
 export type Override<T1, T2> = Omit<T1, keyof T2> & T2;
@@ -177,3 +178,22 @@ export type ReviewType = {
   rating: number;
   guests: User;
 };
+
+export interface IConversation {
+  id: string;
+  members: string[];
+  updatedAt: Timestamp;
+  doc: QueryDocumentSnapshot<DocumentData>;
+}
+
+export interface IMessage {
+  id: string;
+  message: string;
+  sender: string;
+  createdAt: Timestamp;
+}
+
+export interface ISelectedConversation {
+  otherPerson: User;
+  conversation: IConversation;
+}

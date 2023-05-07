@@ -30,18 +30,21 @@ const Home: NextPage = () => {
   const [isAuthenticating, setIsAuthenticating] = React.useState(true);
   const [adminSession, setAdminSession] = useSessionStorage<boolean>({
     key: keys.ADMIN_SESSION,
+    defaultValue: false,
   });
 
   React.useEffect(() => {
-    if (adminSession !== undefined && adminSession !== null) {
-      if (!adminSession) {
-        void router.push("/admin/login");
-      } else {
-        setIsAuthenticating(false);
-      }
-    } else {
-      setIsAuthenticating(false);
-    }
+    console.log(adminSession);
+
+    // if (adminSession !== undefined && adminSession !== null) {
+    //   if (!adminSession) {
+    //     void router.push("/admin/login");
+    //   } else {
+    //     setIsAuthenticating(false);
+    //   }
+    // } else {
+    //   setIsAuthenticating(false);
+    // }
   }, [adminSession, router]);
 
   const heads = (
