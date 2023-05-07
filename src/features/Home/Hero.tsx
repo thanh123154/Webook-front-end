@@ -1,12 +1,4 @@
-import {
-  Box,
-  type ColorScheme,
-  Container,
-  Flex,
-  Tabs,
-  Text,
-  Title,
-} from "@mantine/core";
+import { Box, type ColorScheme, Container, Flex, Tabs, Text, Title } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
 
 import React from "react";
@@ -14,7 +6,7 @@ import React from "react";
 import { SearchBarSpecial } from "../../layouts/components";
 
 export const Hero = () => {
-  const [theme, setTheme] = useLocalStorage<ColorScheme>({
+  const [theme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
     defaultValue: "dark",
   });
@@ -34,8 +26,8 @@ export const Hero = () => {
         </Title>
 
         <Text mt={20} maw={600} c={"#7D7C84"}>
-          When you&apos;re traveling, do you want to make sure your hotel has a
-          nice pool? Or maybe a happy hour with good deals on drinks? There
+          When you&apos;re traveling, do you want to make sure your hotel has a nice pool? Or maybe
+          a happy hour with good deals on drinks? There
         </Text>
 
         <Tabs mt={48} defaultValue="stays" activateTabWithKeyboard={false}>

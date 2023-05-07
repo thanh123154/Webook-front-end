@@ -1,8 +1,7 @@
 import { AspectRatio, Flex } from "@mantine/core";
-import Image, { type StaticImageData } from "next/image";
+import Image from "next/image";
 
 import React, { useState } from "react";
-import { Pic1 } from "../../../assets/imgs";
 
 type Props = {
   dataPic?: string;

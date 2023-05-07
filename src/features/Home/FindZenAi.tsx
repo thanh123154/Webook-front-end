@@ -1,12 +1,4 @@
-import {
-  AspectRatio,
-  Box,
-  Flex,
-  MantineTheme,
-  type Sx,
-  Text,
-  Title,
-} from "@mantine/core";
+import { AspectRatio, Box, Flex, type MantineTheme, type Sx, Text, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/dist/ScrollTrigger";

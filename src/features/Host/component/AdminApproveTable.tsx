@@ -1,23 +1,12 @@
-import { Box, LoadingOverlay } from "@mantine/core";
-import { DataTable } from "mantine-datatable";
+import { Box, LoadingOverlay, Table } from "@mantine/core";
 import type { ForwardRefRenderFunction } from "react";
-import React, {
-  useState,
-  type ElementRef,
-  useRef,
-  useEffect,
-  useImperativeHandle,
-  forwardRef,
-} from "react";
-import { UpdateListingDrawer } from "../../../components/UpdateListingDrawer";
-import { type TableHistoryData } from "../../../types";
+import React, { useImperativeHandle, forwardRef } from "react";
 import { api } from "../../../utils/api";
 import { useSession } from "next-auth/react";
 
 import { type Listing } from "@prisma/client";
 import { type QueryObserverResult } from "@tanstack/react-query";
-import { TableColunm } from "../../../constants/TableListingColunm";
-import { useRefPortal } from "../../../hooks";
+import { nanoid } from "nanoid";
 
 type Props = {
   sth?: string;
@@ -27,24 +16,7 @@ type Ref = {
   refetchFunc: () => Promise<QueryObserverResult<Listing[]>>;
 };
 
-// type DetailListing = ElementRef<typeof UpdateListingDrawer>;
-
-const _AdminApproveTable: ForwardRefRenderFunction<Ref, Props> = (
-  { sth },
-  ref
-) => {
-  const updateListingDrawerRef = useRefPortal<typeof UpdateListingDrawer>();
-
-  // const handleOpen = (data: TableHistoryData) => {
-  //   return updateListingDrawerRef.current?.openDrawer(data);
-  // };
-
-  // const handleClose = () => {
-  //   return updateListingDrawerRef.current?.closeDrawer();
-  // };
-
-  const [dataTable, setDataTable] = useState<TableHistoryData[]>([]);
-
+const _AdminApproveTable: ForwardRefRenderFunction<Ref, Props> = ({ sth }, ref) => {
   const { data: session } = useSession();
   const {
     data: currentListing,
@@ -56,33 +28,75 @@ const _AdminApproveTable: ForwardRefRenderFunction<Ref, Props> = (
     { enabled: !!session?.user?.id, refetchOnWindowFocus: false }
   );
 
-  useEffect(() => {
-    if (currentListing) {
-      setDataTable(currentListing);
-    }
-  }, [currentListing]);
-
   useImperativeHandle(ref, () => ({
     refetchFunc: refetch,
   }));
+
+  const heads = (
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Address</th>
+        <th>Price Long Term</th>
+        <th>Price Short Term</th>
+        <th>Description</th>
+        <th>Beds</th>
+        <th>Bedsrooms</th>
+        <th>Bathrooms</th>
+        <th>Guests</th>
+        <th>Approved</th>
+        <th>Active</th>
+      </tr>
+    </thead>
+  );
+
+  const rows = (
+    <tbody>
+      {isLoading ? (
+        <tr>
+          <td
+            colSpan={11}
+            style={{ textAlign: "center", fontSize: 20, paddingBlock: 50, fontWeight: "bold" }}
+          >
+            Loading...
+          </td>
+        </tr>
+      ) : !currentListing || !currentListing.length ? (
+        <tr>
+          <td
+            colSpan={11}
+            style={{ textAlign: "center", fontSize: 20, paddingBlock: 50, fontWeight: "bold" }}
+          >
+            No Data
+          </td>
+        </tr>
+      ) : (
+        currentListing.map((item) => (
+          <tr key={nanoid()}>
+            <td>{item.name}</td>
+            <td>{item.address}</td>
+            <td>{item.priceLongTerm.toLocaleString("en-US") ?? "N/A"} vnđ</td>
+            <td>{item.priceShortTerm.toLocaleString("en-US") ?? "N/A"} vnđ</td>
+            <td>{item.desc}</td>
+            <td>{item.beds}</td>
+            <td>{item.bedsrooms}</td>
+            <td>{item.bathrooms}</td>
+            <td>{item.guests}</td>
+          </tr>
+        ))
+      )}
+    </tbody>
+  );
 
   return (
     <Box>
       <LoadingOverlay visible={isLoading} />
 
-      <DataTable
-        mt={20}
-        withBorder
-        borderRadius="sm"
-        // withColumnBorders
-        striped
-        highlightOnHover
-        // provide data
-        records={dataTable}
-        // define columns
-        columns={TableColunm.tableListingColunm}
-        // execute this callback when a row is clicked
-      />
+      <Table>
+        {heads}
+
+        {rows}
+      </Table>
     </Box>
   );
 };

@@ -1,16 +1,6 @@
-import {
-  Button,
-  Container,
-  Flex,
-  Group,
-  NumberInput,
-  Textarea,
-} from "@mantine/core";
-import { useForm, zodResolver } from "@mantine/form";
-import { useSession } from "next-auth/react";
-import React, { useState } from "react";
+import { Container } from "@mantine/core";
+import React from "react";
 import { z } from "zod";
-import { api } from "../../../utils/api";
 
 type Props = {
   nextStep: () => void;

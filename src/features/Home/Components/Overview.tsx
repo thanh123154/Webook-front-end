@@ -1,6 +1,4 @@
-import { Box, Spoiler, Text } from "@mantine/core";
-
-import { type StaticImageData } from "next/image";
+import { Box, Spoiler } from "@mantine/core";
 
 import React from "react";
 

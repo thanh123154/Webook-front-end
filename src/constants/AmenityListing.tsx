@@ -1,4 +1,3 @@
-import { BsShop } from "react-icons/bs";
 import { BiFridge } from "react-icons/bi";
 import { RiComputerLine } from "react-icons/ri";
 import {

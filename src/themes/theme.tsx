@@ -1,8 +1,4 @@
-import {
-  type ColorScheme,
-  MantineProvider,
-  type MantineProviderProps,
-} from "@mantine/core";
+import { type ColorScheme, MantineProvider, type MantineProviderProps } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
 import { NotificationsProvider } from "@mantine/notifications";
 import React from "react";
@@ -10,7 +6,7 @@ import React from "react";
 import { fonts } from "./fonts";
 
 export const ThemeProvider: React.FC<MantineProviderProps> = ({ children }) => {
-  const [theme, setTheme] = useLocalStorage<ColorScheme>({
+  const [theme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
     defaultValue: "dark",
   });

@@ -11,9 +11,8 @@ import {
   Radio,
 } from "@mantine/core";
 
-import React, { Suspense, useState } from "react";
+import React, { useState } from "react";
 import { useForm, zodResolver } from "@mantine/form";
-import { randomId, useDisclosure } from "@mantine/hooks";
 import { Header } from "../layouts";
 
 import { type StaticImageData } from "next/image";

@@ -1,15 +1,6 @@
-import {
-  Button,
-  Center,
-  Container,
-  Group,
-  Loader,
-  Stepper,
-  Title,
-} from "@mantine/core";
+import { Center, Container, Group, Loader, Stepper, Title } from "@mantine/core";
 
 import React, { useState } from "react";
-import { z } from "zod";
 
 import { Step1 } from "./component/Step1";
 import { Step2 } from "./component/Step2";
@@ -18,10 +9,8 @@ import { Step4 } from "./component/Step4";
 
 export const CreateListing = () => {
   const [active, setActive] = useState(0);
-  const nextStep = () =>
-    setActive((current) => (current < 4 ? current + 1 : current));
-  const prevStep = () =>
-    setActive((current) => (current > 0 ? current - 1 : current));
+  const nextStep = () => setActive((current) => (current < 4 ? current + 1 : current));
+  const prevStep = () => setActive((current) => (current > 0 ? current - 1 : current));
 
   return (
     <Container py={50} size={1440} px={{ base: "20px", sm: "20px" }}>
@@ -48,10 +37,7 @@ export const CreateListing = () => {
             {" "}
             <Group>
               {" "}
-              <Title>
-                Completed , Please wait for your residence to be approved
-              </Title>{" "}
-              <Loader />
+              <Title>Completed , Please wait for your residence to be approved</Title> <Loader />
             </Group>
           </Center>
         </Stepper.Completed>

@@ -1,4 +1,4 @@
-import { Box, ColorScheme, Container, Title } from "@mantine/core";
+import { Box, type ColorScheme, Container, Title } from "@mantine/core";
 import React from "react";
 import themeDark from "@amcharts/amcharts5/themes/Dark";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
@@ -7,7 +7,7 @@ import * as am5xy from "@amcharts/amcharts5/xy";
 import { useLocalStorage } from "@mantine/hooks";
 
 const Statistic = () => {
-  const [theme, setTheme] = useLocalStorage<ColorScheme>({
+  const [theme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
     defaultValue: "dark",
   });

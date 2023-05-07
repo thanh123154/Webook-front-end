@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ActionIcon,
   Flex,
@@ -9,7 +10,6 @@ import {
 import { type UseFormReturnType } from "@mantine/form";
 
 import React from "react";
-import { type BookingData } from "../../types";
 
 type Props = {
   value: number;
@@ -24,10 +24,8 @@ type Props = {
 };
 
 export const GuestDropDown: React.FC<Props> = ({
-  value,
   increment,
   decrement,
-  setValue,
   xref,
   title,
   form,

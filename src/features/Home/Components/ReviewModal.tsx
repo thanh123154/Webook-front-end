@@ -1,11 +1,4 @@
-import {
-  Modal,
-  Textarea,
-  Rating,
-  useMantineTheme,
-  Title,
-  Button,
-} from "@mantine/core";
+import { Modal, Textarea, Rating, useMantineTheme, Button } from "@mantine/core";
 import React from "react";
 import {
   IconMoodEmpty,
@@ -32,13 +25,7 @@ type Props = {
 
 // icon only
 
-export const ReviewModal: React.FC<Props> = ({
-  opened,
-  close,
-  listingId,
-  idBooking,
-  refetch,
-}) => {
+export const ReviewModal: React.FC<Props> = ({ opened, close, listingId, idBooking, refetch }) => {
   const theme = useMantineTheme();
   const getEmptyIcon = (value: number) => {
     const defaultProps = { size: 24, color: "gray" };
@@ -67,15 +54,11 @@ export const ReviewModal: React.FC<Props> = ({
       case 2:
         return <IconMoodSad {...defaultProps} color={theme.colors.orange[7]} />;
       case 3:
-        return (
-          <IconMoodSmile {...defaultProps} color={theme.colors.yellow[7]} />
-        );
+        return <IconMoodSmile {...defaultProps} color={theme.colors.yellow[7]} />;
       case 4:
         return <IconMoodHappy {...defaultProps} color={theme.colors.lime[7]} />;
       case 5:
-        return (
-          <IconMoodCrazyHappy {...defaultProps} color={theme.colors.green[7]} />
-        );
+        return <IconMoodCrazyHappy {...defaultProps} color={theme.colors.green[7]} />;
       default:
         return <IconMoodEmpty {...defaultProps} />;
     }

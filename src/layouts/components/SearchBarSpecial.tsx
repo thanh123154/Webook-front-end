@@ -2,27 +2,24 @@ import {
   Button,
   type ColorScheme,
   Flex,
-  Text,
   TextInput,
   Popover,
   type NumberInputHandlers,
   Autocomplete,
-  AutocompleteItem,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 
 import { useLocalStorage } from "@mantine/hooks";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Calenda, Location, Who } from "../../assets/svgs";
 import { BsSearch } from "react-icons/bs";
 import { GuestDropDown } from "./GuestDropDown";
 import axios from "axios";
 import { keys } from "../../constants";
 import type { FormSearchListingProps } from "../../types";
-import { type predictionData, type BookingData, type SearchData } from "../../types";
+import { type predictionData, type SearchData } from "../../types";
 import { useForm } from "@mantine/form";
-import moment from "moment";
 import { useSearchListing } from "../../hooks/useSearchListing";
 import { throttle } from "lodash";
 
@@ -30,7 +27,7 @@ type Props = {
   index: number;
 };
 
-export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
+export const SearchBarSpecial: React.FC<Props> = () => {
   const [peopleDropDown, setPeopleDropDown] = useState(false);
   const setSearchValue = useSearchListing((state) => state.setValue);
 
@@ -39,7 +36,7 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
     latitude: number;
   }>();
   const [dataSearch, setDataSearch] = useState<predictionData[]>([]);
-  const [theme, setTheme] = useLocalStorage<ColorScheme>({
+  const [theme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
     defaultValue: "dark",
   });
@@ -55,8 +52,6 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
   });
 
   const [valueAdult, setValueAdult] = useState(0);
-  const [valueChildren, setValueChildren] = useState(0);
-  const handlersChildren = useRef<NumberInputHandlers>();
 
   const handlersAdult = useRef<NumberInputHandlers>();
 
@@ -69,7 +64,7 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
     handlersAdult.current?.decrement();
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, react-hooks/exhaustive-deps
   const handleSearch = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     throttle(async (input: string) => {
@@ -252,6 +247,7 @@ export const SearchBarSpecial: React.FC<Props> = ({ index }) => {
                   increment={incrementAdult}
                   setValue={setValueAdult}
                   value={valueAdult}
+                  maxGuests={1000}
                 />
                 {/* <GuestDropDown
                 title={"Children"}
