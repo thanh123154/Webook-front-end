@@ -8,9 +8,10 @@ export const stripeRouter = createTRPCRouter({
       z.object({
         productName: z.string(),
         amount: z.number(),
+        cancelPath: z.string().optional(),
       })
     )
-    .mutation(async ({ input: { amount, productName }, ctx: { req, stripe } }) => {
+    .mutation(async ({ input: { amount, productName, cancelPath = "" }, ctx: { req, stripe } }) => {
       return await stripe.checkout.sessions.create({
         submit_type: "pay",
         mode: "payment",
@@ -28,7 +29,7 @@ export const stripeRouter = createTRPCRouter({
           },
         ],
         success_url: `${req.headers.origin || ""}/checkout`,
-        cancel_url: `${req.headers.origin || ""}`,
+        cancel_url: `${req.headers.origin || ""}${cancelPath}`,
       });
     }),
 });
