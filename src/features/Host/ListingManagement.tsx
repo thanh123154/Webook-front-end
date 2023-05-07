@@ -48,8 +48,8 @@ const ListingManagement = () => {
       <Tabs defaultValue="Current">
         <Tabs.List>
           <Tabs.Tab value="Current">Current</Tabs.Tab>
-          <Tabs.Tab value="History">History</Tabs.Tab>
-          <Tabs.Tab value="Upcoming">Upcoming</Tabs.Tab>
+          {/* <Tabs.Tab value="History">History</Tabs.Tab>
+          <Tabs.Tab value="Upcoming">Upcoming</Tabs.Tab> */}
         </Tabs.List>
 
         <Tabs.Panel value="Current" pt="xs">

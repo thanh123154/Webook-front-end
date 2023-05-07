@@ -4,6 +4,7 @@ import { userRouter } from "./routers/user";
 import { BookingRouter } from "./routers/booking";
 import { stripeRouter } from "./routers/stripe";
 import { AdminRouter } from "./routers/admin";
+import { ReviewRouter } from "./routers/review";
 
 /**
  * This is the primary router for your server.
@@ -14,6 +15,7 @@ export const appRouter = createTRPCRouter({
   listing: ListingRouter,
   user: userRouter,
   booking: BookingRouter,
+  review: ReviewRouter,
   stripe: stripeRouter,
   admin: AdminRouter,
 });

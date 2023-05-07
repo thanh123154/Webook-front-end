@@ -161,7 +161,7 @@ model review {
     listingId String
     comment   String @db.Text
     rating    Int
-
+    isReview Boolean @default(false)
     guests   User    @relation(fields: [guestId], references: [id])
     listings Listing @relation(fields: [listingId], references: [id])
 
@@ -196,6 +196,5 @@ model ListingAmenity {
 model Amenity {
     id   String @id @default(cuid())
     name String
-
     ListingAmenity ListingAmenity[]
 }

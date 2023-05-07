@@ -109,7 +109,7 @@ export type ListingAndUserData = {
   guests: number;
   host: User & { email: string | null };
   detail: string;
-
+  amenity: string;
   active: boolean;
   approved: boolean;
   createdAt: Date;
@@ -164,4 +164,11 @@ export type FormSearchListingProps = {
   checkIn: Date | undefined;
   checkOut: Date | undefined;
   guest: number | undefined;
+};
+
+export type ReviewType = {
+  hostId: string;
+  listingId: string;
+  comment: string;
+  rating: number;
 };
