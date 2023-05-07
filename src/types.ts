@@ -178,3 +178,21 @@ export type ReviewType = {
   rating: number;
   guests: User;
 };
+
+export type StaticType = {
+  listing: TempList[];
+};
+
+export type TempList = {
+  booking: TempBook[];
+};
+
+export type TempBook = {
+  total: number;
+  createAt: Date;
+};
+
+export type TotalStatic = {
+  country: string;
+  value: number;
+};

@@ -27,6 +27,25 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
+  getStaticByHostId: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .query(({ input: { id }, ctx }) => {
+      return ctx.prisma.user.findMany({
+        where: { id },
+        include: {
+          listings: {
+            include: {
+              booking: true,
+            },
+          },
+        },
+      });
+    }),
+
   create: protectedProcedure
     .input(
       z.object({

@@ -36,12 +36,16 @@ export const BookingRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input: { prepaidId } }) => {
-      const dataPrepaid = await ctx.prisma.prepaidBooking.findUnique({ where: { id: prepaidId } });
+      const dataPrepaid = await ctx.prisma.prepaidBooking.findUnique({
+        where: { id: prepaidId },
+      });
 
       if (!!dataPrepaid) {
         await ctx.prisma.prepaidBooking.delete({ where: { id: prepaidId } });
 
-        return ctx.prisma.booking.create({ data: { ...dataPrepaid, isDenied: false } });
+        return ctx.prisma.booking.create({
+          data: { ...dataPrepaid, isDenied: false },
+        });
       } else {
         throw "Prepaid booking not found!";
       }
