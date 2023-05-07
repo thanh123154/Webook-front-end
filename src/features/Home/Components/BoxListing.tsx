@@ -1,12 +1,12 @@
 import { Carousel } from "@mantine/carousel";
 import { AspectRatio, Flex, Text, Title } from "@mantine/core";
-import Image, { type StaticImageData } from "next/image";
+import Image from "next/image";
 
 import React, { useState } from "react";
 import { AiFillStar } from "react-icons/ai";
 import { nanoid } from "nanoid";
 import Link from "next/link";
-import { type ListingData, type TableHistoryData } from "../../../types";
+import { type ListingData } from "../../../types";
 import moment from "moment";
 
 type Props = {
@@ -32,10 +32,7 @@ export const BoxListing: React.FC<Props> = ({
   }, [dataPic]);
 
   console.log(dataListing, "dataa");
-  const totalRatings = dataListing.review.reduce(
-    (sum, review) => sum + review.rating,
-    0
-  );
+  const totalRatings = dataListing.review.reduce((sum, review) => sum + review.rating, 0);
   const averageRating = totalRatings / dataListing.review.length;
   return (
     <Flex direction={"column"}>
@@ -53,11 +50,7 @@ export const BoxListing: React.FC<Props> = ({
 
       <Flex mt={14} align={"center"} justify={"space-between"}>
         {" "}
-        <Link
-          href={`/lisitng-detail/${dataListing.id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <Link href={`/lisitng-detail/${dataListing.id}`} target="_blank" rel="noopener noreferrer">
           {" "}
           <Title fw={500} fz={20}>
             {title}
@@ -70,13 +63,7 @@ export const BoxListing: React.FC<Props> = ({
         </Flex>
       </Flex>
 
-      <Text
-        sx={{ borderBottom: "1px solid #E9EBED" }}
-        pb={16}
-        c={"#7D7C84"}
-        fz={16}
-        mt={5}
-      >
+      <Text sx={{ borderBottom: "1px solid #E9EBED" }} pb={16} c={"#7D7C84"} fz={16} mt={5}>
         {location}
       </Text>
 

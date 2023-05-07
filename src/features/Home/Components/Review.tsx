@@ -1,14 +1,4 @@
-import {
-  AspectRatio,
-  Box,
-  Center,
-  Flex,
-  Group,
-  Rating,
-  Spoiler,
-  Text,
-  Title,
-} from "@mantine/core";
+import { AspectRatio, Box, Center, Flex, Group, Rating, Text, Title } from "@mantine/core";
 
 import Image, { type StaticImageData } from "next/image";
 
@@ -18,20 +8,16 @@ import { useSession } from "next-auth/react";
 import { api } from "../../../utils/api";
 import { nanoid } from "nanoid";
 import { Avatar } from "../../../assets/imgs";
-import { BigStar, Star } from "../../../assets/svgs";
+import { Star } from "../../../assets/svgs";
 type Props = {
   dataPic?: Array<StaticImageData>;
 
   listingId: string | undefined;
 };
 
-export const Review: React.FC<Props> = ({ dataPic, listingId }) => {
+export const Review: React.FC<Props> = ({ listingId }) => {
   const { data: session } = useSession();
-  const {
-    data: data,
-    isLoading,
-    refetch,
-  } = api.review.getReviewByListingId.useQuery(
+  const { data: data } = api.review.getReviewByListingId.useQuery(
     { listingId: listingId || "" },
     { enabled: !!session?.user?.id, refetchOnWindowFocus: false }
   );

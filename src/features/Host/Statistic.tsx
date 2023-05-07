@@ -1,5 +1,5 @@
-import { Box, ColorScheme, Container, Title } from "@mantine/core";
-import React, { useEffect, useState } from "react";
+import { Box, type ColorScheme, Container, Title } from "@mantine/core";
+import React, { useState } from "react";
 import themeDark from "@amcharts/amcharts5/themes/Dark";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 import * as am5 from "@amcharts/amcharts5";
@@ -7,10 +7,10 @@ import * as am5xy from "@amcharts/amcharts5/xy";
 import { useLocalStorage } from "@mantine/hooks";
 import { api } from "../../utils/api";
 import { useSession } from "next-auth/react";
-import { StaticType, TotalStatic } from "../../types";
+import { type StaticType, type TotalStatic } from "../../types";
 
 const Statistic = () => {
-  const [theme, setTheme] = useLocalStorage<ColorScheme>({
+  const [theme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
     defaultValue: "dark",
   });

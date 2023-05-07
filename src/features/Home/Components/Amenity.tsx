@@ -1,7 +1,4 @@
-import { Accordion, Box, List, Text, Title } from "@mantine/core";
-import { BsShop } from "react-icons/bs";
-import { BiBus, BiBuildings } from "react-icons/bi";
-import { RxGear } from "react-icons/rx";
+import { Accordion, Box, Title } from "@mantine/core";
 
 import React, { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
@@ -12,9 +9,7 @@ type Props = {
 };
 
 export const Amenity: React.FC<Props> = ({ dataFood }) => {
-  const [resultArray, setResultArray] = useState<
-    { value: string; icon: JSX.Element | null }[]
-  >([]);
+  const [resultArray, setResultArray] = useState<{ value: string; icon: JSX.Element | null }[]>([]);
 
   useEffect(() => {
     if (dataFood) {
@@ -22,9 +17,7 @@ export const Amenity: React.FC<Props> = ({ dataFood }) => {
 
       setResultArray(
         parsedArray.map((value) => {
-          const matchingItem = amenityListings.find(
-            (item) => item.value === value
-          );
+          const matchingItem = amenityListings.find((item) => item.value === value);
           return matchingItem
             ? { value: matchingItem.value, icon: matchingItem.icon }
             : { value, icon: null };

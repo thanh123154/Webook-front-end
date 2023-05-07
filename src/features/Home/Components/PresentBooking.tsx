@@ -1,8 +1,6 @@
-import { Box, Button, LoadingOverlay } from "@mantine/core";
-import { DataTable } from "mantine-datatable";
+import { Box, LoadingOverlay, Table } from "@mantine/core";
 import type { ForwardRefRenderFunction } from "react";
-import React, { useState, useEffect, forwardRef } from "react";
-import { type BookingData } from "../../../types";
+import React, { forwardRef } from "react";
 import { api } from "../../../utils/api";
 import { useSession } from "next-auth/react";
 
@@ -10,6 +8,7 @@ import { type Listing } from "@prisma/client";
 import { type QueryObserverResult } from "@tanstack/react-query";
 import { showNotification } from "@mantine/notifications";
 import moment from "moment";
+import { nanoid } from "nanoid";
 
 type Props = {
   sth?: string;
@@ -21,9 +20,6 @@ type Ref = {
 };
 
 const _PresentBooking: ForwardRefRenderFunction<Ref, Props> = () => {
-  const [dataTable, setDataTable] = useState<BookingData[]>([]);
-  // const [isUpdating, setIsUpdating] = useState(false);
-
   const { data: session } = useSession();
 
   const {
@@ -32,20 +28,9 @@ const _PresentBooking: ForwardRefRenderFunction<Ref, Props> = () => {
     refetch,
   } = api.booking.getCurrentBookingByHostId.useQuery(
     { guestId: session?.user?.id || "" },
-
     { enabled: !!session?.user?.id, refetchOnWindowFocus: false }
   );
   const { mutateAsync: apiAprove } = api.booking.aproveBooking.useMutation();
-  useEffect(() => {
-    if (currentListing) {
-      setDataTable(currentListing);
-    }
-  }, [currentListing]);
-  console.log(currentListing, " data table present");
-
-  // useImperativeHandle(ref, () => ({
-  //   refetchFunc: refetch,
-  // }));
 
   const handleUpdateApprove = async (id: string) => {
     try {
@@ -78,74 +63,63 @@ const _PresentBooking: ForwardRefRenderFunction<Ref, Props> = () => {
     }
   };
 
+  const heads = (
+    <thead>
+      <tr>
+        <th>Host name</th>
+        <th>Listing Name</th>
+        <th>Check in</th>
+        <th>Check out</th>
+        <th>Total</th>
+        <th>Approved</th>
+      </tr>
+    </thead>
+  );
+
+  const rows = (
+    <tbody>
+      {isLoading ? (
+        <tr>
+          <td
+            colSpan={6}
+            style={{ textAlign: "center", fontSize: 20, paddingBlock: 50, fontWeight: "bold" }}
+          >
+            Loading...
+          </td>
+        </tr>
+      ) : !currentListing || !currentListing.length ? (
+        <tr>
+          <td
+            colSpan={6}
+            style={{ textAlign: "center", fontSize: 20, paddingBlock: 50, fontWeight: "bold" }}
+          >
+            No Data
+          </td>
+        </tr>
+      ) : (
+        currentListing.map((item) => (
+          <tr key={nanoid()}>
+            <td>{item.guests.name}</td>
+            <td>{item.booked.name}</td>
+            <td>{moment(item.checkIn).format("MMMM D, YYYY")}</td>
+            <td>{moment(item.checkOut).format("MMMM D, YYYY")}</td>
+            <td>{item.total.toLocaleString("en-US") ?? "N/A"} vnđ</td>
+            <td>{!item.isDenied ? "Has approved" : "Pending"}</td>
+          </tr>
+        ))
+      )}
+    </tbody>
+  );
+
   return (
-    <Box>
+    <Box pos="relative">
       <LoadingOverlay visible={isLoading} />
-      <DataTable
-        mt={20}
-        withBorder
-        borderRadius="sm"
-        // withColumnBorders
-        striped
-        highlightOnHover
-        // provide data
-        records={dataTable}
-        // define columns
-        columns={[
-          {
-            accessor: "guests.name",
-            title: "Host name",
-          },
 
-          // {
-          //   accessor: "phoneNumber",
-          //   title: "Phone Number",
-          // },
+      <Table>
+        {heads}
 
-          // {
-          //   accessor: "guests.email",
-          //   title: "Email",
-          // },
-          {
-            accessor: "booked.name",
-            title: "Listing Name",
-          },
-          {
-            accessor: "checkIn",
-            title: "Check in",
-            render: ({ checkIn }) => (
-              <Box>{moment(checkIn).format("MMMM D, YYYY")}</Box>
-            ),
-          },
-          {
-            accessor: "checkOut",
-            title: "Check out",
-            render: ({ checkOut }) => (
-              <Box>{moment(checkOut).format("MMMM D, YYYY")}</Box>
-            ),
-          },
-          {
-            accessor: "total",
-            title: "Total",
-            render: ({ total }) => (
-              <Box>{total.toLocaleString("en-US") ?? "N/A"} vnđ</Box>
-            ),
-          },
-          {
-            accessor: "isDenied",
-            title: "Approved",
-            render: ({ isDenied, id }) => (
-              <Box>{!isDenied ? "Has approved" : "Pending"}</Box>
-            ),
-          },
-        ]}
-        // execute this callback when a row is clicked
-        // onRowClick={(a) => {
-        //   console.log(a, "table");
-
-        //   handleOpen(a);
-        // }}
-      />
+        {rows}
+      </Table>
     </Box>
   );
 };

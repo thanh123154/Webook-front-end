@@ -1,17 +1,15 @@
-import { Box, Button, LoadingOverlay } from "@mantine/core";
-import { DataTable } from "mantine-datatable";
+import { Box, Button, LoadingOverlay, Table } from "@mantine/core";
 import type { ForwardRefRenderFunction } from "react";
-import React, { useState, useEffect, forwardRef } from "react";
-import { type BookingData } from "../../../types";
+import React, { forwardRef } from "react";
 import { api } from "../../../utils/api";
 import { useSession } from "next-auth/react";
 
 import { type Listing } from "@prisma/client";
 import { type QueryObserverResult } from "@tanstack/react-query";
-import { showNotification } from "@mantine/notifications";
 import moment from "moment";
 import { ReviewModal } from "./ReviewModal";
 import { useDisclosure } from "@mantine/hooks";
+import { nanoid } from "nanoid";
 
 type Props = {
   sth?: string;
@@ -23,9 +21,6 @@ type Ref = {
 };
 
 const _HistoryBooking: ForwardRefRenderFunction<Ref, Props> = () => {
-  const [dataTable, setDataTable] = useState<BookingData[]>([]);
-  // const [isUpdating, setIsUpdating] = useState(false);
-
   const { data: session } = useSession();
 
   const {
@@ -34,20 +29,11 @@ const _HistoryBooking: ForwardRefRenderFunction<Ref, Props> = () => {
     refetch,
   } = api.booking.getHistoryBookingByHostId.useQuery(
     { guestId: session?.user?.id || "" },
-
     { enabled: !!session?.user?.id, refetchOnWindowFocus: false }
   );
 
-  useEffect(() => {
-    if (currentListing) {
-      setDataTable(currentListing);
-    }
-  }, [currentListing]);
-  console.log(currentListing, "data table present");
+  console.log(currentListing, " data table present");
 
-  // useImperativeHandle(ref, () => ({
-  //   refetchFunc: refetch,
-  // }));
   const handleRefetch = async () => {
     await refetch();
   };
@@ -84,64 +70,69 @@ const _HistoryBooking: ForwardRefRenderFunction<Ref, Props> = () => {
     );
   };
 
+  const heads = (
+    <thead>
+      <tr>
+        <th>Host name</th>
+        <th>Listing Name</th>
+        <th>Check in</th>
+        <th>Check out</th>
+        <th>Total</th>
+        <th>Review</th>
+      </tr>
+    </thead>
+  );
+
+  const rows = (
+    <tbody>
+      {isLoading ? (
+        <tr>
+          <td
+            colSpan={6}
+            style={{ textAlign: "center", fontSize: 20, paddingBlock: 50, fontWeight: "bold" }}
+          >
+            Loading...
+          </td>
+        </tr>
+      ) : !currentListing || !currentListing.length ? (
+        <tr>
+          <td
+            colSpan={6}
+            style={{ textAlign: "center", fontSize: 20, paddingBlock: 50, fontWeight: "bold" }}
+          >
+            No Data
+          </td>
+        </tr>
+      ) : (
+        currentListing.map((item) => (
+          <tr key={nanoid()}>
+            <td>{item.guests.name}</td>
+            <td>{item.booked.name}</td>
+            <td>{moment(item.checkIn).format("MMMM D, YYYY")}</td>
+            <td>{moment(item.checkOut).format("MMMM D, YYYY")}</td>
+            <td>{item.total.toLocaleString("en-US") ?? "N/A"}</td>
+            <td>
+              <ButtonReview
+                id={item.id}
+                isReview={item.isReview || false}
+                listingId={item.listingId}
+              />
+            </td>
+          </tr>
+        ))
+      )}
+    </tbody>
+  );
+
   return (
-    <Box>
+    <Box pos="relative">
       <LoadingOverlay visible={isLoading} />
-      <DataTable
-        mt={20}
-        withBorder
-        borderRadius="sm"
-        // withColumnBorders
-        striped
-        highlightOnHover
-        // provide data
-        records={dataTable}
-        // define columns
-        columns={[
-          {
-            accessor: "guests.name",
-            title: "Host name",
-          },
-          {
-            accessor: "booked.name",
-            title: "Listing Name",
-          },
-          {
-            accessor: "checkIn",
-            title: "Check in",
-            render: ({ checkIn }) => (
-              <Box>{moment(checkIn).format("MMMM D, YYYY")}</Box>
-            ),
-          },
-          {
-            accessor: "checkOut",
-            title: "Check out",
-            render: ({ checkOut }) => (
-              <Box>{moment(checkOut).format("MMMM D, YYYY")}</Box>
-            ),
-          },
-          {
-            accessor: "total",
-            title: "Total",
-            render: ({ total }) => (
-              <Box>{total.toLocaleString("en-US") ?? "N/A"} vnđ</Box>
-            ),
-          },
-          {
-            accessor: "review",
-            title: "Review",
-            render: ({ id, isReview, listingId }) => (
-              <Box>
-                <ButtonReview
-                  id={id}
-                  isReview={isReview}
-                  listingId={listingId}
-                />
-              </Box>
-            ),
-          },
-        ]}
-      />
+
+      <Table>
+        {heads}
+
+        {rows}
+      </Table>
     </Box>
   );
 };

@@ -11,9 +11,8 @@ import {
   Radio,
 } from "@mantine/core";
 
-import React, { Suspense, useState } from "react";
+import React, { useState } from "react";
 import { useForm, zodResolver } from "@mantine/form";
-import { randomId, useDisclosure } from "@mantine/hooks";
 import { Header } from "../layouts";
 
 import { type StaticImageData } from "next/image";
@@ -23,6 +22,7 @@ import { AvatarUser } from "../components";
 import { api } from "../utils/api";
 import { z } from "zod";
 import { useProtectedPage } from "../hooks/useProtectedPage";
+import { uploadFile } from "../helpers";
 
 type PropsForm = {
   name: string;
@@ -78,7 +78,7 @@ const Profile: NextPage = () => {
   }, [userInfo]);
 
   const handleSubmit = async (values: PropsForm) => {
-    console.log(values);
+    // return console.log(file);
 
     try {
       setIsUpdating(true);
@@ -88,8 +88,23 @@ const Profile: NextPage = () => {
         name: values.name,
         email: values.email,
         gender: valueGender,
-        image: avatar,
+        image: avatar as string | undefined,
       };
+      // return console.log(updatedUserData);
+
+      if (file) {
+        console.log("uploading file");
+
+        const newImage = await uploadFile(file);
+
+        console.log("uploading completed", newImage);
+
+        if (newImage) {
+          updatedUserData.image = newImage;
+        } else {
+          throw new Error("Failed to upload image");
+        }
+      }
 
       // Call the update user API endpoint
       await apiUpdate({ id: session?.user?.id || "", ...updatedUserData });

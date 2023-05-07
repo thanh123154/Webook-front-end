@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState, useRef } from "react";
 
 export const useRender = () => {
@@ -28,10 +29,7 @@ export const useRefPortal = <
     | ((
         props: any,
         context?: any
-      ) => React.ReactElement<
-        any,
-        string | React.JSXElementConstructor<any>
-      > | null)
+      ) => React.ReactElement<any, string | React.JSXElementConstructor<any>> | null)
     | keyof JSX.IntrinsicElements
 >() => {
   return useRef<React.ElementRef<T>>(null);

@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 import moment from "moment";
-import { raw } from "@prisma/client/runtime";
 
 export const ListingRouter = createTRPCRouter({
   create: protectedProcedure
@@ -73,10 +72,7 @@ export const ListingRouter = createTRPCRouter({
       })
     )
     .query(
-      async ({
-        ctx,
-        input: { checkInDate, checkOutDate, latitude, longitude, totalGuests },
-      }) => {
+      async ({ ctx, input: { checkInDate, checkOutDate, latitude, longitude, totalGuests } }) => {
         const searchRadiusMeters = 5000;
 
         const data = await ctx.prisma.listing.findMany({
@@ -95,12 +91,10 @@ export const ListingRouter = createTRPCRouter({
                   longitude: {
                     gte:
                       longitude -
-                      searchRadiusMeters /
-                        (111111 * Math.cos((latitude * Math.PI) / 180)),
+                      searchRadiusMeters / (111111 * Math.cos((latitude * Math.PI) / 180)),
                     lte:
                       longitude +
-                      searchRadiusMeters /
-                        (111111 * Math.cos((latitude * Math.PI) / 180)),
+                      searchRadiusMeters / (111111 * Math.cos((latitude * Math.PI) / 180)),
                   },
                 }
               : {}),
@@ -127,10 +121,8 @@ export const ListingRouter = createTRPCRouter({
 
           return !bookingList.some(
             ({ checkIn, checkOut }) =>
-              (checkIn.isSameOrAfter(checkInDate) &&
-                checkIn.isSameOrBefore(checkOutDate)) ||
-              (checkOut.isSameOrAfter(checkInDate) &&
-                checkOut.isSameOrBefore(checkOutDate))
+              (checkIn.isSameOrAfter(checkInDate) && checkIn.isSameOrBefore(checkOutDate)) ||
+              (checkOut.isSameOrAfter(checkInDate) && checkOut.isSameOrBefore(checkOutDate))
           );
         });
       }

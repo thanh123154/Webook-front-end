@@ -1,12 +1,11 @@
 import { Button, Container, Flex, Tabs, Title } from "@mantine/core";
-import React, { useState } from "react";
+import React from "react";
 import { Present } from "./component/Present";
 
 import { UpdateListingDrawer } from "../../components/UpdateListingDrawer";
 import { type TableHistoryData } from "../../types";
 import { AdminApproveTable } from "./component/AdminApproveTable";
 import { useRefPortal } from "../../hooks";
-import { TableColunm } from "../../constants/TableListingColunm";
 
 const ListingManagement = () => {
   const presentRef = useRefPortal<typeof Present>();

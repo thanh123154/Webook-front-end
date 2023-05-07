@@ -20,7 +20,7 @@ type Props = {
 const _TextEditor: React.FC<Props> = ({ editorRef, label, initData }) => {
   const oldContent = useRef<string>("");
   const { isRendered, reRender } = useRender();
-  const [theme, setTheme] = useLocalStorage<ColorScheme>({
+  const [theme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
     defaultValue: "dark",
   });
