@@ -1,8 +1,5 @@
-import {
-  initializeApp,
-  type FirebaseOptions,
-  type FirebaseApp,
-} from "firebase/app";
+import { initializeApp, type FirebaseOptions, type FirebaseApp } from "firebase/app";
+import { type Firestore, getFirestore } from "firebase/firestore";
 import { type FirebaseStorage, getStorage } from "firebase/storage";
 
 const config: FirebaseOptions = {
@@ -18,3 +15,4 @@ const config: FirebaseOptions = {
 const app: FirebaseApp = initializeApp(config);
 
 export const storage: FirebaseStorage = getStorage(app);
+export const db: Firestore = getFirestore(app);

@@ -9,6 +9,7 @@ import {
   Center,
   type ColorScheme,
   InputBase,
+  Flex,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { useLocalStorage } from "@mantine/hooks";
@@ -26,6 +27,7 @@ import { keys } from "../../../constants";
 import { getStripe } from "../../../libs/stripe-client";
 import { TRPCClientError } from "@trpc/client";
 import moment from "moment";
+import { ButtonContact } from "./ButtonContact";
 
 type Props = {
   place?: string;
@@ -34,6 +36,7 @@ type Props = {
   listingId?: string;
   listingName?: string;
   guests: number;
+  hostId?: string;
 };
 
 export const Reserve: React.FC<Props> = ({
@@ -43,8 +46,9 @@ export const Reserve: React.FC<Props> = ({
   listingId,
   listingName,
   guests,
+  hostId,
 }) => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   const [theme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
@@ -155,157 +159,159 @@ export const Reserve: React.FC<Props> = ({
   }, [form.values.checkIn, form.values.checkOut]);
 
   return (
-    <Box
-      w={418}
-      mah={900}
-      sx={{
-        border: "1px solid #E9EBED",
-        borderRadius: "24px",
-      }}
-      p={20}
-    >
-      <Title fz={32} mb={24}>
-        Reserve
-      </Title>
+    <Flex direction={"column"} gap={20} miw={460} h="fit-content" pl={50}>
+      <Box
+        sx={{
+          border: "1px solid #E9EBED",
+          borderRadius: "24px",
+        }}
+        p={20}
+      >
+        <Title fz={32} mb={24}>
+          Reserve
+        </Title>
 
-      <Text mt={24}>
-        <Box display={"inline"} fw={600}>
-          {dayDif} Days&nbsp;
-        </Box>
-        in {place}
-      </Text>
+        <Text mt={24}>
+          <Box display={"inline"} fw={600}>
+            {dayDif} Days&nbsp;
+          </Box>
+          in {place}
+        </Text>
 
-      <Text mb={24} c={"#7D7C84"} mt={8}>
-        {form.values.checkIn ? moment(form.values.checkIn).format("MMMM D, YYYY") : ""} - &nbsp;
-        {form.values.checkOut ? moment(form.values.checkOut).format("MMMM D, YYYY") : ""}
-      </Text>
-      <form onSubmit={form.onSubmit((values) => void handleSubmitCreateBooking(values))}>
-        <Group align="start" mb={24}>
-          <DatePicker
-            label="Check in"
-            placeholder="Pick date"
-            // value={valueCheckIn}
-            // onChange={setValueCheckIn}
-            mx="auto"
-            minDate={moment().toDate()}
-            maw={173}
-            icon={<IoCalendar />}
-            radius={32}
-            {...form.getInputProps("checkIn")}
+        <Text mb={24} c={"#7D7C84"} mt={8}>
+          {form.values.checkIn ? moment(form.values.checkIn).format("MMMM D, YYYY") : ""} - &nbsp;
+          {form.values.checkOut ? moment(form.values.checkOut).format("MMMM D, YYYY") : ""}
+        </Text>
+        <form onSubmit={form.onSubmit((values) => void handleSubmitCreateBooking(values))}>
+          <Group align="start" mb={24}>
+            <DatePicker
+              label="Check in"
+              placeholder="Pick date"
+              // value={valueCheckIn}
+              // onChange={setValueCheckIn}
+              mx="auto"
+              minDate={moment().toDate()}
+              maw={173}
+              icon={<IoCalendar />}
+              radius={32}
+              {...form.getInputProps("checkIn")}
+            />
+
+            <DatePicker
+              label="Check out"
+              placeholder="Pick date"
+              mx="auto"
+              maw={173}
+              icon={<IoCalendar />}
+              minDate={moment().toDate()}
+              radius={32}
+              {...form.getInputProps("checkOut")}
+            />
+          </Group>
+
+          <GuestDropDown
+            maxGuests={guests}
+            form={form}
+            xref={handlersAdult}
+            decrement={decrementAdult}
+            title={"Guests"}
+            increment={incrementAdult}
+            setValue={setValueAdult}
+            value={valueAdult}
           />
 
-          <DatePicker
-            label="Check out"
-            placeholder="Pick date"
-            mx="auto"
-            maw={173}
-            icon={<IoCalendar />}
-            minDate={moment().toDate()}
-            radius={32}
-            {...form.getInputProps("checkOut")}
+          <InputBase
+            mt={20}
+            label="Your phone"
+            component={IMaskInput}
+            mask="+84 (000) 000-0000"
+            {...form.getInputProps("phoneNumber")}
           />
+
+          <Box my={24}></Box>
+
+          <Center mt={24}>
+            {" "}
+            <SegmentedControl
+              onChange={(e) => {
+                if (e === "month") {
+                  setCurrentPrice(longTermPrice || 0);
+                } else {
+                  setCurrentPrice(shortTermPrice || 0);
+                }
+              }}
+              data={[
+                {
+                  label: `${formattedPriceLongTerm} vnđ/Month`,
+                  value: "month",
+                },
+                {
+                  label: `${formattedPriceShortTerm} vnđ/Night`,
+                  value: "night",
+                },
+              ]}
+            />
+          </Center>
+
+          <Button loading={isCheckingOut} type="submit" mt={32} size="lg" w={"100%"} bg={"#3B71FE"}>
+            Reserve
+          </Button>
+        </form>
+        <Text fz={14} c={"#7D7C84"} my={32}>
+          You won&apos;t be charged yet
+        </Text>
+
+        <Group p={12} mt={44} mb={16} position="apart">
+          {" "}
+          <Text fw={500} fz={12} c={"#7D7C84"}>
+            {currentPrice?.toLocaleString("en-US") ?? "N/A"} vnđ x {dayDif || 0} days
+          </Text>
+          <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
+            {(0 || totalPrice.toLocaleString("en-US")) ?? "N/A"} vnđ
+          </Text>
         </Group>
 
-        <GuestDropDown
-          maxGuests={guests}
-          form={form}
-          xref={handlersAdult}
-          decrement={decrementAdult}
-          title={"Guests"}
-          increment={incrementAdult}
-          setValue={setValueAdult}
-          value={valueAdult}
-        />
-
-        <InputBase
-          mt={20}
-          label="Your phone"
-          component={IMaskInput}
-          mask="+84 (000) 000-0000"
-          {...form.getInputProps("phoneNumber")}
-        />
-
-        <Box my={24}></Box>
-
-        <Center mt={24}>
+        <Group p={12} mb={16} position="apart">
           {" "}
-          <SegmentedControl
-            onChange={(e) => {
-              if (e === "month") {
-                setCurrentPrice(longTermPrice || 0);
-              } else {
-                setCurrentPrice(shortTermPrice || 0);
-              }
-            }}
-            data={[
-              {
-                label: `${formattedPriceLongTerm} vnđ/Month`,
-                value: "month",
-              },
-              {
-                label: `${formattedPriceShortTerm} vnđ/Night`,
-                value: "night",
-              },
-            ]}
-          />
-        </Center>
+          <Text fw={500} fz={12} c={"#7D7C84"}>
+            0% campaign discount
+          </Text>
+          <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
+            -0 vnđ
+          </Text>
+        </Group>
 
-        <Button loading={isCheckingOut} type="submit" mt={32} size="lg" w={"100%"} bg={"#3B71FE"}>
-          Reserve
-        </Button>
-      </form>
-      <Text fz={14} c={"#7D7C84"} my={32}>
-        You won&apos;t be charged yet
-      </Text>
+        <Group p={12} mb={16} position="apart">
+          {" "}
+          <Text fw={500} fz={12} c={"#7D7C84"}>
+            Service fee
+          </Text>
+          <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
+            0 vnđ
+          </Text>
+        </Group>
 
-      <Group p={12} mt={44} mb={16} position="apart">
-        {" "}
-        <Text fw={500} fz={12} c={"#7D7C84"}>
-          {currentPrice?.toLocaleString("en-US") ?? "N/A"} vnđ x {dayDif || 0} days
-        </Text>
-        <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
-          {(0 || totalPrice.toLocaleString("en-US")) ?? "N/A"} vnđ
-        </Text>
-      </Group>
+        <Group
+          bg={theme === "dark" ? "black" : "#F9F9F9"}
+          sx={{
+            borderRadius: "24px",
+            border: "1px solid #E9EBED",
+          }}
+          p={12}
+          mb={16}
+          position="apart"
+        >
+          {" "}
+          <Text fw={500} fz={12} c={"#7D7C84"}>
+            Total before taxes
+          </Text>
+          <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
+            {totalPrice?.toLocaleString("en-US") ?? "N/A"} vnđ
+          </Text>
+        </Group>
+      </Box>
 
-      <Group p={12} mb={16} position="apart">
-        {" "}
-        <Text fw={500} fz={12} c={"#7D7C84"}>
-          0% campaign discount
-        </Text>
-        <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
-          -0 vnđ
-        </Text>
-      </Group>
-
-      <Group p={12} mb={16} position="apart">
-        {" "}
-        <Text fw={500} fz={12} c={"#7D7C84"}>
-          Service fee
-        </Text>
-        <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
-          0 vnđ
-        </Text>
-      </Group>
-
-      <Group
-        bg={theme === "dark" ? "black" : "#F9F9F9"}
-        sx={{
-          borderRadius: "24px",
-          border: "1px solid #E9EBED",
-        }}
-        p={12}
-        mb={16}
-        position="apart"
-      >
-        {" "}
-        <Text fw={500} fz={12} c={"#7D7C84"}>
-          Total before taxes
-        </Text>
-        <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
-          {totalPrice?.toLocaleString("en-US") ?? "N/A"} vnđ
-        </Text>
-      </Group>
-    </Box>
+      {status !== "loading" && <ButtonContact otherPersonId={hostId} />}
+    </Flex>
   );
 };

@@ -3,15 +3,14 @@ import {
   type ColorScheme,
   Flex,
   Group,
-  Indicator,
   Text,
   ActionIcon,
   Title,
   Switch,
+  type BoxProps,
 } from "@mantine/core";
 import Link from "next/link";
 import React, { useState } from "react";
-import { CgBell } from "react-icons/cg";
 import { GrClose } from "react-icons/gr";
 
 import { DrawerMenu, MenuDropDown } from "./components";
@@ -19,17 +18,14 @@ import { useLocalStorage } from "@mantine/hooks";
 import { useSession } from "next-auth/react";
 import { useRender } from "../hooks";
 import { useRouter } from "next/router";
-import { IconMoonStars, IconSun } from "@tabler/icons";
+import { IconBrandTelegram, IconMoonStars, IconSun } from "@tabler/icons";
 
-const _Header = () => {
+const _Header: React.FC<{ variant?: "default" | "chat" }> = ({ variant = "default" }) => {
   const { isRendered } = useRender();
   const router = useRouter();
   const [opened, setOpened] = useState(false);
 
   const { data: sessionData } = useSession();
-
-  console.log(router, "test mode");
-  const [count, setCount] = useState(9);
 
   const [theme, setTheme] = useLocalStorage<ColorScheme>({
     key: "Mantine theme",
@@ -48,8 +44,17 @@ const _Header = () => {
       }}
       // bg="#fff"
     >
-      <Box maw="134rem" mx="auto" py={{ base: 20, sm: 0 }} px={{ base: 30, sm: 100 }}>
-        <Flex h={{ base: "auto", sm: "8rem" }} align="center">
+      <Box
+        maw="134rem"
+        mx="auto"
+        py={{ base: 20, sm: variant === "chat" ? 10 : 0 }}
+        px={{ base: 30, sm: variant === "chat" ? 25 : 100 }}
+      >
+        <Flex
+          h={{ base: "auto", sm: variant === "chat" ? "auto" : "8rem" }}
+          align="center"
+          className="flex-wrapper"
+        >
           <Group position="apart" w="100%">
             <Link href={router.asPath.includes("/host") ? "/host" : "/"}>
               <Title fz={30}>WEBOOK</Title>
@@ -89,11 +94,19 @@ const _Header = () => {
 
               {/* <Button>Switch to hosting</Button> */}
 
-              <Indicator label={count} overflowCount={10} inline size={22}>
+              {/* <Indicator label={count} overflowCount={10} inline size={22}>
                 <ActionIcon color="cyan">
                   <CgBell size={25} />
                 </ActionIcon>
-              </Indicator>
+              </Indicator> */}
+
+              {router.pathname !== "/chat" && (
+                <Link href="/chat" target="_blank" rel="noopener noreferrer">
+                  <ActionIcon color="cyan">
+                    <IconBrandTelegram size={25} />
+                  </ActionIcon>
+                </Link>
+              )}
 
               <Text fz={18}>{sessionData && <span>Hello {sessionData.user?.name}</span>}</Text>
               <MenuDropDown index={123} />

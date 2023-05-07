@@ -139,6 +139,7 @@ export const ListingDetails = () => {
           longTermPrice={dataListing?.priceLongTerm}
           shortTermPrice={dataListing?.priceShortTerm}
           listingName={dataListing?.name}
+          hostId={dataListing?.host.id}
         />
       </Flex>
     </Container>
