@@ -30,6 +30,12 @@ export const BoxListing: React.FC<Props> = ({
     setPic(JSON.parse(dataPic) as string[]);
   }, [dataPic]);
 
+  console.log(dataListing, "dataa");
+  const totalRatings = dataListing.review.reduce(
+    (sum, review) => sum + review.rating,
+    0
+  );
+  const averageRating = totalRatings / dataListing.review.length;
   return (
     <Flex direction={"column"}>
       <Carousel sx={{ maxWidth: 282 }} mx="auto" withIndicators height={282}>
@@ -58,7 +64,8 @@ export const BoxListing: React.FC<Props> = ({
         </Link>
         <Flex gap={10} align={"center"} justify={"space-between"}>
           {" "}
-          <AiFillStar size={20} color="orange" /> 4.8
+          <AiFillStar size={20} color="orange" />{" "}
+          {dataListing.review.length === 0 ? 0 : averageRating}
         </Flex>
       </Flex>
 

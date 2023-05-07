@@ -71,4 +71,18 @@ export const BookingRouter = createTRPCRouter({
         data: input,
       });
     }),
+
+  updateIsReview: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        isReview: z.boolean().optional(),
+      })
+    )
+    .mutation(({ input, ctx }) => {
+      return ctx.prisma.booking.update({
+        where: { id: input.id },
+        data: input,
+      });
+    }),
 });

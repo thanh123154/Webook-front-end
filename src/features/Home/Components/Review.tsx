@@ -11,7 +11,7 @@ type Props = {
 export const Review: React.FC<Props> = ({ dataPic }) => {
   return (
     <Box mt={24}>
-      <Title>40+ reviews</Title>
+      <Title>Reviews</Title>
     </Box>
   );
 };

@@ -26,11 +26,19 @@ type Props = {
   opened: boolean;
   close: () => void;
   listingId: string;
+  idBooking: string;
+  refetch?: () => Promise<void>;
 };
 
 // icon only
 
-export const ReviewModal: React.FC<Props> = ({ opened, close, listingId }) => {
+export const ReviewModal: React.FC<Props> = ({
+  opened,
+  close,
+  listingId,
+  idBooking,
+  refetch,
+}) => {
   const theme = useMantineTheme();
   const getEmptyIcon = (value: number) => {
     const defaultProps = { size: 24, color: "gray" };
@@ -74,6 +82,7 @@ export const ReviewModal: React.FC<Props> = ({ opened, close, listingId }) => {
   };
 
   const { mutateAsync: apiCreate } = api.review.create.useMutation();
+
   const { data: session } = useSession();
 
   const formSchema = z.object({
@@ -83,8 +92,6 @@ export const ReviewModal: React.FC<Props> = ({ opened, close, listingId }) => {
   const form = useForm<ReviewType>({
     validate: zodResolver(formSchema),
   });
-
-  console.log(listingId, "id");
 
   const handleSubmit = async (values: ReviewType) => {
     console.log(values, "day la value review");
@@ -96,6 +103,8 @@ export const ReviewModal: React.FC<Props> = ({ opened, close, listingId }) => {
 
       await apiCreate({
         ...createListingData,
+        bookingId: idBooking,
+        isReview: true,
         guestId: session?.user?.id || "",
         listingId: listingId || "",
       });
@@ -108,13 +117,7 @@ export const ReviewModal: React.FC<Props> = ({ opened, close, listingId }) => {
       form.reset();
       close();
 
-      // refetch && (await refetch());
-
-      // Call the update user API endpoint
-
-      // Refetch the updated user data
-
-      // Clear the file input and reset the form
+      refetch && (await refetch());
     } catch (error) {
       console.log(error);
     } finally {
@@ -128,7 +131,10 @@ export const ReviewModal: React.FC<Props> = ({ opened, close, listingId }) => {
       overlayBlur={0.3}
       overlayOpacity={0.3}
       opened={opened}
-      onClose={close}
+      onClose={() => {
+        close();
+        form.reset();
+      }}
       title="Rating"
     >
       <form onSubmit={form.onSubmit((values) => void handleSubmit(values))}>
