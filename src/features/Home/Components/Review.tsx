@@ -1,4 +1,13 @@
-import { AspectRatio, Box, Center, Flex, Group, Rating, Text, Title } from "@mantine/core";
+import {
+  AspectRatio,
+  Box,
+  Center,
+  Flex,
+  Group,
+  Rating,
+  Text,
+  Title,
+} from "@mantine/core";
 
 import Image, { type StaticImageData } from "next/image";
 
@@ -50,9 +59,13 @@ export const Review: React.FC<Props> = ({ listingId }) => {
             {" "}
             {review?.map((item) => (
               <Group sx={{ borderRadius: "40px" }} key={nanoid()}>
-                <AspectRatio w={48} sx={{ borderRadius: "50%" }} ratio={1}>
-                  {/* <Image src={item.guests.image} alt="" fill /> */}
-                  <Image src={Avatar} alt="" fill />
+                <AspectRatio
+                  w={48}
+                  sx={{ borderRadius: "50%", overflow: "hidden" }}
+                  ratio={1}
+                >
+                  <Image src={item.guests.image || ""} alt="" fill />
+                  {/* <Image src={Avatar} alt="" fill /> */}
                 </AspectRatio>
                 <Box>
                   {" "}

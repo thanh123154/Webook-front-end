@@ -20,7 +20,10 @@ type Ref = {
   refetchFunc: () => Promise<QueryObserverResult<Listing[]>>;
 };
 
-const _Present: ForwardRefRenderFunction<Ref, Props> = ({ handleRefetch }, ref) => {
+const _Present: ForwardRefRenderFunction<Ref, Props> = (
+  { handleRefetch },
+  ref
+) => {
   const updateListingDrawerRef = useRefPortal<typeof UpdateListingDrawer>();
 
   const handleOpen = (data: TableHistoryData) => {
@@ -71,7 +74,12 @@ const _Present: ForwardRefRenderFunction<Ref, Props> = ({ handleRefetch }, ref) 
         <tr>
           <td
             colSpan={11}
-            style={{ textAlign: "center", fontSize: 20, paddingBlock: 50, fontWeight: "bold" }}
+            style={{
+              textAlign: "center",
+              fontSize: 20,
+              paddingBlock: 50,
+              fontWeight: "bold",
+            }}
           >
             Loading...
           </td>
@@ -80,14 +88,25 @@ const _Present: ForwardRefRenderFunction<Ref, Props> = ({ handleRefetch }, ref) 
         <tr>
           <td
             colSpan={11}
-            style={{ textAlign: "center", fontSize: 20, paddingBlock: 50, fontWeight: "bold" }}
+            style={{
+              textAlign: "center",
+              fontSize: 20,
+              paddingBlock: 50,
+              fontWeight: "bold",
+            }}
           >
             No Data
           </td>
         </tr>
       ) : (
         currentListing.map((item) => (
-          <tr key={nanoid()}>
+          <tr
+            style={{
+              cursor: "pointer",
+            }}
+            key={nanoid()}
+            onClick={() => handleOpen(item)}
+          >
             <td>{item.name}</td>
             <td>{item.address}</td>
             <td>{item.priceLongTerm.toLocaleString("en-US") ?? "N/A"} vnđ</td>
@@ -97,6 +116,8 @@ const _Present: ForwardRefRenderFunction<Ref, Props> = ({ handleRefetch }, ref) 
             <td>{item.bedsrooms}</td>
             <td>{item.bathrooms}</td>
             <td>{item.guests}</td>
+            <td>{item.approved ? "Yes" : "Pending"}</td>
+            <td>{item.active ? "True" : "False"}</td>
           </tr>
         ))
       )}
@@ -113,7 +134,10 @@ const _Present: ForwardRefRenderFunction<Ref, Props> = ({ handleRefetch }, ref) 
         {rows}
       </Table>
 
-      <UpdateListingDrawer refetch={handleRefetch} ref={updateListingDrawerRef} />
+      <UpdateListingDrawer
+        refetch={handleRefetch}
+        ref={updateListingDrawerRef}
+      />
     </Box>
   );
 };

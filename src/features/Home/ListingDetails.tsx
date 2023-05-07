@@ -84,8 +84,12 @@ export const ListingDetails = () => {
             </Text>
 
             <Group>
-              <AspectRatio w={48} ratio={1}>
-                <Image src={Avatar} alt="" fill />
+              <AspectRatio
+                sx={{ borderRadius: "50%", overflow: "hidden" }}
+                w={48}
+                ratio={1}
+              >
+                <Image src={dataListing?.host.image || ""} alt="" fill />
               </AspectRatio>
 
               <Flex h={52} direction={"column"} justify={"space-between"}>

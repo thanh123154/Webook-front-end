@@ -16,7 +16,10 @@ type Ref = {
   refetchFunc: () => Promise<QueryObserverResult<Listing[]>>;
 };
 
-const _AdminApproveTable: ForwardRefRenderFunction<Ref, Props> = ({ sth }, ref) => {
+const _AdminApproveTable: ForwardRefRenderFunction<Ref, Props> = (
+  { sth },
+  ref
+) => {
   const { data: session } = useSession();
   const {
     data: currentListing,
@@ -56,7 +59,12 @@ const _AdminApproveTable: ForwardRefRenderFunction<Ref, Props> = ({ sth }, ref) 
         <tr>
           <td
             colSpan={11}
-            style={{ textAlign: "center", fontSize: 20, paddingBlock: 50, fontWeight: "bold" }}
+            style={{
+              textAlign: "center",
+              fontSize: 20,
+              paddingBlock: 50,
+              fontWeight: "bold",
+            }}
           >
             Loading...
           </td>
@@ -65,7 +73,12 @@ const _AdminApproveTable: ForwardRefRenderFunction<Ref, Props> = ({ sth }, ref) 
         <tr>
           <td
             colSpan={11}
-            style={{ textAlign: "center", fontSize: 20, paddingBlock: 50, fontWeight: "bold" }}
+            style={{
+              textAlign: "center",
+              fontSize: 20,
+              paddingBlock: 50,
+              fontWeight: "bold",
+            }}
           >
             No Data
           </td>
@@ -82,6 +95,8 @@ const _AdminApproveTable: ForwardRefRenderFunction<Ref, Props> = ({ sth }, ref) 
             <td>{item.bedsrooms}</td>
             <td>{item.bathrooms}</td>
             <td>{item.guests}</td>
+            <td>{item.approved ? "Yes" : "Pending"}</td>
+            <td>{item.active ? "True" : "False"}</td>
           </tr>
         ))
       )}
