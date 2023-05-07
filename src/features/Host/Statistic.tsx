@@ -30,47 +30,47 @@ const Statistic = () => {
   const [dataTotalStatic, setDataTotalStatic] = useState<TotalStatic[]>([
     {
       country: "January",
-      value: 2025,
+      value: 0,
     },
     {
       country: "February",
-      value: 1882,
+      value: 0,
     },
     {
       country: "March",
-      value: 1809,
+      value: 0,
     },
     {
       country: "April",
-      value: -2000,
+      value: 0,
     },
     {
       country: "May",
-      value: 1122,
+      value: 0,
     },
     {
       country: "June",
-      value: 1114,
+      value: 0,
     },
     {
       country: "July",
-      value: 984,
+      value: 0,
     },
     {
       country: "August",
-      value: 711,
+      value: 0,
     },
     {
       country: "September",
-      value: 665,
+      value: 0,
     },
     {
       country: "November ",
-      value: 443,
+      value: 0,
     },
     {
       country: "December",
-      value: 441,
+      value: 0,
     },
   ]);
 
