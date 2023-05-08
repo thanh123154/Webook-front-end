@@ -84,7 +84,7 @@ const _PresentBooking: ForwardRefRenderFunction<Ref, Props> = () => {
       {isLoading ? (
         <tr>
           <td
-            colSpan={2}
+            colSpan={8}
             style={{
               textAlign: "center",
               fontSize: 20,
@@ -98,7 +98,7 @@ const _PresentBooking: ForwardRefRenderFunction<Ref, Props> = () => {
       ) : !currentListing || !currentListing.length ? (
         <tr>
           <td
-            colSpan={2}
+            colSpan={8}
             style={{
               textAlign: "center",
               fontSize: 20,
@@ -125,7 +125,7 @@ const _PresentBooking: ForwardRefRenderFunction<Ref, Props> = () => {
                 // loading={isUpdating}
                 fz={10}
                 radius={"xs"}
-                disabled={item.isDenied}
+                disabled={!item.isDenied}
               >
                 Accept booking
               </Button>

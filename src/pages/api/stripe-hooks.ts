@@ -18,20 +18,32 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     try {
       if (signature) {
-        const event = stripe.webhooks.constructEvent(reqBuffer, signature, signingSecret);
+        const event = stripe.webhooks.constructEvent(
+          reqBuffer,
+          signature,
+          signingSecret
+        );
 
-        const data = JSON.parse(JSON.stringify(event.data.object)) as { success_url: string };
-        const code = new URLSearchParams(new URL(data.success_url).search).get("code");
+        const data = JSON.parse(JSON.stringify(event.data.object)) as {
+          success_url: string;
+        };
+        const code = new URLSearchParams(new URL(data.success_url).search).get(
+          "code"
+        );
 
         console.log("Booking id", code);
 
         if (code) {
-          const dataPrepaid = await prisma.prepaidBooking.findUnique({ where: { id: code } });
+          const dataPrepaid = await prisma.prepaidBooking.findUnique({
+            where: { id: code },
+          });
 
           if (!!dataPrepaid) {
             await prisma.prepaidBooking.delete({ where: { id: code } });
 
-            return prisma.booking.create({ data: { ...dataPrepaid, isDenied: false } });
+            return prisma.booking.create({
+              data: { ...dataPrepaid, isDenied: true },
+            });
           } else {
             throw "Prepaid booking not found!";
           }

@@ -131,8 +131,8 @@ model booking {
     total       Float
     phoneNumber String
     guest       Int
-    isDenied    Boolean?
-    isReview    Boolean?  @default(false)
+    isDenied    Boolean?  @default(true)
+    isReview    Boolean? @default(false)
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
     // review      String   @db.Text
