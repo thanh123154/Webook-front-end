@@ -1,14 +1,20 @@
-import { Button, Container, Flex, PasswordInput, TextInput, Title } from "@mantine/core";
+import {
+  Button,
+  Container,
+  Flex,
+  PasswordInput,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { z } from "zod";
 import { api } from "../../utils/api";
 import { showNotification } from "@mantine/notifications";
-import { useSessionStorage } from "@mantine/hooks";
-import { keys } from "../../constants";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import { useAdminSession } from "../../features/Admin/useAdminSession";
 
 interface ILoginForm {
   username: string;
@@ -24,17 +30,23 @@ const AdminLogin: NextPage = () => {
   const router = useRouter();
   const { mutateAsync: apiLogin, isLoading } = api.admin.login.useMutation();
   const [isAuthenticating, setIsAuthenticating] = useState(true);
-  const [adminSession, setAdminSession] = useSessionStorage<boolean>({
-    key: keys.ADMIN_SESSION,
-  });
+  const effectRan = useRef(false);
+  const [adminSession, setAdminSession] = useAdminSession((state) => [
+    state.value,
+    state.setValue,
+  ]);
 
   useEffect(() => {
-    if (adminSession !== undefined && adminSession !== null) {
+    console.log(adminSession);
+
+    if (!effectRan.current) {
       if (adminSession) {
         void router.push("/admin");
       } else {
         setIsAuthenticating(false);
       }
+
+      effectRan.current = true;
     }
   }, [adminSession, router]);
 
@@ -90,9 +102,17 @@ const AdminLogin: NextPage = () => {
             <Flex direction={"column"} gap={30}>
               <TextInput label="Username" {...form.getInputProps("username")} />
 
-              <PasswordInput label="Password" {...form.getInputProps("password")} />
+              <PasswordInput
+                label="Password"
+                {...form.getInputProps("password")}
+              />
 
-              <Button loading={isLoading} fullWidth variant="gradient" type="submit">
+              <Button
+                loading={isLoading}
+                fullWidth
+                variant="gradient"
+                type="submit"
+              >
                 Login
               </Button>
             </Flex>

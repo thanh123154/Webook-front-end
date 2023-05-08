@@ -13,38 +13,41 @@ import { useSessionStorage } from "@mantine/hooks";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useRef } from "react";
 import { keys } from "../../constants";
 import { IconLogout, IconSearch } from "@tabler/icons";
 import { api } from "../../utils/api";
 import { nanoid } from "nanoid";
 import { showNotification } from "@mantine/notifications";
+import { useAdminSession } from "../../features/Admin/useAdminSession";
 
 const Home: NextPage = () => {
   const searchRef = React.useRef<HTMLInputElement>(null);
   const router = useRouter();
   const [searchName, setSearchName] = React.useState<string | undefined>();
-  const { data, isLoading, refetch } = api.admin.getAllUnapprovedListings.useQuery({
-    name: searchName,
-  });
+  const { data, isLoading, refetch } =
+    api.admin.getAllUnapprovedListings.useQuery({
+      name: searchName,
+    });
   const [isAuthenticating, setIsAuthenticating] = React.useState(true);
-  const [adminSession, setAdminSession] = useSessionStorage<boolean>({
-    key: keys.ADMIN_SESSION,
-    defaultValue: false,
-  });
+  const effectRan = useRef(false);
+  const [adminSession, setAdminSession] = useAdminSession((state) => [
+    state.value,
+    state.setValue,
+  ]);
 
   React.useEffect(() => {
     console.log(adminSession);
 
-    // if (adminSession !== undefined && adminSession !== null) {
-    //   if (!adminSession) {
-    //     void router.push("/admin/login");
-    //   } else {
-    //     setIsAuthenticating(false);
-    //   }
-    // } else {
-    //   setIsAuthenticating(false);
-    // }
+    if (!effectRan.current) {
+      if (!adminSession) {
+        void router.push("/admin/login");
+      } else {
+        setIsAuthenticating(false);
+      }
+
+      effectRan.current = true;
+    }
   }, [adminSession, router]);
 
   const heads = (
@@ -62,7 +65,12 @@ const Home: NextPage = () => {
         <tr>
           <td
             colSpan={2}
-            style={{ textAlign: "center", fontSize: 20, paddingBlock: 50, fontWeight: "bold" }}
+            style={{
+              textAlign: "center",
+              fontSize: 20,
+              paddingBlock: 50,
+              fontWeight: "bold",
+            }}
           >
             Loading...
           </td>
@@ -71,7 +79,12 @@ const Home: NextPage = () => {
         <tr>
           <td
             colSpan={2}
-            style={{ textAlign: "center", fontSize: 20, paddingBlock: 50, fontWeight: "bold" }}
+            style={{
+              textAlign: "center",
+              fontSize: 20,
+              paddingBlock: 50,
+              fontWeight: "bold",
+            }}
           >
             No Data
           </td>
@@ -122,7 +135,9 @@ const Home: NextPage = () => {
 
       <Container fluid p={25}>
         <Group position="apart" mb="xl">
-          <Title order={3}>Unapproved Listing {!!data?.length && `(${data.length})`}</Title>
+          <Title order={3}>
+            Unapproved Listing {!!data?.length && `(${data.length})`}
+          </Title>
 
           <Input
             ref={searchRef}
@@ -132,7 +147,9 @@ const Home: NextPage = () => {
                 <IconSearch size={14} />
               </ActionIcon>
             }
-            onKeyDown={(e) => e.keyCode === 13 && setSearchName(searchRef.current?.value)}
+            onKeyDown={(e) =>
+              e.keyCode === 13 && setSearchName(searchRef.current?.value)
+            }
           />
         </Group>
 
@@ -148,10 +165,10 @@ const Home: NextPage = () => {
 
 export default Home;
 
-const ButtonApprove: React.FC<{ listingId: string; onSuccess: () => Promise<void> }> = ({
-  listingId,
-  onSuccess = () => Promise.resolve(""),
-}) => {
+const ButtonApprove: React.FC<{
+  listingId: string;
+  onSuccess: () => Promise<void>;
+}> = ({ listingId, onSuccess = () => Promise.resolve("") }) => {
   const { mutateAsync: apiApprove } = api.admin.approveListing.useMutation();
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -174,7 +191,12 @@ const ButtonApprove: React.FC<{ listingId: string; onSuccess: () => Promise<void
   };
 
   return (
-    <Button variant="filled" color="teal" onClick={() => void handleApprove()} loading={isLoading}>
+    <Button
+      variant="filled"
+      color="teal"
+      onClick={() => void handleApprove()}
+      loading={isLoading}
+    >
       Approve
     </Button>
   );
