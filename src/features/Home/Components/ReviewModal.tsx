@@ -1,5 +1,11 @@
-import { Modal, Textarea, Rating, useMantineTheme, Button } from "@mantine/core";
-import React from "react";
+import {
+  Modal,
+  Textarea,
+  Rating,
+  useMantineTheme,
+  Button,
+} from "@mantine/core";
+import React, { useState } from "react";
 import {
   IconMoodEmpty,
   IconMoodCry,
@@ -25,8 +31,16 @@ type Props = {
 
 // icon only
 
-export const ReviewModal: React.FC<Props> = ({ opened, close, listingId, idBooking, refetch }) => {
+export const ReviewModal: React.FC<Props> = ({
+  opened,
+  close,
+  listingId,
+  idBooking,
+  refetch,
+}) => {
   const theme = useMantineTheme();
+  const [isLoading, setIsLoading] = useState(false);
+
   const getEmptyIcon = (value: number) => {
     const defaultProps = { size: 24, color: "gray" };
     switch (value) {
@@ -54,11 +68,15 @@ export const ReviewModal: React.FC<Props> = ({ opened, close, listingId, idBooki
       case 2:
         return <IconMoodSad {...defaultProps} color={theme.colors.orange[7]} />;
       case 3:
-        return <IconMoodSmile {...defaultProps} color={theme.colors.yellow[7]} />;
+        return (
+          <IconMoodSmile {...defaultProps} color={theme.colors.yellow[7]} />
+        );
       case 4:
         return <IconMoodHappy {...defaultProps} color={theme.colors.lime[7]} />;
       case 5:
-        return <IconMoodCrazyHappy {...defaultProps} color={theme.colors.green[7]} />;
+        return (
+          <IconMoodCrazyHappy {...defaultProps} color={theme.colors.green[7]} />
+        );
       default:
         return <IconMoodEmpty {...defaultProps} />;
     }
@@ -80,6 +98,8 @@ export const ReviewModal: React.FC<Props> = ({ opened, close, listingId, idBooki
     console.log(values, "day la value review");
 
     try {
+      setIsLoading(true);
+
       const createListingData = {
         ...values,
       };
@@ -104,7 +124,7 @@ export const ReviewModal: React.FC<Props> = ({ opened, close, listingId, idBooki
     } catch (error) {
       console.log(error);
     } finally {
-      // setIsUpdating(false);
+      setIsLoading(false);
     }
   };
 
@@ -138,7 +158,7 @@ export const ReviewModal: React.FC<Props> = ({ opened, close, listingId, idBooki
           {...form.getInputProps("comment")}
         />
 
-        <Button type="submit" mt={20}>
+        <Button type="submit" mt={20} loading={isLoading}>
           Submit
         </Button>
       </form>

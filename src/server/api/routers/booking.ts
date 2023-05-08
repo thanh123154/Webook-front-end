@@ -69,7 +69,7 @@ export const BookingRouter = createTRPCRouter({
               }
             : { guestId }),
           checkIn: {
-            gte: new Date(),
+            gte: new Date(new Date().setHours(0, 0, 0, 0)),
           },
         },
         include: { guests: true, booked: true },
@@ -89,6 +89,7 @@ export const BookingRouter = createTRPCRouter({
           checkOut: {
             lt: new Date(),
           },
+          isDenied: false,
         },
         include: { guests: true, booked: true },
       });

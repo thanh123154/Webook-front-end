@@ -114,7 +114,7 @@ const _PresentBooking: ForwardRefRenderFunction<Ref, Props> = () => {
             <td>{moment(item.checkIn).format("MMMM D, YYYY")}</td>
             <td>{moment(item.checkOut).format("MMMM D, YYYY")}</td>
             <td>{item.total.toLocaleString("en-US") ?? "N/A"} vnđ</td>
-            <td>{item.isDenied ? "Has approved" : "Pending"}</td>
+            <td>{!item.isDenied ? "Has approved" : "Pending"}</td>
           </tr>
         ))
       )}

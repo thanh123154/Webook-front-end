@@ -48,6 +48,7 @@ const _HistoryBooking: ForwardRefRenderFunction<Ref, Props> = () => {
     isReview: boolean;
   }) => {
     const [opened, { open, close }] = useDisclosure(false);
+
     return (
       <Box>
         <ReviewModal
@@ -89,7 +90,12 @@ const _HistoryBooking: ForwardRefRenderFunction<Ref, Props> = () => {
         <tr>
           <td
             colSpan={6}
-            style={{ textAlign: "center", fontSize: 20, paddingBlock: 50, fontWeight: "bold" }}
+            style={{
+              textAlign: "center",
+              fontSize: 20,
+              paddingBlock: 50,
+              fontWeight: "bold",
+            }}
           >
             Loading...
           </td>
@@ -98,7 +104,12 @@ const _HistoryBooking: ForwardRefRenderFunction<Ref, Props> = () => {
         <tr>
           <td
             colSpan={6}
-            style={{ textAlign: "center", fontSize: 20, paddingBlock: 50, fontWeight: "bold" }}
+            style={{
+              textAlign: "center",
+              fontSize: 20,
+              paddingBlock: 50,
+              fontWeight: "bold",
+            }}
           >
             No Data
           </td>
