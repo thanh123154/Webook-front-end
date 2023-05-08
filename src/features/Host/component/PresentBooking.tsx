@@ -27,8 +27,7 @@ const _PresentBooking: ForwardRefRenderFunction<Ref, Props> = () => {
     isLoading,
     refetch,
   } = api.booking.getCurrentBookingByHostId.useQuery(
-    { guestId: session?.user?.id || "" },
-
+    { guestId: session?.user?.id || "", isHost: true },
     { enabled: !!session?.user?.id, refetchOnWindowFocus: false }
   );
   const { mutateAsync: apiAprove } = api.booking.aproveBooking.useMutation();

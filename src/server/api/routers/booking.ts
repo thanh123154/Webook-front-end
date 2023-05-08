@@ -55,14 +55,19 @@ export const BookingRouter = createTRPCRouter({
     .input(
       z.object({
         guestId: z.string(),
+        isHost: z.boolean().optional(),
       })
     )
-    .query(({ input: { guestId }, ctx }) => {
+    .query(({ input: { guestId, isHost = false }, ctx }) => {
       return ctx.prisma.booking.findMany({
         where: {
-          booked: {
-            hostId: guestId,
-          },
+          ...(isHost
+            ? {
+                booked: {
+                  hostId: guestId,
+                },
+              }
+            : { guestId }),
           checkIn: {
             gte: new Date(),
           },
