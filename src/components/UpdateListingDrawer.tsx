@@ -318,10 +318,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
       const result = await axios.get<SearchData>(
         `https://rsapi.goong.io/Place/AutoComplete?api_key=${
           keys.YOUR_GOOGLE_MAPS_API_KEY
-        }&location=21.013715429594125,%20105.79829597455202&input=${input.replace(
-          /\s+/g,
-          "%"
-        )}`
+        }&input=${input.replace(/\s+/g, "%")}`
       );
 
       const data = result.data.predictions;
