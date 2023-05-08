@@ -18,7 +18,11 @@ import {
   Textarea,
   Title,
 } from "@mantine/core";
-import { Dropzone, type FileWithPath, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import {
+  Dropzone,
+  type FileWithPath,
+  IMAGE_MIME_TYPE,
+} from "@mantine/dropzone";
 import { type Editor as TinyMCEEditor } from "tinymce";
 import {
   useImperativeHandle,
@@ -57,8 +61,12 @@ const formSchema = z.object({
   guests: z.number().min(1, { message: "Please enter guest" }),
   priceLongTerm: z.number().min(1, { message: "Please enter price" }),
   priceShortTerm: z.number().min(1, { message: "Please enter price" }),
-  amenity: z.array(z.string()).min(1, { message: "Please enter at least 1 amenity" }),
-  desc: z.string().min(1, { message: "Please enter description for your place" }),
+  amenity: z
+    .array(z.string())
+    .min(1, { message: "Please enter at least 1 amenity" }),
+  desc: z
+    .string()
+    .min(1, { message: "Please enter description for your place" }),
 });
 
 type Ref = {
@@ -71,7 +79,7 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
   ref
 ) => {
   const [openedDrawer, setOpened] = useState(false);
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(true);
   const [addressToSubmit, setAddressToSubmit] = useState("");
 
   const [dataSearch, setDataSearch] = useState<predictionData[]>([]);
@@ -126,7 +134,9 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
     } else {
       try {
         setIsUpdating(true);
-        const uploadedGallery = await Promise.all(filesGallery.map((file) => uploadFile(file)));
+        const uploadedGallery = await Promise.all(
+          filesGallery.map((file) => uploadFile(file))
+        );
         const allGallery = [
           ...urlsGallery,
           ...uploadedGallery.filter((x) => x !== undefined),
@@ -194,7 +204,9 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
       console.log("hello", values);
       try {
         setIsUpdating(true);
-        const uploadedGallery = await Promise.all(filesGallery.map((file) => uploadFile(file)));
+        const uploadedGallery = await Promise.all(
+          filesGallery.map((file) => uploadFile(file))
+        );
 
         const allGallery = [
           ...urlsGallery,
@@ -246,20 +258,21 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
   };
 
   const previews = useMemo(() => {
-    return [...filesGallery.map((file) => URL.createObjectURL(file)), ...urlsGallery].map(
-      (link) => {
-        return (
-          <AspectRatio key={nanoid()} ratio={1}>
-            {" "}
-            <Image
-              src={link}
-              // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
-              alt=""
-            />
-          </AspectRatio>
-        );
-      }
-    );
+    return [
+      ...filesGallery.map((file) => URL.createObjectURL(file)),
+      ...urlsGallery,
+    ].map((link) => {
+      return (
+        <AspectRatio key={nanoid()} ratio={1}>
+          {" "}
+          <Image
+            src={link}
+            // imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+            alt=""
+          />
+        </AspectRatio>
+      );
+    });
   }, [filesGallery, urlsGallery]);
 
   useImperativeHandle(ref, () => ({
@@ -305,7 +318,10 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
       const result = await axios.get<SearchData>(
         `https://rsapi.goong.io/Place/AutoComplete?api_key=${
           keys.YOUR_GOOGLE_MAPS_API_KEY
-        }&location=21.013715429594125,%20105.79829597455202&input=${input.replace(/\s+/g, "%")}`
+        }&location=21.013715429594125,%20105.79829597455202&input=${input.replace(
+          /\s+/g,
+          "%"
+        )}`
       );
 
       const data = result.data.predictions;
@@ -349,7 +365,9 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
       onClose={() => handleClose()}
       padding={30}
       {...props}
-      title={<Title>{isCreateListing ? "Create Listing" : "Update Listing"} </Title>}
+      title={
+        <Title>{isCreateListing ? "Create Listing" : "Update Listing"} </Title>
+      }
     >
       <ScrollArea h={"90vh"}>
         <form
@@ -430,7 +448,11 @@ const _UpdateListingDrawer: ForwardRefRenderFunction<Ref, Props> = (
                 <Text align="center">Drop images here</Text>
               </Dropzone>
 
-              <SimpleGrid cols={4} breakpoints={[{ maxWidth: "sm", cols: 1 }]} mt={"xl"}>
+              <SimpleGrid
+                cols={4}
+                breakpoints={[{ maxWidth: "sm", cols: 1 }]}
+                mt={"xl"}
+              >
                 {previews}
               </SimpleGrid>
 
