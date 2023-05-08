@@ -205,7 +205,7 @@ export const Reserve: React.FC<Props> = ({
               // value={valueCheckIn}
               // onChange={setValueCheckIn}
               mx="auto"
-              minDate={moment().toDate()}
+              // minDate={moment().toDate()}
               maw={173}
               icon={<IoCalendar />}
               radius={32}
@@ -218,7 +218,7 @@ export const Reserve: React.FC<Props> = ({
               mx="auto"
               maw={173}
               icon={<IoCalendar />}
-              minDate={moment().toDate()}
+              // minDate={moment().toDate()}
               radius={32}
               {...form.getInputProps("checkOut")}
             />
