@@ -57,7 +57,9 @@ export const Reserve: React.FC<Props> = ({
 
   const [dayDif, setDayDif] = useState(0);
 
-  const [currentPrice, setCurrentPrice] = useState(longTermPrice ? longTermPrice : 0);
+  const [currentPrice, setCurrentPrice] = useState(
+    longTermPrice ? longTermPrice : 0
+  );
 
   const totalPrice = currentPrice * dayDif || 0;
 
@@ -68,8 +70,12 @@ export const Reserve: React.FC<Props> = ({
   const [valueAdult, setValueAdult] = useState(0);
   // const [valueChildren, setValueChildren] = useState(0);
 
-  const formattedPriceLongTerm = `${longTermPrice?.toLocaleString("en-US") ?? "N/A"}`;
-  const formattedPriceShortTerm = `${shortTermPrice?.toLocaleString("en-US") ?? "N/A"}`;
+  const formattedPriceLongTerm = `${
+    longTermPrice?.toLocaleString("en-US") ?? "N/A"
+  }`;
+  const formattedPriceShortTerm = `${
+    shortTermPrice?.toLocaleString("en-US") ?? "N/A"
+  }`;
 
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const { mutateAsync: apiCheckout } = api.stripe.checkoutSession.useMutation();
@@ -179,10 +185,19 @@ export const Reserve: React.FC<Props> = ({
         </Text>
 
         <Text mb={24} c={"#7D7C84"} mt={8}>
-          {form.values.checkIn ? moment(form.values.checkIn).format("MMMM D, YYYY") : ""} - &nbsp;
-          {form.values.checkOut ? moment(form.values.checkOut).format("MMMM D, YYYY") : ""}
+          {form.values.checkIn
+            ? moment(form.values.checkIn).format("MMMM D, YYYY")
+            : ""}{" "}
+          - &nbsp;
+          {form.values.checkOut
+            ? moment(form.values.checkOut).format("MMMM D, YYYY")
+            : ""}
         </Text>
-        <form onSubmit={form.onSubmit((values) => void handleSubmitCreateBooking(values))}>
+        <form
+          onSubmit={form.onSubmit(
+            (values) => void handleSubmitCreateBooking(values)
+          )}
+        >
           <Group align="start" mb={24}>
             <DatePicker
               label="Check in"
@@ -190,7 +205,7 @@ export const Reserve: React.FC<Props> = ({
               // value={valueCheckIn}
               // onChange={setValueCheckIn}
               mx="auto"
-              minDate={moment().toDate()}
+              // minDate={moment().toDate()}
               maw={173}
               icon={<IoCalendar />}
               radius={32}
@@ -203,7 +218,7 @@ export const Reserve: React.FC<Props> = ({
               mx="auto"
               maw={173}
               icon={<IoCalendar />}
-              minDate={moment().toDate()}
+              // minDate={moment().toDate()}
               radius={32}
               {...form.getInputProps("checkOut")}
             />
@@ -253,7 +268,14 @@ export const Reserve: React.FC<Props> = ({
             />
           </Center>
 
-          <Button loading={isCheckingOut} type="submit" mt={32} size="lg" w={"100%"} bg={"#3B71FE"}>
+          <Button
+            loading={isCheckingOut}
+            type="submit"
+            mt={32}
+            size="lg"
+            w={"100%"}
+            bg={"#3B71FE"}
+          >
             Reserve
           </Button>
         </form>
@@ -264,7 +286,8 @@ export const Reserve: React.FC<Props> = ({
         <Group p={12} mt={44} mb={16} position="apart">
           {" "}
           <Text fw={500} fz={12} c={"#7D7C84"}>
-            {currentPrice?.toLocaleString("en-US") ?? "N/A"} vnđ x {dayDif || 0} days
+            {currentPrice?.toLocaleString("en-US") ?? "N/A"} vnđ x {dayDif || 0}{" "}
+            days
           </Text>
           <Text fw={500} fz={12} c={theme === "dark" ? "white" : "#09080D"}>
             {(0 || totalPrice.toLocaleString("en-US")) ?? "N/A"} vnđ
