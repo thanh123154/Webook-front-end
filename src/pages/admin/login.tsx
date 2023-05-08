@@ -71,6 +71,8 @@ const AdminLogin: NextPage = () => {
           color: "green",
           message: "Login successful",
         });
+
+        void router.push("/admin");
       })
       .catch((err) => {
         console.log(err);
