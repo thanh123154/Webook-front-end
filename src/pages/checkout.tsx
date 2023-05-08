@@ -20,7 +20,7 @@ const Checkout: NextPage = () => {
       </Title>
 
       <Center>
-        <Link href="/booking-status">
+        <Link href="/manage-booking">
           <Button variant="gradient">Xem lịch sử giao dịch</Button>
         </Link>
       </Center>
